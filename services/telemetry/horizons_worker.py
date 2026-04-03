@@ -278,14 +278,16 @@ async def run_horizons_worker(
         try:
             now = datetime.now(timezone.utc)
             start = now.strftime("%Y-%m-%d %H:%M")
-            # Horizons requires start < stop
-            stop = f"{start} + 1 min"
+            # Horizons requires start < stop; query a 5-min window
+            from datetime import timedelta
+            stop_dt = now + timedelta(minutes=5)
+            stop = stop_dt.strftime("%Y-%m-%d %H:%M")
 
             # Get Moon position first
             moon_pos = await fetch_moon_position(start)
 
             # Get Orion vectors
-            vectors = await fetch_horizons_vectors(start, stop, step="1 min")
+            vectors = await fetch_horizons_vectors(start, stop, step="5 min")
 
             if vectors:
                 latest = vectors[-1]
