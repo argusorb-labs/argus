@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import re
 import signal
 import sys
@@ -219,7 +220,11 @@ async def run_worker(
                 print("[INIT] Skeptic Agent not available (run from monorepo root)")
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=HEADLESS)
+        chromium_path = os.environ.get("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH")
+        browser = await p.chromium.launch(
+            headless=HEADLESS,
+            executable_path=chromium_path,
+        )
         page = await browser.new_page()
 
         print("[INIT] Loading Artemis tracking page...")
