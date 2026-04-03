@@ -153,7 +153,8 @@ def ingest_telemetry(point: dict) -> None:
     """Store a telemetry point and queue broadcast."""
     ts = point.get("timestamp", time.time())
     met = point.get("met", "unknown")
-    store.put(f"telem:{met}", point, timestamp=ts)
+    source = point.get("source", "issinfo")
+    store.put(f"telem:{source}:{met}", point, timestamp=ts)
 
 
 def ingest_alert(alert: dict) -> None:
