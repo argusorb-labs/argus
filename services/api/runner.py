@@ -42,7 +42,10 @@ async def run_all() -> None:
             if p.get("source", "issinfo") != "jpl_horizons":
                 validator.update_issinfo(p)
                 issinfo_count += 1
-        print(f"  [VALIDATE] Fed {issinfo_count} issinfo points from {len(recent)} total (store={store.size})")
+        h_ts = point.get("timestamp", 0)
+        issinfo_ts = [p.get("timestamp", 0) for p in recent if p.get("source", "issinfo") != "jpl_horizons"]
+        min_dt = min(abs(h_ts - t) for t in issinfo_ts) if issinfo_ts else -1
+        print(f"  [VALIDATE] Fed {issinfo_count}/{len(recent)} | horizons_ts={h_ts:.0f} | closest_issinfo_dt={min_dt:.0f}s | tol=120s")
 
         # Cross-validate
         result = validator.validate(point)
