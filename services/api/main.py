@@ -26,7 +26,7 @@ from services.brain.cross_validator import CrossValidator
 
 store = Lethe(max_entries=500_000)
 alert_store = Lethe(max_entries=10_000)
-validator = CrossValidator()
+validator = CrossValidator(time_tolerance_sec=120)
 
 # Connected WebSocket clients
 _ws_clients: set[WebSocket] = set()
