@@ -169,6 +169,14 @@ async def validation_latest():
     }
 
 
+@app.get("/api/dsn/status")
+async def dsn_status():
+    """Current DSN tracking status for Artemis II."""
+    from services.telemetry.dsn_worker import get_latest_dsn
+    contacts = get_latest_dsn()
+    return {"contacts": contacts, "count": len(contacts)}
+
+
 @app.get("/api/status")
 async def status():
     """Health check with store stats."""

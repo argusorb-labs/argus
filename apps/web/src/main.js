@@ -371,6 +371,35 @@ function updateMiniChart(vel, earthDist) {
   if (distBar) distBar.style.width = `${Math.min(100, (earthDist / 450000) * 100)}%`;
 }
 
+// ── DSN Tracking ──
+
+function updateDSN(contacts) {
+  const el = document.getElementById("dsn-content");
+  if (!contacts || !contacts.length) {
+    el.innerHTML = '<span class="dim">No active contacts</span>';
+    return;
+  }
+  el.innerHTML = contacts.map((c) => `
+    <div class="dsn-contact">
+      <span class="dsn-dish">${c.dish}</span>
+      <span class="dsn-station">${c.station_name}</span>
+      <div class="dsn-signal">
+        <span class="${c.signal_type !== 'none' ? 'active' : 'inactive'}">${c.signal_type.toUpperCase()}</span>
+        <span class="dsn-metric">${c.band || "?"}-band</span>
+        <span class="dsn-metric">${c.data_rate_bps > 0 ? (c.data_rate_bps / 1000).toFixed(0) + " kbps" : ""}</span>
+      </div>
+      <div class="dsn-signal">
+        <span class="dsn-metric">Range: ${c.range_km > 0 ? Math.round(c.range_km).toLocaleString() + " km" : "--"}</span>
+        <span class="dsn-metric">RTLT: ${c.rtlt_sec > 0 ? c.rtlt_sec.toFixed(2) + "s" : "--"}</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+// Fetch initial DSN
+fetch("/api/dsn/status").then((r) => r.json())
+  .then((d) => { if (d.contacts) updateDSN(d.contacts); }).catch(() => {});
+
 // ── Alerts & Validation ──
 
 fetch("/api/alerts/latest?n=10").then((r) => r.json())
@@ -416,6 +445,7 @@ function connectWs() {
       const msg = JSON.parse(evt.data);
       if (msg.type === "alert") addAlert(msg.data);
       else if (msg.type === "validation") { updateValidation(msg.data); dom.vCount.textContent = ++validationCount; }
+      else if (msg.type === "dsn") updateDSN(msg.data);
     } catch {}
   };
   ws.onclose = () => { dom.connStatus.textContent = "OFFLINE"; dom.connStatus.className = "status-disconnected"; setTimeout(connectWs, 3000); };

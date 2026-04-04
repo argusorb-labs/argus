@@ -76,6 +76,12 @@ async def run_all() -> None:
         else:
             print("  [?VALIDATE] No issinfo data available for cross-validation")
 
+    # DSN worker
+    from services.telemetry.dsn_worker import run_dsn_worker
+
+    def on_dsn_update(contacts):
+        asyncio.create_task(_broadcast_dsn(contacts))
+
     tasks = [
         asyncio.create_task(server.serve()),
         asyncio.create_task(run_worker(with_skeptic=True, api_mode=True)),
@@ -83,9 +89,27 @@ async def run_all() -> None:
             on_telemetry=on_horizons_telemetry,
             poll_interval=60,
         )),
+        asyncio.create_task(run_dsn_worker(
+            on_update=on_dsn_update,
+            poll_interval=10,
+        )),
     ]
 
     await asyncio.gather(*tasks)
+
+
+async def _broadcast_dsn(contacts: list) -> None:
+    if not _ws_clients:
+        return
+    message = json.dumps({"type": "dsn", "data": contacts})
+    dead = []
+    for ws in _ws_clients:
+        try:
+            await ws.send_text(message)
+        except Exception:
+            dead.append(ws)
+    for ws in dead:
+        _ws_clients.discard(ws)
 
 
 async def _broadcast_validation(result: dict) -> None:
