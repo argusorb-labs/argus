@@ -36,6 +36,7 @@ import "cesium/Build/Cesium/Widgets/widgets.css";
 
 import { eciToCartesian3 } from "./lib/orbit.js";
 import { generateMoonOrbit } from "./lib/referenceTrajectory.js";
+import { buildColorSegments } from "./lib/colorScale.js";
 
 // ── Config ──
 Ion.defaultAccessToken =
@@ -144,13 +145,7 @@ const orionEntity = viewer.entities.add({
     pixelOffset: new Cartesian2(0, -28),
     scaleByDistance: new NearFarScalar(5e5, 1.6, 1e9, 0.6),
   },
-  // Trail: solid cyan for flown path
-  path: new PathGraphics({
-    leadTime: 0,
-    trailTime: 86400 * 12,
-    width: 3,
-    material: Color.fromCssColorString("#00ccff").withAlpha(0.8),
-  }),
+  // No PathGraphics trail — we use color-coded polyline segments instead
 });
 
 // Orion future path (dashed)
@@ -251,6 +246,18 @@ fetch("/api/telemetry/history")
 
     // Add mission event markers
     addMissionEventMarkers(d.orion, d.moon);
+
+    // Add velocity color-coded trajectory segments
+    const segments = buildColorSegments(d.orion, eciToCartesian3, Cartesian3);
+    for (const seg of segments) {
+      viewer.entities.add({
+        polyline: {
+          positions: seg.positions,
+          width: 4,
+          material: seg.color,
+        },
+      });
+    }
 
     // Tick handler for telemetry panel + chart
     viewer.clock.onTick.addEventListener((clock) => {

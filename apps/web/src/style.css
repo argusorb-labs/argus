@@ -11,6 +11,25 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
 /* Hide Cesium credits */
 .cesium-viewer-bottom { display: none !important; }
 
+/* ── Velocity legend ── */
+#legend-panel {
+  bottom: 56px;
+  right: 16px;
+  min-width: 160px;
+}
+.legend-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #3355ff, #00ccff, #00ff88, #ffcc00, #ff4400, #ff0000);
+  margin-bottom: 4px;
+}
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #667;
+}
+
 /* Style Cesium timeline/animation to match dark theme */
 .cesium-viewer-animationContainer { bottom: 4px !important; left: 4px !important; }
 .cesium-viewer-timelineContainer { bottom: 0 !important; left: 180px !important; right: 0 !important; }
