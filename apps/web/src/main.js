@@ -143,10 +143,15 @@ const moonEntity = viewer.entities.add({
   },
 });
 
-// Earth label
+// Earth — visible sphere (exaggerated to 3x radius for visibility at this zoom)
+const EARTH_VIS_RADIUS = 6371000 * 3;
 viewer.entities.add({
   name: "Earth",
-  position: Cartesian3.fromDegrees(0, 90, 0),
+  position: Cartesian3.fromDegrees(0, 0, 0),
+  ellipsoid: {
+    radii: new Cartesian3(EARTH_VIS_RADIUS, EARTH_VIS_RADIUS, EARTH_VIS_RADIUS),
+    material: Color.fromCssColorString("#2244aa").withAlpha(0.8),
+  },
   label: {
     text: "EARTH",
     font: LABEL_FONT,
@@ -155,7 +160,7 @@ viewer.entities.add({
     outlineColor: Color.BLACK,
     outlineWidth: 4,
     verticalOrigin: VerticalOrigin.BOTTOM,
-    pixelOffset: new Cartesian2(0, -16),
+    pixelOffset: new Cartesian2(0, -20),
     scaleByDistance: new NearFarScalar(5e5, 1.6, 1e9, 0.6),
   },
 });
