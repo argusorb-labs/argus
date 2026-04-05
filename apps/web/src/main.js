@@ -71,7 +71,12 @@ const viewer = new Viewer("cesium-container", {
   infoBox: true,
   selectionIndicator: false,
   sceneMode: SceneMode.SCENE3D,
-  skyBox: new SkyBox({
+  skyAtmosphere: false,
+});
+
+// Custom NASA Deep Star Maps skybox (Gaia/Tycho catalog)
+try {
+  viewer.scene.skyBox = new SkyBox({
     sources: {
       positiveX: "/skybox/px.jpg",
       negativeX: "/skybox/nx.jpg",
@@ -80,9 +85,10 @@ const viewer = new Viewer("cesium-container", {
       positiveZ: "/skybox/pz.jpg",
       negativeZ: "/skybox/nz.jpg",
     },
-  }),
-  skyAtmosphere: false,
-});
+  });
+} catch (e) {
+  console.warn("[SKYBOX] Failed to load custom skybox:", e);
+}
 
 viewer.scene.globe.enableLighting = true;
 
