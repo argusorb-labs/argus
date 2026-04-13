@@ -272,12 +272,155 @@ def test_archive_raw(tmp_path):
 def test_orbital_analyzer():
     from services.brain.orbital_analyzer import analyze_tle_pair
 
-    old = {"norad_id": 44714, "mean_motion": 15.34, "eccentricity": 0.0003, "epoch_jd": 2460400.0}
-    new = {"norad_id": 44714, "mean_motion": 15.50, "eccentricity": 0.0003, "epoch_jd": 2460401.0}
+    old = {"norad_id": 44714, "mean_motion": 15.34, "eccentricity": 0.0003,
+           "epoch_jd": 2460400.0, "inclination": 53.15}
+    new = {"norad_id": 44714, "mean_motion": 15.50, "eccentricity": 0.0003,
+           "epoch_jd": 2460401.0, "inclination": 53.15}
 
     anomaly = analyze_tle_pair(old, new)
     assert anomaly is not None
     assert anomaly["anomaly_type"] in ("altitude_change", "deorbiting", "reentry")
+    # Step 2: every anomaly must be fully labeled.
+    assert anomaly["classified_by"] == "rule_v1"
+    assert anomaly["cause"] in ("maneuver_candidate", "natural_decay", "reentry")
+    assert 0.0 <= anomaly["confidence"] <= 1.0
+    assert anomaly["source_epoch_jd"] == 2460401.0
+
+
+def test_orbital_analyzer_inclination_shift():
+    from services.brain.orbital_analyzer import analyze_tle_pair
+
+    old = {"norad_id": 44714, "mean_motion": 15.34, "eccentricity": 0.0003,
+           "epoch_jd": 2460400.0, "inclination": 53.15}
+    # 0.2° plane change — far beyond TLE noise.
+    new = {"norad_id": 44714, "mean_motion": 15.34, "eccentricity": 0.0003,
+           "epoch_jd": 2460401.0, "inclination": 53.35}
+
+    anomaly = analyze_tle_pair(old, new)
+    assert anomaly is not None
+    assert anomaly["anomaly_type"] == "inclination_shift"
+    assert anomaly["cause"] == "maneuver_candidate"
+
+
+def test_orbital_analyzer_no_false_positive():
+    """Station-keeping noise must not trigger any rule."""
+    from services.brain.orbital_analyzer import analyze_tle_pair
+
+    old = {"norad_id": 44714, "mean_motion": 15.340, "eccentricity": 0.000348,
+           "epoch_jd": 2460400.0, "inclination": 53.1552}
+    new = {"norad_id": 44714, "mean_motion": 15.341, "eccentricity": 0.000350,
+           "epoch_jd": 2460401.0, "inclination": 53.1553}
+
+    assert analyze_tle_pair(old, new) is None
+
+
+def test_anomaly_label_semantics():
+    """anomaly table is labeled data — multi-classifier labels must coexist."""
+    store, db = _make_store()
+    store.upsert_tles(SAMPLE_TLES)
+
+    base = {
+        "norad_id": 44714, "anomaly_type": "altitude_change",
+        "altitude_before_km": 550, "altitude_after_km": 540,
+        "cause": "maneuver_candidate",
+        "source_epoch_jd": 2460401.0,
+    }
+
+    # 1. rule_v1 labels this event → inserted.
+    rule_label = dict(base, confidence=0.7, classified_by="rule_v1")
+    assert store.insert_anomaly(rule_label) is True
+
+    # 2. Re-running rule_v1 on the same event → no-op (same classifier, same key).
+    assert store.insert_anomaly(rule_label) is False
+    assert len(store.get_anomalies()) == 1
+
+    # 3. imm_ukf_v1 labels the SAME event → NEW row. This is the A/B
+    #    mechanism: both classifiers' opinions coexist so we can compare.
+    imm_label = dict(base, confidence=0.95, classified_by="imm_ukf_v1")
+    assert store.insert_anomaly(imm_label) is True
+    assert len(store.get_anomalies()) == 2
+
+    # 4. A human reviewer overrides with a different cause → NEW row.
+    human_label = dict(base,
+        cause="natural_decay", confidence=1.0, classified_by="human:yong")
+    assert store.insert_anomaly(human_label) is True
+    assert len(store.get_anomalies()) == 3
+
+    # 5. Same classifier, different anomaly_type on the same event → NEW row
+    #    (a single classifier may emit multiple labels per transition).
+    rule_ecc = dict(rule_label, anomaly_type="eccentricity_change")
+    assert store.insert_anomaly(rule_ecc) is True
+    assert len(store.get_anomalies()) == 4
+
+    # 6. Legacy rows with NULL source_epoch_jd are treated as distinct
+    #    (SQLite NULL semantics) — migration safety.
+    legacy = dict(base, classified_by="rule_v1", confidence=0.7)
+    legacy.pop("source_epoch_jd")
+    assert store.insert_anomaly(legacy) is True
+    assert store.insert_anomaly(legacy) is True
+
+    os.unlink(db)
+
+
+def test_analyze_constellation_idempotent():
+    """Running analyze_constellation twice must not duplicate anomalies."""
+    from services.brain.orbital_analyzer import analyze_constellation
+
+    store, db = _make_store()
+
+    # Two TLEs for the same sat: epoch 0 (550 km shell) and epoch 1 (raised by ~15 km).
+    old = {
+        "norad_id": 44714, "epoch_jd": 2460400.0,
+        "line1": "x", "line2": "y", "name": "STARLINK-1008",
+        "mean_motion": 15.34, "inclination": 53.15, "eccentricity": 0.0003,
+        "shell_km": 550, "intl_designator": "19074B", "launch_group": "19074",
+    }
+    new = dict(old, epoch_jd=2460401.0, mean_motion=15.10)  # raise orbit
+
+    store.upsert_tles([old, new])
+
+    first_run = analyze_constellation(store)
+    assert len(first_run) == 1
+    assert first_run[0]["cause"] == "maneuver_candidate"
+    assert first_run[0]["classified_by"] == "rule_v1"
+
+    # Second run on unchanged history → zero new anomalies.
+    second_run = analyze_constellation(store)
+    assert second_run == []
+    assert len(store.get_anomalies()) == 1
+
+    os.unlink(db)
+
+
+def test_store_inventory_queries():
+    from services.telemetry.store import StarlinkStore
+    import sqlite3
+
+    store, db = _make_store()
+    store.upsert_tles(SAMPLE_TLES)
+
+    # Both satellites should have been first_seen just now.
+    new_sats = store.get_new_satellites(since_ts=time.time() - 60)
+    assert len(new_sats) == 2
+
+    # Nothing should be stale yet (both last_seen is fresh).
+    stale = store.get_stale_satellites(max_age_s=60)
+    assert stale == []
+
+    # Backdate one satellite's last_seen to simulate a 5-day gap.
+    conn = sqlite3.connect(db)
+    conn.execute(
+        "UPDATE satellite SET last_seen = ? WHERE norad_id = ?",
+        (time.time() - 5 * 86400, 44714),
+    )
+    conn.commit()
+    conn.close()
+
+    stale = store.get_stale_satellites(max_age_s=3 * 86400)
+    assert len(stale) == 1
+    assert stale[0]["norad_id"] == 44714
+
+    os.unlink(db)
 
 
 def test_api_imports():

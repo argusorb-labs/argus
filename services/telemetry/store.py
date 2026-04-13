@@ -1,13 +1,17 @@
 """SQLite-backed persistent store for Starlink TLE data.
 
 Tables:
-- tle: every TLE update, deduplicated by (norad_id, epoch_jd)
+- tle:       every TLE update, deduplicated by (norad_id, epoch_jd)
 - satellite: metadata, shell classification, status
-- anomaly: detected orbital events (with cause labels)
+- anomaly:   LABELED DATASET — every row is a label produced by some
+             classifier (rule_v1, imm_ukf_v1, human, ...) about a specific
+             TLE transition. Multiple classifiers can label the same event;
+             comparing their labels is the validation-credibility moat.
 - fetch_log: audit trail of every Celestrak fetch attempt
 
-This is the data moat — every TLE ever seen is stored permanently.
-Schema is versioned via PRAGMA user_version and migrated forward.
+The combination of `tle` (every update stored forever) and `anomaly`
+(every classifier opinion stored forever) is the data moat. Schema is
+versioned via PRAGMA user_version and migrated forward.
 """
 
 from __future__ import annotations
@@ -20,7 +24,7 @@ from pathlib import Path
 
 DB_PATH = os.environ.get("ARGUS_DB_PATH", "data/starlink.db")
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 _SCHEMA_V1 = """
 CREATE TABLE IF NOT EXISTS tle (
@@ -84,6 +88,20 @@ _ANOMALY_V2_COLUMNS = [
     ("classified_by", "TEXT"),
 ]
 
+_ANOMALY_V3_COLUMNS = [
+    ("source_epoch_jd", "REAL"),
+]
+
+# Uniqueness semantics: one classifier can emit at most one label of a given
+# anomaly_type per TLE transition. Different classifiers (rule_v1 vs
+# imm_ukf_v1 vs human) can all label the same event — that's the A/B /
+# validation-credibility mechanism. NULL source_epoch_jd rows (legacy) are
+# treated as distinct by SQLite, so this is migration-safe.
+_SCHEMA_V3 = """
+CREATE UNIQUE INDEX IF NOT EXISTS idx_anomaly_unique
+    ON anomaly(norad_id, source_epoch_jd, anomaly_type, classified_by);
+"""
+
 
 class StarlinkStore:
     """Thread-safe SQLite store for Starlink constellation data."""
@@ -122,6 +140,14 @@ class StarlinkStore:
                     conn.execute(f"ALTER TABLE anomaly ADD COLUMN {col} {col_type}")
                 except sqlite3.OperationalError:
                     pass  # column already exists
+
+        if version < 3:
+            for col, col_type in _ANOMALY_V3_COLUMNS:
+                try:
+                    conn.execute(f"ALTER TABLE anomaly ADD COLUMN {col} {col_type}")
+                except sqlite3.OperationalError:
+                    pass
+            conn.executescript(_SCHEMA_V3)
 
         conn.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
         conn.commit()
@@ -211,16 +237,23 @@ class StarlinkStore:
 
     # ── Anomaly operations ──
 
-    def insert_anomaly(self, anomaly: dict) -> None:
-        """Store a detected anomaly."""
+    def insert_anomaly(self, anomaly: dict) -> bool:
+        """Write a label into the anomaly table. Returns True if a new row was inserted.
+
+        This is the labeled dataset, not a detection log. Each row is one
+        classifier's opinion about one TLE transition. Dedupe is on
+        (norad_id, source_epoch_jd, anomaly_type, classified_by) — re-running
+        the SAME classifier on the SAME TLE pair is a no-op, but a different
+        classifier labeling the same event inserts a new row (by design).
+        """
         with self._lock:
             conn = self._get_conn()
-            conn.execute(
-                """INSERT INTO anomaly
+            cursor = conn.execute(
+                """INSERT OR IGNORE INTO anomaly
                    (norad_id, detected_at, anomaly_type, details,
                     altitude_before_km, altitude_after_km,
-                    cause, confidence, classified_by)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    cause, confidence, classified_by, source_epoch_jd)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     anomaly["norad_id"],
                     anomaly.get("detected_at", time.time()),
@@ -231,10 +264,13 @@ class StarlinkStore:
                     anomaly.get("cause"),
                     anomaly.get("confidence"),
                     anomaly.get("classified_by"),
+                    anomaly.get("source_epoch_jd"),
                 ),
             )
+            inserted = cursor.rowcount > 0
             conn.commit()
             conn.close()
+        return inserted
 
     def get_anomalies(self, limit: int = 50) -> list[dict]:
         """Get recent anomalies."""
@@ -244,6 +280,39 @@ class StarlinkStore:
                LEFT JOIN satellite s ON a.norad_id = s.norad_id
                ORDER BY a.detected_at DESC LIMIT ?""",
             (limit,),
+        ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
+    # ── Inventory queries (for weekly report) ──
+
+    def get_new_satellites(self, since_ts: float) -> list[dict]:
+        """Satellites first seen at or after since_ts (new launches / deployments)."""
+        conn = self._get_conn()
+        rows = conn.execute(
+            """SELECT * FROM satellite
+               WHERE first_seen >= ?
+               ORDER BY first_seen DESC""",
+            (since_ts,),
+        ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
+    def get_stale_satellites(
+        self, max_age_s: float, now_ts: float | None = None
+    ) -> list[dict]:
+        """Satellites whose last_seen is older than (now_ts - max_age_s).
+
+        A Starlink that hasn't shown up in Celestrak for several days is
+        likely decommissioned, decayed, or renamed.
+        """
+        cutoff = (now_ts if now_ts is not None else time.time()) - max_age_s
+        conn = self._get_conn()
+        rows = conn.execute(
+            """SELECT * FROM satellite
+               WHERE last_seen < ?
+               ORDER BY last_seen ASC""",
+            (cutoff,),
         ).fetchall()
         conn.close()
         return [dict(r) for r in rows]
