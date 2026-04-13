@@ -15,8 +15,7 @@ ssh "$REMOTE" "sqlite3 $REMOTE_DB '.backup /tmp/starlink-backup.db'" 2>/dev/null
 scp -q "$REMOTE:/tmp/starlink-backup.db" "$LOCAL_DIR/starlink-$DATE.db"
 ssh "$REMOTE" "rm -f /tmp/starlink-backup.db"
 
-# Keep last 30 days
-find "$LOCAL_DIR" -name "starlink-*.db" -mtime +30 -delete 2>/dev/null || true
+# Keep all backups permanently (data is the moat)
 
 SIZE=$(ls -lh "$LOCAL_DIR/starlink-$DATE.db" | awk '{print $5}')
 echo "[BACKUP] $DATE: $SIZE → $LOCAL_DIR/starlink-$DATE.db"

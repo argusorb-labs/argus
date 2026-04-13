@@ -14,6 +14,7 @@ services:
       context: apps/web
       dockerfile: Dockerfile
     ports:
+      - "80:80"
       - "8080:80"
     depends_on:
       - api
