@@ -14,3 +14,4 @@ data/*.db-shm
 *.jpg
 !apps/web/public/skybox/*.jpg
 backups/*.db
+CLAUDE.md
