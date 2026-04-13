@@ -1,4 +1,4 @@
-"""Combined runner — starts FastAPI server + telemetry workers in one process.
+"""Combined runner — FastAPI + TLE fetcher + position updater + anomaly analyzer.
 
 Usage:
     python -m services.api.runner
@@ -7,134 +7,91 @@ Usage:
 from __future__ import annotations
 
 import asyncio
-import json
 import signal
 import sys
+import time
 import uvicorn
 
 from services.api.main import (
-    app, store, alert_store, validator,
-    ingest_telemetry, ingest_alert,
-    broadcast_telemetry, broadcast_alert, _ws_clients,
+    app, store, propagator, update_position_cache, broadcast,
 )
+from services.telemetry.tle_fetcher import run_tle_fetcher
+from services.brain.orbital_analyzer import analyze_constellation
+
+
+async def position_update_loop(interval: int = 5) -> None:
+    """Refresh position cache every N seconds and broadcast to WS clients."""
+    print(f"[POS] Position updater starting (interval={interval}s)")
+    while True:
+        t0 = time.perf_counter()
+        update_position_cache()
+        elapsed = time.perf_counter() - t0
+
+        # Broadcast positions to WebSocket clients
+        from services.api.main import _position_cache
+        await broadcast("positions", {
+            "count": _position_cache["count"],
+            "timestamp": _position_cache["timestamp"],
+        })
+
+        await asyncio.sleep(interval)
+
+
+def on_tle_fetch_complete(total: int, new: int) -> None:
+    """Called after each TLE fetch. Reload propagator + run anomaly detection."""
+    # Reload propagator with fresh TLEs
+    tles = store.get_latest_tles()
+    loaded = propagator.load_tles(tles)
+    print(f"[TLE] Propagator reloaded: {loaded} satellites")
+
+    # Run anomaly detection
+    anomalies = analyze_constellation(store)
+    if anomalies:
+        print(f"[ANOMALY] Detected {len(anomalies)} anomalies:")
+        for a in anomalies[:5]:
+            print(f"  {a['anomaly_type']}: norad={a['norad_id']} {a.get('details','')}")
+        # Broadcast anomalies (fire-and-forget in the event loop)
+        loop = asyncio.get_event_loop()
+        for a in anomalies:
+            loop.create_task(broadcast("anomaly", a))
 
 
 async def run_all() -> None:
-    """Run API server, issinfo scraper, Horizons worker, cross-validator."""
+    """Start all services."""
+    # Initial TLE load
+    print("[INIT] Loading TLEs from database...")
+    tles = store.get_latest_tles()
+    if tles:
+        loaded = propagator.load_tles(tles)
+        update_position_cache()
+        print(f"[INIT] Loaded {loaded} satellites from database")
+    else:
+        print("[INIT] No TLEs in database, will fetch on first cycle")
+
     config = uvicorn.Config(app, host="0.0.0.0", port=8000, log_level="info")
     server = uvicorn.Server(config)
 
-    # Patch telemetry_worker to use shared store
-    from services.telemetry.telemetry_worker import run_worker
-    import services.telemetry.telemetry_worker as tw
-    tw.store = store
-
-    # Horizons worker
-    from services.telemetry.horizons_worker import run_horizons_worker
-
-    def on_horizons_telemetry(point: dict) -> None:
-        ingest_telemetry(point)
-
-        # Feed validator: grab latest issinfo readings from Lethe
-        recent = store.latest(20)
-        for p in recent:
-            if p.get("source", "issinfo") != "jpl_horizons":
-                validator.update_issinfo(p)
-
-        # Cross-validate
-        result = validator.validate(point)
-        if result:
-            grade = result.grade
-            conf = result.confidence
-            marker = {"excellent": "+", "good": "~", "degraded": "!", "suspect": "X"}
-            print(
-                f"  [{marker.get(grade, '?')}VALIDATE] {grade.upper()} "
-                f"(confidence={conf:.1%}) "
-                f"vel={result.velocity_pct:.2f}% "
-                f"earth={result.earth_dist_pct:.2f}% "
-                f"moon={result.moon_dist_pct:.2f}%"
-            )
-
-            asyncio.create_task(_broadcast_validation(result.to_dict()))
-
-            if grade == "suspect":
-                alert = {
-                    "type": "Insight_Alert",
-                    "timestamp": result.timestamp,
-                    "met": point.get("met", ""),
-                    "alert_type": "data_quality",
-                    "confidence": conf,
-                    "deviation_pct": max(
-                        result.velocity_pct,
-                        result.earth_dist_pct,
-                        result.moon_dist_pct,
-                    ),
-                    "details": result.details,
-                }
-                ingest_alert(alert)
-                asyncio.create_task(broadcast_alert(alert))
-        else:
-            print("  [?VALIDATE] No issinfo data available for cross-validation")
-
-    # DSN worker
-    from services.telemetry.dsn_worker import run_dsn_worker
-
-    def on_dsn_update(contacts):
-        asyncio.create_task(_broadcast_dsn(contacts))
-
     tasks = [
         asyncio.create_task(server.serve()),
-        asyncio.create_task(run_worker(with_skeptic=True, api_mode=True)),
-        asyncio.create_task(run_horizons_worker(
-            on_telemetry=on_horizons_telemetry,
-            poll_interval=60,
+        asyncio.create_task(run_tle_fetcher(
+            store=store,
+            on_complete=on_tle_fetch_complete,
+            interval=8 * 3600,
         )),
-        asyncio.create_task(run_dsn_worker(
-            on_update=on_dsn_update,
-            poll_interval=10,
-        )),
+        asyncio.create_task(position_update_loop(interval=5)),
     ]
 
     await asyncio.gather(*tasks)
 
 
-async def _broadcast_dsn(contacts: list) -> None:
-    if not _ws_clients:
-        return
-    message = json.dumps({"type": "dsn", "data": contacts})
-    dead = []
-    for ws in _ws_clients:
-        try:
-            await ws.send_text(message)
-        except Exception:
-            dead.append(ws)
-    for ws in dead:
-        _ws_clients.discard(ws)
-
-
-async def _broadcast_validation(result: dict) -> None:
-    if not _ws_clients:
-        return
-    message = json.dumps({"type": "validation", "data": result})
-    dead = []
-    for ws in _ws_clients:
-        try:
-            await ws.send_text(message)
-        except Exception:
-            dead.append(ws)
-    for ws in dead:
-        _ws_clients.discard(ws)
-
-
 def main() -> None:
-    def _shutdown(sig: int, frame: object) -> None:
-        print(f"\n[STOP] Signal {sig}. Entries: {store.size}, Alerts: {alert_store.size}")
-        print(f"[STOP] Validation stats: {validator.stats}")
+    def _shutdown(sig, frame):
+        stats = store.stats
+        print(f"\n[STOP] Signal {sig}. {stats}")
         sys.exit(0)
 
     signal.signal(signal.SIGINT, _shutdown)
     signal.signal(signal.SIGTERM, _shutdown)
-
     asyncio.run(run_all())
 
 

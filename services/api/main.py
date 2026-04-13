@@ -1,53 +1,55 @@
-"""Selene-Insight API — REST + WebSocket gateway to telemetry and alerts.
+"""Selene-Insight API — Starlink constellation tracking.
 
-Exposes Lethe KV store and Skeptic Agent alerts over HTTP/WS.
-
-Usage:
-    uvicorn services.api.main:app --reload
+REST + WebSocket gateway for satellite positions, anomalies, and metadata.
 """
 
 from __future__ import annotations
 
-import asyncio
 import json
 import time
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from fastapi import FastAPI, Query, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Query, WebSocket, WebSocketDisconnect, Path
 from fastapi.middleware.cors import CORSMiddleware
 
-from services.telemetry.lethe import Lethe
-from services.brain.cross_validator import CrossValidator
+from services.telemetry.store import StarlinkStore
+from services.telemetry.propagator import Propagator
 
-# ---------------------------------------------------------------------------
-# Shared state
-# ---------------------------------------------------------------------------
+# ── Shared state ──
 
-store = Lethe(max_entries=500_000)
-alert_store = Lethe(max_entries=10_000)
-validator = CrossValidator(time_tolerance_sec=300)
-
-# Connected WebSocket clients
+store = StarlinkStore()
+propagator = Propagator()
 _ws_clients: set[WebSocket] = set()
 
+# Position cache (refreshed every 5s by runner)
+_position_cache: dict = {"satellites": [], "timestamp": 0, "count": 0}
 
-# ---------------------------------------------------------------------------
-# App
-# ---------------------------------------------------------------------------
+
+def update_position_cache() -> None:
+    """Recompute all satellite positions. Called by runner every 5s."""
+    global _position_cache
+    positions = propagator.propagate_all()
+    _position_cache = {
+        "satellites": positions,
+        "timestamp": time.time(),
+        "count": len(positions),
+    }
+
+
+# ── App ──
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Startup/shutdown lifecycle."""
-    print("[API] Selene-Insight API started")
+    print("[API] Selene-Insight Starlink API started")
     yield
-    print("[API] Selene-Insight API shutting down")
+    print("[API] Shutting down")
 
 
 app = FastAPI(
     title="Selene-Insight API",
-    description="Artemis II real-time telemetry and physics verification",
-    version="0.1.0",
+    description="Starlink constellation tracking and space situational awareness",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
@@ -60,149 +62,82 @@ app.add_middleware(
 )
 
 
-# ---------------------------------------------------------------------------
-# REST endpoints
-# ---------------------------------------------------------------------------
+# ── Endpoints ──
 
-@app.get("/api/telemetry/latest")
-async def telemetry_latest(n: int = Query(default=10, ge=1, le=1000)):
-    """Get the N most recent telemetry readings."""
-    return {"data": store.latest(n), "count": store.size}
-
-
-@app.get("/api/telemetry/range")
-async def telemetry_range(
-    start: float = Query(..., description="Start timestamp (Unix epoch)"),
-    end: float = Query(..., description="End timestamp (Unix epoch)"),
-    limit: int = Query(default=1000, ge=1, le=10000),
-):
-    """Query telemetry by time range (for dashboard rewind)."""
-    data = store.range(start, end, limit=limit)
-    return {"data": data, "count": len(data)}
+@app.get("/api/starlink/constellation")
+async def constellation(time_unix: float | None = Query(default=None)):
+    """All satellite positions. Uses cache for current time, propagates for custom time."""
+    if time_unix is not None:
+        positions = propagator.propagate_all(time_unix)
+        return {"satellites": positions, "timestamp": time_unix, "count": len(positions)}
+    return _position_cache
 
 
-@app.get("/api/alerts/latest")
-async def alerts_latest(n: int = Query(default=20, ge=1, le=500)):
-    """Get the N most recent Skeptic Agent alerts."""
-    return {"data": alert_store.latest(n), "count": alert_store.size}
+@app.get("/api/starlink/satellite/{norad_id}")
+async def satellite_detail(norad_id: int = Path(...)):
+    """Single satellite metadata + TLE history."""
+    sat = store.get_satellite(norad_id)
+    if not sat:
+        return {"error": "Satellite not found"}
 
+    history = store.get_satellite_history(norad_id, limit=50)
 
-@app.get("/api/telemetry/history")
-async def telemetry_history():
-    """Full mission trajectory from JPL Horizons (launch to end, 30-min steps).
+    # Current position
+    from services.telemetry.propagator import propagate_single, tle_to_satrec
+    pos = None
+    if history:
+        satrec = tle_to_satrec(history[0]["line1"], history[0]["line2"])
+        if satrec:
+            pos = propagate_single(satrec, time.time())
 
-    Returns both Orion and Moon positions for the entire mission,
-    including predicted future trajectory.
-    """
-    from services.telemetry.horizons_worker import (
-        fetch_horizons_vectors, fetch_moon_position, vectors_to_telemetry,
-        _parse_vectors, _get_ssl_context, HORIZONS_API,
-    )
-    import urllib.request
-    import urllib.parse
-    import json as _json
-
-    launch = "2026-04-02 02:00"
-    mission_end = "2026-04-10 23:50"  # Horizons has data until here
-
-    try:
-        # Fetch Orion trajectory (full mission)
-        orion_vecs = await fetch_horizons_vectors(launch, mission_end, "30 min")
-
-        # Fetch Moon trajectory (same period)
-        ctx = _get_ssl_context()
-        params = urllib.parse.urlencode({
-            "format": "json",
-            "COMMAND": "'301'",
-            "OBJ_DATA": "'NO'",
-            "MAKE_EPHEM": "'YES'",
-            "EPHEM_TYPE": "'VECTORS'",
-            "CENTER": "'500@399'",
-            "START_TIME": f"'{launch}'",
-            "STOP_TIME": f"'{mission_end}'",
-            "STEP_SIZE": "'30 min'",
-            "VEC_TABLE": "'2'",
-        })
-        url = f"{HORIZONS_API}?{params}"
-        import asyncio
-        loop = asyncio.get_event_loop()
-        resp = await loop.run_in_executor(
-            None, lambda: urllib.request.urlopen(url, timeout=30, context=ctx).read()
-        )
-        moon_data = _json.loads(resp)
-        moon_vecs = _parse_vectors(moon_data.get("result", ""))
-
-        # Build response
-        orion_data = []
-        for v in orion_vecs:
-            orion_data.append({
-                "timestamp": v["timestamp"],
-                "pos_km": [v["x_km"], v["y_km"], v["z_km"]],
-                "vel_kms": [v["vx_kms"], v["vy_kms"], v["vz_kms"]],
-            })
-
-        moon_data_out = []
-        for v in moon_vecs:
-            moon_data_out.append({
-                "timestamp": v["timestamp"],
-                "pos_km": [v["x_km"], v["y_km"], v["z_km"]],
-            })
-
-        return {
-            "orion": orion_data,
-            "moon": moon_data_out,
-            "count": len(orion_data),
-            "source": "jpl_horizons",
-            "mission_start": launch,
-            "mission_end": mission_end,
-        }
-    except Exception as e:
-        return {"orion": [], "moon": [], "count": 0, "error": str(e)}
-
-
-@app.get("/api/validation/latest")
-async def validation_latest():
-    """Latest cross-validation results and confidence score."""
     return {
-        "stats": validator.stats,
-        "recent": validator.recent_results,
+        "satellite": dict(sat),
+        "position": pos,
+        "tle_history": [{"epoch_jd": h["epoch_jd"], "mean_motion": h["mean_motion"],
+                         "inclination": h["inclination"], "eccentricity": h["eccentricity"]}
+                        for h in history],
+        "tle_count": len(history),
     }
 
 
-@app.get("/api/dsn/status")
-async def dsn_status():
-    """Current DSN tracking status for Artemis II."""
-    from services.telemetry.dsn_worker import get_latest_dsn
-    contacts = get_latest_dsn()
-    return {"contacts": contacts, "count": len(contacts)}
+@app.get("/api/starlink/anomalies")
+async def anomalies(limit: int = Query(default=50, ge=1, le=500)):
+    """Recent orbital anomalies."""
+    return {"anomalies": store.get_anomalies(limit)}
+
+
+@app.get("/api/starlink/shells")
+async def shells():
+    """Satellite count by orbital shell."""
+    sats = _position_cache.get("satellites", [])
+    shell_counts = {}
+    for s in sats:
+        k = s.get("shell_km", 0)
+        shell_counts[k] = shell_counts.get(k, 0) + 1
+    return {"shells": dict(sorted(shell_counts.items())), "total": len(sats)}
 
 
 @app.get("/api/status")
 async def status():
-    """Health check with store stats."""
-    v = validator.stats
+    """Health check."""
+    stats = store.stats
     return {
         "status": "ok",
-        "telemetry_entries": store.size,
-        "alert_entries": alert_store.size,
+        "satellites": stats["satellites"],
+        "tle_records": stats["tle_records"],
+        "anomalies": stats["anomalies"],
+        "position_cache_age_sec": round(time.time() - _position_cache.get("timestamp", 0), 1),
         "ws_clients": len(_ws_clients),
-        "data_confidence": v.get("latest_confidence"),
-        "data_grade": v.get("latest_grade"),
-        "validations": v.get("total_validations"),
     }
 
 
-# ---------------------------------------------------------------------------
-# WebSocket
-# ---------------------------------------------------------------------------
+# ── WebSocket ──
 
 @app.websocket("/ws/telemetry")
 async def ws_telemetry(ws: WebSocket):
-    """Live telemetry stream. Pushes new readings as they arrive."""
     await ws.accept()
     _ws_clients.add(ws)
     try:
-        # Keep connection alive; client can send pings
         while True:
             await ws.receive_text()
     except WebSocketDisconnect:
@@ -211,12 +146,12 @@ async def ws_telemetry(ws: WebSocket):
         _ws_clients.discard(ws)
 
 
-async def broadcast_telemetry(point: dict) -> None:
-    """Push a telemetry point to all connected WebSocket clients."""
+async def broadcast(msg_type: str, data) -> None:
+    """Push a message to all WebSocket clients."""
     if not _ws_clients:
         return
-    message = json.dumps({"type": "telemetry", "data": point})
-    dead: list[WebSocket] = []
+    message = json.dumps({"type": msg_type, "data": data})
+    dead = []
     for ws in _ws_clients:
         try:
             await ws.send_text(message)
@@ -224,37 +159,3 @@ async def broadcast_telemetry(point: dict) -> None:
             dead.append(ws)
     for ws in dead:
         _ws_clients.discard(ws)
-
-
-async def broadcast_alert(alert: dict) -> None:
-    """Push a Skeptic Agent alert to all connected WebSocket clients."""
-    if not _ws_clients:
-        return
-    message = json.dumps({"type": "alert", "data": alert})
-    dead: list[WebSocket] = []
-    for ws in _ws_clients:
-        try:
-            await ws.send_text(message)
-        except Exception:
-            dead.append(ws)
-    for ws in dead:
-        _ws_clients.discard(ws)
-
-
-# ---------------------------------------------------------------------------
-# Ingestion helpers (called by telemetry worker)
-# ---------------------------------------------------------------------------
-
-def ingest_telemetry(point: dict) -> None:
-    """Store a telemetry point and queue broadcast."""
-    ts = point.get("timestamp", time.time())
-    met = point.get("met", "unknown")
-    source = point.get("source", "issinfo")
-    store.put(f"telem:{source}:{met}", point, timestamp=ts)
-
-
-def ingest_alert(alert: dict) -> None:
-    """Store a Skeptic Agent alert and queue broadcast."""
-    ts = alert.get("timestamp", time.time())
-    met = alert.get("met", "unknown")
-    alert_store.put(f"alert:{met}", alert, timestamp=ts)

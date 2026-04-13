@@ -3,64 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Selene-Insight — Artemis II Digital Twin</title>
+    <title>Selene-Insight — Starlink Constellation Tracker</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <div id="cesium-container"></div>
 
-    <!-- Unified sidebar -->
     <div id="sidebar">
       <div class="sidebar-header">
         <div class="logo">SELENE-INSIGHT</div>
-        <div class="logo-sub">Artemis II Digital Twin</div>
+        <div class="logo-sub">Starlink Constellation Tracker</div>
         <div id="connection-status" class="status-live">LIVE</div>
       </div>
 
-      <!-- Telemetry -->
       <div class="section">
-        <h3>TELEMETRY</h3>
-        <div class="big-value" id="t-met">--</div>
-        <div class="row"><span class="label">PHASE</span><span id="t-phase" class="value">--</span></div>
-        <div class="row"><span class="label">VELOCITY</span><span id="t-velocity" class="value">--</span></div>
-        <div class="bar-container"><div id="vel-bar" class="bar bar-vel"></div></div>
-        <div class="row"><span class="label">EARTH</span><span id="t-earth" class="value">--</span></div>
-        <div class="bar-container"><div id="dist-bar" class="bar bar-dist"></div></div>
-        <div class="row"><span class="label">MOON</span><span id="t-moon" class="value">--</span></div>
+        <h3>CONSTELLATION</h3>
+        <div class="big-value" id="sat-count">--</div>
+        <div class="row"><span class="label">ACTIVE SATELLITES</span></div>
+        <div id="shell-list"></div>
       </div>
 
-      <!-- DSN -->
       <div class="section">
-        <h3 class="h-purple">DSN TRACKING</h3>
-        <div id="dsn-content"><span class="dim">Searching...</span></div>
+        <h3>SELECTED SATELLITE</h3>
+        <div id="sat-detail">
+          <span class="dim">Click a satellite to see details</span>
+        </div>
       </div>
 
-      <!-- Data Quality -->
       <div class="section">
-        <h3 class="h-green">DATA QUALITY</h3>
-        <div id="v-grade" class="grade-badge">--</div>
-        <div class="row"><span class="label">CONFIDENCE</span><span id="v-confidence" class="value">--</span></div>
-        <div class="row"><span class="label">VEL</span><span id="v-vel" class="value">--</span></div>
-        <div class="row"><span class="label">EARTH</span><span id="v-earth" class="value">--</span></div>
-        <div class="row"><span class="label">MOON</span><span id="v-moon" class="value">--</span></div>
-        <div class="row dim"><span class="label">SOURCE</span><span id="t-source" class="value">--</span></div>
+        <h3 class="h-orange">ANOMALIES</h3>
+        <div id="anomaly-list"><span class="dim">No anomalies</span></div>
       </div>
 
-      <!-- Alerts -->
-      <div class="section">
-        <h3 class="h-orange">ALERTS</h3>
-        <div id="alert-list"></div>
-      </div>
-
-      <!-- Velocity legend -->
       <div class="section">
         <div class="legend-bar"></div>
-        <div class="legend-labels"><span>0.5 km/s</span><span>VELOCITY</span><span>10 km/s</span></div>
+        <div class="legend-labels"><span>340 km</span><span>ALTITUDE</span><span>570 km</span></div>
       </div>
     </div>
-
-    <!-- Now marker overlay on timeline -->
-    <div id="now-marker">NOW</div>
 
     <script type="module" src="/src/main.js"></script>
   </body>

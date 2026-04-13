@@ -1,76 +1,131 @@
-"""Smoke tests — verify core modules import and basic functionality."""
+"""Smoke tests for Starlink constellation tracker."""
 
+import tempfile
 import time
+import os
 
 
-def test_lethe_put_get():
-    from services.telemetry.lethe import Lethe
-
-    store = Lethe(max_entries=100)
-    store.put("k1", {"a": 1}, timestamp=1.0)
-    assert store.get("k1") == {"a": 1}
-    assert store.size == 1
+def _make_store():
+    from services.telemetry.store import StarlinkStore
+    db = tempfile.mktemp(suffix=".db")
+    return StarlinkStore(db), db
 
 
-def test_lethe_latest():
-    from services.telemetry.lethe import Lethe
-
-    store = Lethe()
-    t = time.time()
-    for i in range(5):
-        store.put(f"k{i}", {"i": i}, timestamp=t + i)
-    latest = store.latest(3)
-    assert len(latest) == 3
-    assert latest[0]["i"] == 4
-
-
-def test_gravity_model():
-    from services.brain.gravity_model import check_anomaly
-
-    pred = check_anomaly(
-        prev_velocity_kms=2.630,
-        curr_velocity_kms=2.628,
-        earth_dist_km=92361,
-        moon_dist_km=314735,
-        dt_seconds=5,
-    )
-    assert pred.earth_accel_ms2 > 0
-    assert pred.moon_accel_ms2 > 0
+SAMPLE_TLES = [
+    {
+        "norad_id": 44714, "epoch_jd": 2460400.5,
+        "line1": "1 44714C 19074B   26102.88173611  .00004936  00000+0  14452-3 0  1023",
+        "line2": "2 44714  53.1552  19.3277 0003480 144.5700 243.9067 15.34670756    14",
+        "name": "STARLINK-1008", "inclination": 53.15, "mean_motion": 15.347,
+        "eccentricity": 0.000348, "shell_km": 550, "intl_designator": "19074B",
+        "launch_group": "19074",
+    },
+    {
+        "norad_id": 44718, "epoch_jd": 2460400.5,
+        "line1": "1 44718C 19074F   26102.82965278 -.00009195  00000+0 -27482-3 0  1020",
+        "line2": "2 44718  53.1593  19.8308 0003906 134.6049 336.9563 15.34025274    15",
+        "name": "STARLINK-1012", "inclination": 53.16, "mean_motion": 15.340,
+        "eccentricity": 0.000391, "shell_km": 550, "intl_designator": "19074F",
+        "launch_group": "19074",
+    },
+]
 
 
-def test_skeptic_agent():
-    from services.brain.skeptic_agent import SkepticAgent
+def test_store_crud():
+    store, db = _make_store()
+    n = store.upsert_tles(SAMPLE_TLES)
+    assert n >= 1
+    assert store.stats["satellites"] == 2
+    assert store.stats["tle_records"] == 2
 
-    agent = SkepticAgent()
-    t = time.time()
-    agent.analyze({"timestamp": t, "met": "001:00:00:00", "phase": "Coast",
-                    "velocity_kms": 2.63, "earth_dist_km": 92000, "moon_dist_km": 315000})
-    alert = agent.analyze({"timestamp": t + 5, "met": "001:00:00:05", "phase": "Coast",
-                           "velocity_kms": 2.628, "earth_dist_km": 92013, "moon_dist_km": 314987})
-    # Should produce an alert (or None if within threshold)
-    assert agent.stats["total"] == 1
+    # Dedup
+    n2 = store.upsert_tles(SAMPLE_TLES)
+    assert store.stats["tle_records"] == 2  # no new rows
 
+    latest = store.get_latest_tles()
+    assert len(latest) == 2
 
-def test_cross_validator():
-    from services.brain.cross_validator import CrossValidator
+    sat = store.get_satellite(44714)
+    assert sat["name"] == "STARLINK-1008"
 
-    v = CrossValidator(time_tolerance_sec=60)
-    t = time.time()
-    v.update_issinfo({"timestamp": t, "velocity_kms": 1.57, "earth_dist_km": 190000, "moon_dist_km": 245000})
-    result = v.validate({"timestamp": t + 5, "velocity_kms": 1.56, "earth_dist_km": 191000, "moon_dist_km": 244000})
-    assert result is not None
-    assert result.grade in ("excellent", "good", "degraded", "suspect")
-    assert 0 <= result.confidence <= 1
+    os.unlink(db)
 
 
-def test_telemetry_point():
-    from services.telemetry.models import TelemetryPoint
+def test_store_anomaly():
+    store, db = _make_store()
+    store.upsert_tles(SAMPLE_TLES)
+    store.insert_anomaly({
+        "norad_id": 44714, "anomaly_type": "altitude_change",
+        "altitude_before_km": 550, "altitude_after_km": 540,
+    })
+    anomalies = store.get_anomalies()
+    assert len(anomalies) == 1
+    assert anomalies[0]["anomaly_type"] == "altitude_change"
+    os.unlink(db)
 
-    p = TelemetryPoint(timestamp=1.0, met="001:00:00:00", phase="Coast",
-                       velocity_kms=2.63, earth_dist_km=92000, moon_dist_km=315000)
-    d = p.to_dict()
-    assert d["velocity_kms"] == 2.63
-    assert p.key == "telem:001:00:00:00"
+
+def test_propagator():
+    from services.telemetry.propagator import Propagator
+
+    prop = Propagator()
+    loaded = prop.load_tles(SAMPLE_TLES)
+    assert loaded == 2
+
+    positions = prop.propagate_all()
+    assert len(positions) == 2
+    for p in positions:
+        assert -90 <= p["lat"] <= 90
+        assert -180 <= p["lon"] <= 180
+        assert p["alt_km"] > 100
+
+
+def test_propagator_performance():
+    """Ensure batch propagation is fast enough."""
+    from services.telemetry.propagator import Propagator
+
+    prop = Propagator()
+    # Create 100 copies with different IDs
+    tles = []
+    for i in range(100):
+        t = dict(SAMPLE_TLES[0])
+        t["norad_id"] = 90000 + i
+        tles.append(t)
+    prop.load_tles(tles)
+
+    t0 = time.perf_counter()
+    positions = prop.propagate_all()
+    elapsed = time.perf_counter() - t0
+
+    assert len(positions) == 100
+    assert elapsed < 1.0  # should be << 1s
+
+
+def test_tle_parser():
+    from services.telemetry.tle_fetcher import parse_tle_text
+
+    text = """STARLINK-1008
+1 44714C 19074B   26102.88173611  .00004936  00000+0  14452-3 0  1023
+2 44714  53.1552  19.3277 0003480 144.5700 243.9067 15.34670756    14
+STARLINK-1012
+1 44718C 19074F   26102.82965278 -.00009195  00000+0 -27482-3 0  1020
+2 44718  53.1593  19.8308 0003906 134.6049 336.9563 15.34025274    15"""
+
+    tles = parse_tle_text(text)
+    assert len(tles) == 2
+    assert tles[0]["norad_id"] == 44714
+    assert tles[0]["name"] == "STARLINK-1008"
+    assert tles[0]["inclination"] > 50
+
+
+def test_orbital_analyzer():
+    from services.brain.orbital_analyzer import analyze_tle_pair
+
+    old = {"norad_id": 44714, "mean_motion": 15.34, "eccentricity": 0.0003, "epoch_jd": 2460400.0}
+    new = {"norad_id": 44714, "mean_motion": 15.50, "eccentricity": 0.0003, "epoch_jd": 2460401.0}
+
+    anomaly = analyze_tle_pair(old, new)
+    assert anomaly is not None
+    assert anomaly["anomaly_type"] in ("altitude_change", "deorbiting", "reentry")
 
 
 def test_api_imports():

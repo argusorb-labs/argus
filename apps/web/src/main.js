@@ -1,483 +1,229 @@
 /**
- * Selene-Insight — Artemis II Digital Twin
+ * Selene-Insight — Starlink Constellation 3D Tracker
  *
- * Full mission animation with:
- * - Orion + Moon animated from JPL Horizons ECI vectors
- * - Sun lighting on Earth
- * - Mission event markers
- * - Telemetry charts
+ * Renders 10,000+ Starlink satellites on a CesiumJS globe
+ * using PointPrimitiveCollection for GPU-accelerated performance.
  */
 
 import {
   Viewer,
   Cartesian3,
-  Cartesian2,
   Color,
   Ion,
-  LabelStyle,
-  VerticalOrigin,
-  HorizontalOrigin,
-  NearFarScalar,
   SceneMode,
-  JulianDate,
-  ClockRange,
-  ClockStep,
-  SampledPositionProperty,
-  LagrangePolynomialApproximation,
-  PathGraphics,
-  PolylineDashMaterialProperty,
-  VelocityOrientationProperty,
-  HeadingPitchRoll,
-  Transforms,
-  DirectionalLight,
-  SunLight,
+  PointPrimitiveCollection,
+  SkyBox,
+  ScreenSpaceEventType,
+  ScreenSpaceEventHandler,
+  defined,
 } from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
-
-import { eciToCartesian3 } from "./lib/orbit.js";
-import { generateMoonOrbit } from "./lib/referenceTrajectory.js";
-import { buildColorSegments } from "./lib/colorScale.js";
 import { createStarfieldSkyboxSources } from "./lib/starfield.js";
 
-// ── Config ──
 Ion.defaultAccessToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlYWE1OWUxNy1mMWZiLTQzYjYtYTQ0OS1kMWFjYmFkNjc5YzciLCJpZCI6NTc1ODcsImlhdCI6MTYyNzg0NTE4Mn0.XcKpgANiY19MC4bdFUXMVEBToBmqS8kuYpUlxJHYZxk";
 
-const MOON_RADIUS_M = 1.737e6;
-const LABEL_FONT = "bold 22px monospace";
-
-// Mission events (timestamps from Horizons analysis)
-// Mission events — yOff spreads labels vertically to avoid overlap
-const MISSION_EVENTS = [
-  { name: "LAUNCH",         ts: 1743559200, color: "#00ff88", yOff: -30 },
-  { name: "TLI BURN",       ts: 1743629400, color: "#ff8800", yOff: 20 },
-  { name: "LUNAR CLOSEST",  ts: 1743980400, color: "#ffffff", yOff: -30 },
-  { name: "RETURN BEGINS",  ts: 1744029000, color: "#ffaa00", yOff: 20 },
-  { name: "PREDICTION END", ts: 1744328400, color: "#666666", yOff: -30 },
-];
-
-// ── State ──
-let alertBuffer = [];
-let orionDataCache = [];
+// ── Shell color mapping ──
+function shellColor(alt_km) {
+  if (alt_km < 300) return Color.RED.withAlpha(0.8);        // deorbiting
+  if (alt_km < 380) return Color.ORANGE.withAlpha(0.8);     // low shells
+  if (alt_km < 460) return Color.YELLOW.withAlpha(0.7);     // mid shells
+  if (alt_km < 520) return Color.CYAN.withAlpha(0.7);       // operational v2
+  if (alt_km < 560) return Color.fromCssColorString("#4488ff").withAlpha(0.7); // v1 550
+  return Color.fromCssColorString("#aa44ff").withAlpha(0.7); // high shells
+}
 
 // ── Viewer ──
 const viewer = new Viewer("cesium-container", {
-  timeline: true,
-  animation: true,
+  timeline: false,
+  animation: false,
   homeButton: false,
   geocoder: false,
   sceneModePicker: false,
   baseLayerPicker: false,
   navigationHelpButton: false,
   fullscreenButton: false,
-  infoBox: true,
+  infoBox: false,
   selectionIndicator: false,
   sceneMode: SceneMode.SCENE3D,
   skyAtmosphere: false,
 });
 
-// Programmatic sharp-point starfield (crisp at any zoom)
 try {
   viewer.scene.skyBox = new SkyBox({
     sources: createStarfieldSkyboxSources(2048, 4000),
   });
-} catch (e) {
-  console.warn("[SKYBOX] Failed:", e);
-}
+} catch (e) { /* fallback to default */ }
 
 viewer.scene.globe.enableLighting = true;
-
-// Retina/HiDPI: render at full device pixel ratio for sharp stars/labels
 viewer.resolutionScale = window.devicePixelRatio || 1;
 
+// Start zoomed out to see the full constellation
 viewer.camera.setView({
-  destination: Cartesian3.fromDegrees(20, 30, 800_000_000),
+  destination: Cartesian3.fromDegrees(0, 20, 20_000_000),
 });
 
-// ── Static Entities ──
-
-const nowTs = Date.now() / 1000;
-
-// Moon orbit ring
-viewer.entities.add({
-  name: "Moon Orbit",
-  polyline: {
-    positions: generateMoonOrbit(nowTs, Cartesian3),
-    width: 1,
-    material: Color.fromCssColorString("#444444").withAlpha(0.3),
-  },
-});
-
-// Earth (slight exaggeration)
-const EARTH_VIS_R = 6371000 * 1.2;
-viewer.entities.add({
-  name: "Earth",
-  position: Cartesian3.fromDegrees(0, 0, 0),
-  ellipsoid: {
-    radii: new Cartesian3(EARTH_VIS_R, EARTH_VIS_R, EARTH_VIS_R),
-    material: Color.fromCssColorString("#2244aa").withAlpha(0.8),
-  },
-  label: {
-    text: "EARTH",
-    font: LABEL_FONT,
-    fillColor: Color.fromCssColorString("#4488ff"),
-    style: LabelStyle.FILL_AND_OUTLINE,
-    outlineColor: Color.BLACK,
-    outlineWidth: 4,
-    verticalOrigin: VerticalOrigin.BOTTOM,
-    pixelOffset: new Cartesian2(0, -16),
-    scaleByDistance: new NearFarScalar(5e5, 1.6, 1e9, 0.6),
-  },
-});
-
-// ── Animated Entities ──
-
-// Orion position
-const orionPosition = new SampledPositionProperty();
-orionPosition.setInterpolationOptions({
-  interpolationDegree: 3,
-  interpolationAlgorithm: LagrangePolynomialApproximation,
-});
-
-// Orion entity — oriented along velocity vector
-const orionEntity = viewer.entities.add({
-  name: "Orion",
-  position: orionPosition,
-  orientation: new VelocityOrientationProperty(orionPosition),
-  point: { pixelSize: 14, color: Color.CYAN, outlineColor: Color.WHITE, outlineWidth: 2 },
-  label: {
-    text: "ORION ▸",
-    font: LABEL_FONT,
-    fillColor: Color.CYAN,
-    style: LabelStyle.FILL_AND_OUTLINE,
-    outlineColor: Color.BLACK,
-    outlineWidth: 4,
-    verticalOrigin: VerticalOrigin.BOTTOM,
-    pixelOffset: new Cartesian2(0, -28),
-    scaleByDistance: new NearFarScalar(5e5, 1.6, 1e9, 0.6),
-  },
-  // No PathGraphics trail — we use color-coded polyline segments instead
-});
-
-// Orion future path (dashed)
-viewer.entities.add({
-  name: "Predicted Path",
-  position: orionPosition,
-  path: new PathGraphics({
-    leadTime: 86400 * 12,
-    trailTime: 0,
-    width: 2,
-    material: new PolylineDashMaterialProperty({
-      color: Color.fromCssColorString("#00ccff").withAlpha(0.25),
-      dashLength: 16,
-    }),
-  }),
-});
-
-// Moon (animated)
-const moonPosition = new SampledPositionProperty();
-moonPosition.setInterpolationOptions({
-  interpolationDegree: 3,
-  interpolationAlgorithm: LagrangePolynomialApproximation,
-});
-
-viewer.entities.add({
-  name: "Moon",
-  position: moonPosition,
-  ellipsoid: {
-    radii: new Cartesian3(MOON_RADIUS_M, MOON_RADIUS_M, MOON_RADIUS_M),
-    material: Color.fromCssColorString("#cccccc").withAlpha(0.9),
-  },
-  label: {
-    text: "MOON",
-    font: LABEL_FONT,
-    fillColor: Color.fromCssColorString("#cccccc"),
-    style: LabelStyle.FILL_AND_OUTLINE,
-    outlineColor: Color.BLACK,
-    outlineWidth: 4,
-    verticalOrigin: VerticalOrigin.BOTTOM,
-    pixelOffset: new Cartesian2(0, -28),
-    scaleByDistance: new NearFarScalar(5e5, 1.6, 1e9, 0.6),
-  },
-});
+// ── Point Collection for satellites ──
+const pointCollection = viewer.scene.primitives.add(new PointPrimitiveCollection());
+const satelliteMap = new Map(); // norad_id → { point, data }
 
 // ── DOM refs ──
 const dom = {
-  met: document.getElementById("t-met"),
-  phase: document.getElementById("t-phase"),
-  velocity: document.getElementById("t-velocity"),
-  earth: document.getElementById("t-earth"),
-  moon: document.getElementById("t-moon"),
-  source: document.getElementById("t-source"),
-  grade: document.getElementById("v-grade"),
-  confidence: document.getElementById("v-confidence"),
-  vVel: document.getElementById("v-vel"),
-  vEarth: document.getElementById("v-earth"),
-  vMoon: document.getElementById("v-moon"),
-  alertList: document.getElementById("alert-list"),
+  satCount: document.getElementById("sat-count"),
+  shellList: document.getElementById("shell-list"),
+  satDetail: document.getElementById("sat-detail"),
+  anomalyList: document.getElementById("anomaly-list"),
   connStatus: document.getElementById("connection-status"),
 };
 
-// ── Load full mission ──
+// ── Update constellation ──
+function updateConstellation(satellites) {
+  const shells = {};
 
-fetch("/api/telemetry/history")
+  for (const sat of satellites) {
+    const pos = Cartesian3.fromDegrees(sat.lon, sat.lat, sat.alt_km * 1000);
+    const color = shellColor(sat.alt_km);
+    const key = sat.norad_id;
+
+    shells[sat.shell_km] = (shells[sat.shell_km] || 0) + 1;
+
+    if (satelliteMap.has(key)) {
+      const entry = satelliteMap.get(key);
+      entry.point.position = pos;
+      entry.point.color = color;
+      entry.data = sat;
+    } else {
+      const point = pointCollection.add({
+        position: pos,
+        color: color,
+        pixelSize: 2.5,
+      });
+      point._noradId = key;
+      satelliteMap.set(key, { point, data: sat });
+    }
+  }
+
+  dom.satCount.textContent = satellites.length.toLocaleString();
+  renderShells(shells);
+}
+
+function renderShells(shells) {
+  const sorted = Object.entries(shells).sort((a, b) => b[1] - a[1]);
+  dom.shellList.innerHTML = sorted.slice(0, 8).map(([km, count]) => {
+    const c = shellColor(parseFloat(km));
+    const hex = c.toCssHexString();
+    return `<div class="shell-row">
+      <span><span class="shell-dot" style="background:${hex}"></span><span class="shell-name">${km} km</span></span>
+      <span class="shell-count">${count}</span>
+    </div>`;
+  }).join("");
+}
+
+// ── Click to select satellite ──
+const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
+handler.setInputAction((click) => {
+  const picked = viewer.scene.pick(click.position);
+  if (defined(picked) && picked.primitive && picked.primitive._noradId) {
+    const noradId = picked.primitive._noradId;
+    selectSatellite(noradId);
+  }
+}, ScreenSpaceEventType.LEFT_CLICK);
+
+async function selectSatellite(noradId) {
+  const entry = satelliteMap.get(noradId);
+  if (!entry) return;
+
+  // Highlight selected
+  for (const [, e] of satelliteMap) e.point.pixelSize = 2.5;
+  entry.point.pixelSize = 8;
+  entry.point.color = Color.WHITE;
+
+  const sat = entry.data;
+  dom.satDetail.innerHTML = `
+    <div class="sat-name">${sat.name || `NORAD ${sat.norad_id}`}</div>
+    <div class="sat-row"><span class="sat-label">NORAD ID</span><span class="sat-value">${sat.norad_id}</span></div>
+    <div class="sat-row"><span class="sat-label">ALTITUDE</span><span class="sat-value">${sat.alt_km.toFixed(1)} km</span></div>
+    <div class="sat-row"><span class="sat-label">SHELL</span><span class="sat-value">${sat.shell_km} km</span></div>
+    <div class="sat-row"><span class="sat-label">LAT</span><span class="sat-value">${sat.lat.toFixed(2)}°</span></div>
+    <div class="sat-row"><span class="sat-label">LON</span><span class="sat-value">${sat.lon.toFixed(2)}°</span></div>
+    <div class="sat-row"><span class="sat-label">STATUS</span><span class="sat-value">${sat.status}</span></div>
+  `;
+
+  // Fetch detailed info from API
+  try {
+    const r = await fetch(`/api/starlink/satellite/${noradId}`);
+    const d = await r.json();
+    if (d.satellite && d.tle_count) {
+      dom.satDetail.innerHTML += `
+        <div class="sat-row"><span class="sat-label">TLE RECORDS</span><span class="sat-value">${d.tle_count}</span></div>
+      `;
+    }
+  } catch { /* ignore */ }
+}
+
+// ── Anomalies ──
+function addAnomaly(a) {
+  const name = satelliteMap.get(a.norad_id)?.data?.name || `NORAD ${a.norad_id}`;
+  const el = document.createElement("div");
+  el.className = "anomaly-item";
+  el.innerHTML = `<div class="anom-type">${(a.anomaly_type || "").toUpperCase().replace("_", " ")}</div>
+    <div class="anom-detail">${name}: ${a.details || ""}</div>`;
+  if (dom.anomalyList.querySelector(".dim")) dom.anomalyList.innerHTML = "";
+  dom.anomalyList.prepend(el);
+  while (dom.anomalyList.children.length > 10) dom.anomalyList.removeChild(dom.anomalyList.lastChild);
+
+  // Flash the satellite red
+  const entry = satelliteMap.get(a.norad_id);
+  if (entry) {
+    entry.point.color = Color.RED;
+    entry.point.pixelSize = 6;
+  }
+}
+
+// ── Fetch initial data ──
+fetch("/api/starlink/constellation")
   .then((r) => r.json())
   .then((d) => {
-    if (!d.orion || !d.orion.length) return;
-    orionDataCache = d.orion;
-
-    // Load Orion samples
-    for (const p of d.orion) {
-      const jd = JulianDate.fromDate(new Date(p.timestamp * 1000));
-      orionPosition.addSample(jd, eciToCartesian3(p.pos_km, Cartesian3));
-    }
-
-    // Load Moon samples
-    if (d.moon) {
-      for (const p of d.moon) {
-        const jd = JulianDate.fromDate(new Date(p.timestamp * 1000));
-        moonPosition.addSample(jd, eciToCartesian3(p.pos_km, Cartesian3));
-      }
-    }
-
-    // Set clock
-    const startJd = JulianDate.fromDate(new Date(d.orion[0].timestamp * 1000));
-    const stopJd = JulianDate.fromDate(new Date(d.orion[d.orion.length - 1].timestamp * 1000));
-    const nowJd = JulianDate.fromDate(new Date());
-
-    viewer.clock.startTime = startJd.clone();
-    viewer.clock.stopTime = stopJd.clone();
-    viewer.clock.currentTime = nowJd.clone();
-    viewer.clock.clockRange = ClockRange.LOOP_STOP;
-    viewer.clock.clockStep = ClockStep.SYSTEM_CLOCK_MULTIPLIER;
-    viewer.clock.multiplier = 1;
-    viewer.timeline.zoomTo(startJd, stopJd);
-
-    // Add mission event markers
-    addMissionEventMarkers(d.orion, d.moon);
-
-    // Add velocity color-coded trajectory segments
-    const segments = buildColorSegments(d.orion, eciToCartesian3, Cartesian3);
-    for (const seg of segments) {
-      viewer.entities.add({
-        polyline: {
-          positions: seg.positions,
-          width: 4,
-          material: seg.color,
-        },
-      });
-    }
-
-    // Position the NOW marker on the timeline
-    positionNowMarker(startJd, stopJd);
-
-    // Tick handler for telemetry panel + chart
-    viewer.clock.onTick.addEventListener((clock) => {
-      updateFromClock(clock.currentTime);
-    });
-
-    console.log(`[MISSION] ${d.orion.length} Orion + ${d.moon?.length || 0} Moon points`);
+    if (d.satellites) updateConstellation(d.satellites);
   })
-  .catch((e) => console.warn("[MISSION]", e));
+  .catch((e) => console.warn("Failed to load constellation:", e));
 
-// ── Mission Event Markers ──
-
-function addMissionEventMarkers(orionData, moonData) {
-  for (const evt of MISSION_EVENTS) {
-    // Find closest Orion point to this event time
-    let best = null;
-    let bestDt = Infinity;
-    for (const p of orionData) {
-      const dt = Math.abs(p.timestamp - evt.ts);
-      if (dt < bestDt) { bestDt = dt; best = p; }
-    }
-    if (!best || !best.pos_km) continue;
-
-    const pos = eciToCartesian3(best.pos_km, Cartesian3);
-
-    viewer.entities.add({
-      name: evt.name,
-      position: pos,
-      point: {
-        pixelSize: 12,
-        color: Color.fromCssColorString(evt.color),
-        outlineColor: Color.WHITE,
-        outlineWidth: 2,
-      },
-      label: {
-        text: evt.name,
-        font: "bold 14px monospace",
-        fillColor: Color.fromCssColorString(evt.color),
-        style: LabelStyle.FILL_AND_OUTLINE,
-        outlineColor: Color.BLACK,
-        outlineWidth: 3,
-        verticalOrigin: VerticalOrigin.CENTER,
-        horizontalOrigin: HorizontalOrigin.LEFT,
-        pixelOffset: new Cartesian2(16, evt.yOff || 0),
-        scaleByDistance: new NearFarScalar(1e6, 1.0, 1e9, 0.5),
-        showBackground: true,
-        backgroundColor: Color.fromCssColorString("rgba(0,0,0,0.7)"),
-        backgroundPadding: new Cartesian2(6, 3),
-      },
-    });
-  }
-}
-
-// ── Telemetry Panel from Clock ──
-
-let lastUpdateSec = 0;
-function updateFromClock(currentTime) {
-  const nowSec = JulianDate.toDate(currentTime).getTime() / 1000;
-  if (Math.abs(nowSec - lastUpdateSec) < 0.4) return;
-  lastUpdateSec = nowSec;
-
-  if (!orionDataCache.length) return;
-
-  // Find closest data point
-  let best = null;
-  let bestDt = Infinity;
-  for (const p of orionDataCache) {
-    const dt = Math.abs(p.timestamp - nowSec);
-    if (dt < bestDt) { bestDt = dt; best = p; }
-  }
-  if (!best) return;
-
-  const [x, y, z] = best.pos_km;
-  const earthDist = Math.sqrt(x * x + y * y + z * z);
-  const vel = best.vel_kms
-    ? Math.sqrt(best.vel_kms[0] ** 2 + best.vel_kms[1] ** 2 + best.vel_kms[2] ** 2)
-    : 0;
-
-  const elapsed = nowSec - orionDataCache[0].timestamp;
-  const days = Math.floor(elapsed / 86400);
-  const hrs = Math.floor((elapsed % 86400) / 3600);
-  const mins = Math.floor((elapsed % 3600) / 60);
-  const secs = Math.floor(elapsed % 60);
-
-  const isFuture = nowSec > Date.now() / 1000;
-
-  // Phase detection
-  let phase = "Outbound Coast";
-  if (earthDist < 20000) phase = "Earth Orbit";
-  else if (earthDist < 50000) phase = elapsed < 86400 * 4 ? "TLI Phase" : "Re-entry Approach";
-  else if (earthDist > 350000) phase = "Lunar Vicinity";
-  else if (elapsed > 86400 * 5) phase = "Return Coast";
-  if (isFuture) phase = `${phase} (Predicted)`;
-
-  dom.met.textContent = `T+${days}d ${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
-  dom.phase.textContent = phase;
-  dom.velocity.textContent = vel ? `${vel.toFixed(3)} km/s` : "--";
-  dom.earth.textContent = `${Math.round(earthDist).toLocaleString()} km`;
-  dom.source.textContent = isFuture ? "prediction" : "jpl_horizons";
-
-  // Update velocity chart bar
-  updateMiniChart(vel, earthDist);
-}
-
-function pad(n) { return String(n).padStart(2, "0"); }
-
-function positionNowMarker(startJd, stopJd) {
-  const marker = document.getElementById("now-marker");
-  const timeline = document.querySelector(".cesium-viewer-timelineContainer");
-  if (!marker || !timeline) return;
-
-  const nowJd = JulianDate.fromDate(new Date());
-  const startSec = JulianDate.secondsDifference(startJd, startJd);
-  const totalSec = JulianDate.secondsDifference(stopJd, startJd);
-  const nowSec = JulianDate.secondsDifference(nowJd, startJd);
-  const pct = Math.max(0, Math.min(1, nowSec / totalSec));
-
-  const rect = timeline.getBoundingClientRect();
-  marker.style.display = "block";
-  marker.style.left = `${rect.left + rect.width * pct}px`;
-}
-
-// ── Mini velocity/distance bars ──
-
-function updateMiniChart(vel, earthDist) {
-  const velBar = document.getElementById("vel-bar");
-  const distBar = document.getElementById("dist-bar");
-  if (velBar) velBar.style.width = `${Math.min(100, (vel / 12) * 100)}%`;
-  if (distBar) distBar.style.width = `${Math.min(100, (earthDist / 450000) * 100)}%`;
-}
-
-// ── DSN Tracking ──
-
-function updateDSN(contacts) {
-  const el = document.getElementById("dsn-content");
-  if (!contacts || !contacts.length) {
-    el.innerHTML = '<span class="dim">No active contacts</span>';
-    return;
-  }
-  el.innerHTML = contacts.map((c) => `
-    <div class="dsn-contact">
-      <span class="dsn-dish">${c.dish}</span>
-      <span class="dsn-station">${c.station_name}</span>
-      <div class="dsn-signal">
-        <span class="${c.signal_type !== 'none' ? 'active' : 'inactive'}">${c.signal_type.toUpperCase()}</span>
-        <span class="dsn-metric">${c.band || "?"}-band</span>
-        <span class="dsn-metric">${c.data_rate_bps > 0 ? (c.data_rate_bps / 1000).toFixed(0) + " kbps" : ""}</span>
-      </div>
-      <div class="dsn-signal">
-        <span class="dsn-metric">Range: ${c.range_km > 0 ? Math.round(c.range_km).toLocaleString() + " km" : "--"}</span>
-        <span class="dsn-metric">RTLT: ${c.rtlt_sec > 0 ? c.rtlt_sec.toFixed(2) + "s" : "--"}</span>
-      </div>
-    </div>
-  `).join("");
-}
-
-// Fetch initial DSN
-fetch("/api/dsn/status").then((r) => r.json())
-  .then((d) => { if (d.contacts) updateDSN(d.contacts); }).catch(() => {});
-
-// ── Alerts & Validation ──
-
-fetch("/api/alerts/latest?n=10").then((r) => r.json())
-  .then((d) => { if (d.data) d.data.reverse().forEach(addAlert); }).catch(() => {});
-
-fetch("/api/validation/latest").then((r) => r.json())
+fetch("/api/starlink/anomalies?limit=10")
+  .then((r) => r.json())
   .then((d) => {
-    if (d.recent && d.recent.length) updateValidation(d.recent[d.recent.length - 1]);
-  }).catch(() => {});
-
-function updateValidation(data) {
-  const grade = data.grade || "--";
-  dom.grade.textContent = grade.toUpperCase();
-  dom.grade.className = `grade-badge grade-${grade}`;
-  dom.confidence.textContent = data.confidence != null ? `${(data.confidence * 100).toFixed(1)}%` : "--";
-  const dev = data.deviations || {};
-  dom.vVel.textContent = dev.velocity_pct != null ? `${dev.velocity_pct.toFixed(2)}%` : "--";
-  dom.vEarth.textContent = dev.earth_dist_pct != null ? `${dev.earth_dist_pct.toFixed(2)}%` : "--";
-  dom.vMoon.textContent = dev.moon_dist_pct != null ? `${dev.moon_dist_pct.toFixed(2)}%` : "--";
-}
-
-function addAlert(alert) {
-  alertBuffer.push(alert);
-  if (alertBuffer.length > 20) alertBuffer = alertBuffer.slice(-15);
-  const el = document.createElement("div");
-  el.className = "alert-item";
-  const type = (alert.alert_type || "UNKNOWN").toUpperCase().replace("_", " ");
-  el.innerHTML = `<div class="alert-type type-${alert.alert_type || ""}">${type}</div>
-    <div class="alert-detail">${alert.details || ""}</div>`;
-  dom.alertList.prepend(el);
-  while (dom.alertList.children.length > 6) dom.alertList.removeChild(dom.alertList.lastChild);
-}
+    if (d.anomalies) d.anomalies.forEach(addAnomaly);
+  })
+  .catch(() => {});
 
 // ── WebSocket ──
-let validationCount = 0;
 function connectWs() {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const ws = new WebSocket(`${protocol}//${window.location.host}/ws/telemetry`);
-  ws.onopen = () => { dom.connStatus.textContent = "LIVE"; dom.connStatus.className = "status-live"; };
+
+  ws.onopen = () => {
+    dom.connStatus.textContent = "LIVE";
+    dom.connStatus.className = "status-live";
+  };
+
   ws.onmessage = (evt) => {
     try {
       const msg = JSON.parse(evt.data);
-      if (msg.type === "alert") addAlert(msg.data);
-      else if (msg.type === "validation") { updateValidation(msg.data); validationCount++; }
-      else if (msg.type === "dsn") updateDSN(msg.data);
-    } catch {}
+      if (msg.type === "positions") {
+        // Positions broadcast is lightweight (just count), re-fetch full data
+        fetch("/api/starlink/constellation")
+          .then((r) => r.json())
+          .then((d) => { if (d.satellites) updateConstellation(d.satellites); });
+      } else if (msg.type === "anomaly") {
+        addAnomaly(msg.data);
+      }
+    } catch { /* ignore */ }
   };
-  ws.onclose = () => { dom.connStatus.textContent = "OFFLINE"; dom.connStatus.className = "status-disconnected"; setTimeout(connectWs, 3000); };
+
+  ws.onclose = () => {
+    dom.connStatus.textContent = "OFFLINE";
+    dom.connStatus.className = "status-disconnected";
+    setTimeout(connectWs, 5000);
+  };
   ws.onerror = () => ws.close();
 }
 connectWs();

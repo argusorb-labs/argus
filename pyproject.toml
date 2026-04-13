@@ -1,20 +1,20 @@
 [project]
 name = "selene-insight"
-version = "0.1.0"
-description = "Artemis II real-time digital twin and deep analysis system"
+version = "0.2.0"
+description = "Starlink constellation tracking and space situational awareness platform"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.34",
     "websockets>=14.0",
-    "playwright>=1.49",
+    "httpx>=0.28",
+    "sgp4>=2.23",
     "certifi>=2024.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
-    "httpx>=0.28",
     "pytest-asyncio>=0.25",
 ]
 

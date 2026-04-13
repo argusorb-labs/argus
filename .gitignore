@@ -7,3 +7,6 @@ node_modules/
 .DS_Store
 .env
 uv.lock
+data/*.db
+data/*.db-wal
+data/*.db-shm
