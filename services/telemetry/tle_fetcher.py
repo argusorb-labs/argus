@@ -20,9 +20,17 @@ import httpx
 
 try:
     from services.telemetry.store import StarlinkStore
+    from services.telemetry.tle_validator import (
+        validate_tle_structure,
+        validate_tle_physics,
+    )
     from services.brain.orbital_analyzer import analyze_constellation
 except ImportError:
     from store import StarlinkStore  # type: ignore
+    from tle_validator import (  # type: ignore
+        validate_tle_structure,
+        validate_tle_physics,
+    )
     from brain.orbital_analyzer import analyze_constellation  # type: ignore
 
 CELESTRAK_URL = "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink&FORMAT=tle"
@@ -59,13 +67,26 @@ def classify_shell(alt_km: float) -> float:
 
 
 def parse_tle_text(text: str) -> tuple[list[dict], int]:
-    """Parse Celestrak TLE text (name, line1, line2 triplets).
+    """Parse Celestrak TLE text (name, line1, line2 triplets) with cleaning.
 
-    Returns (parsed_tles, error_count). Malformed triplets are counted, not raised.
+    Every triplet is run through validate_tle_structure (checksum, length,
+    NORAD match) and validate_tle_physics (range bounds on the parsed
+    elements). Rejections are counted by reason and the aggregated breakdown
+    is printed to stderr — stored in the fetch_log only as a total count.
+
+    Returns (parsed_tles, error_count). Rejections and parse exceptions both
+    count toward error_count. The raw bytes are archived by the caller
+    regardless, so a rejection here is recoverable via replay.
     """
     lines = [l.strip().replace("\r", "") for l in text.strip().split("\n") if l.strip()]
     results: list[dict] = []
     errors = 0
+    rejections: dict[str, int] = {}
+
+    def _reject(reason: str) -> None:
+        nonlocal errors
+        errors += 1
+        rejections[reason] = rejections.get(reason, 0) + 1
 
     i = 0
     while i + 2 < len(lines):
@@ -73,9 +94,19 @@ def parse_tle_text(text: str) -> tuple[list[dict], int]:
         line1 = lines[i + 1]
         line2 = lines[i + 2]
 
+        # Prefix check is inline (not in validator) so we can advance one line
+        # instead of three when lines are misaligned — this lets the parser
+        # recover from junk blocks between valid triplets without losing the
+        # next valid triplet.
         if not line1.startswith("1 ") or not line2.startswith("2 "):
-            errors += 1
+            _reject("prefix")
             i += 1
+            continue
+
+        ok, reason = validate_tle_structure(line1, line2)
+        if not ok:
+            _reject(reason or "structure")
+            i += 3
             continue
 
         try:
@@ -97,7 +128,7 @@ def parse_tle_text(text: str) -> tuple[list[dict], int]:
             shell_km = classify_shell(alt_km)
             launch_group = intl_des[:8] if intl_des else ""
 
-            results.append({
+            parsed = {
                 "norad_id": norad_id,
                 "name": name_line.strip(),
                 "line1": line1,
@@ -110,11 +141,26 @@ def parse_tle_text(text: str) -> tuple[list[dict], int]:
                 "shell_km": shell_km,
                 "launch_group": launch_group,
                 "alt_km": alt_km,
-            })
+            }
         except (ValueError, IndexError):
-            errors += 1
+            _reject("parse_exception")
+            i += 3
+            continue
 
+        ok, reason = validate_tle_physics(parsed)
+        if not ok:
+            _reject(reason or "physics")
+            i += 3
+            continue
+
+        results.append(parsed)
         i += 3
+
+    if rejections:
+        print(
+            f"[TLE PARSE] rejected {sum(rejections.values())}: {dict(sorted(rejections.items()))}",
+            file=sys.stderr,
+        )
 
     return results, errors
 

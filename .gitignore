@@ -10,8 +10,11 @@ uv.lock
 data/*.db
 data/*.db-wal
 data/*.db-shm
+data/raw/
 *.png
 *.jpg
 !apps/web/public/skybox/*.jpg
 backups/*.db
+backups/*.db-wal
+backups/*.db-shm
 CLAUDE.md

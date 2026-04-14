@@ -257,6 +257,147 @@ ALSO-NOT-A-TLE"""
     assert errors >= 1
 
 
+# ── Cleaning layer (tle_validator) ──
+
+VALID_TLE_1008_L1 = "1 44714C 19074B   26102.88173611  .00004936  00000+0  14452-3 0  1023"
+VALID_TLE_1008_L2 = "2 44714  53.1552  19.3277 0003480 144.5700 243.9067 15.34670756    14"
+
+
+def test_checksum_algorithm():
+    """Standard TLE checksum: digits summed + 1 per '-' minus sign, mod 10."""
+    from services.telemetry.tle_validator import _compute_checksum
+
+    assert _compute_checksum(VALID_TLE_1008_L1) == 3
+    assert _compute_checksum(VALID_TLE_1008_L2) == 4
+    # Line with a real minus sign in the middle
+    l1_with_minus = "1 44718C 19074F   26102.82965278 -.00009195  00000+0 -27482-3 0  1020"
+    assert _compute_checksum(l1_with_minus) == 0
+
+
+def test_validate_structure_accepts_good_lines():
+    from services.telemetry.tle_validator import validate_tle_structure
+
+    ok, reason = validate_tle_structure(VALID_TLE_1008_L1, VALID_TLE_1008_L2)
+    assert ok is True
+    assert reason is None
+
+
+def test_validate_structure_rejects_bad_length():
+    from services.telemetry.tle_validator import validate_tle_structure
+
+    short = VALID_TLE_1008_L1[:50]
+    ok, reason = validate_tle_structure(short, VALID_TLE_1008_L2)
+    assert ok is False
+    assert reason == "length"
+
+
+def test_validate_structure_rejects_corrupted_checksum():
+    """Flip the stored checksum digit — everything else valid."""
+    from services.telemetry.tle_validator import validate_tle_structure
+
+    corrupted_l1 = VALID_TLE_1008_L1[:68] + "9"  # was '3'
+    ok, reason = validate_tle_structure(corrupted_l1, VALID_TLE_1008_L2)
+    assert ok is False
+    assert reason == "checksum_l1"
+
+    corrupted_l2 = VALID_TLE_1008_L2[:68] + "0"  # was '4'
+    ok, reason = validate_tle_structure(VALID_TLE_1008_L1, corrupted_l2)
+    assert ok is False
+    assert reason == "checksum_l2"
+
+
+def test_validate_structure_rejects_norad_mismatch():
+    """Line 2 NORAD differs from line 1 — catches triplet misalignment."""
+    from services.telemetry.tle_validator import validate_tle_structure
+
+    # Same line 2 but NORAD 44714 → 44715 AND checksum rewritten from 4 → 5
+    # (single digit change in NORAD shifts the sum by +1, so new checksum = 5).
+    mismatch_l2 = "2 44715  53.1552  19.3277 0003480 144.5700 243.9067 15.34670756    15"
+    ok, reason = validate_tle_structure(VALID_TLE_1008_L1, mismatch_l2)
+    assert ok is False
+    assert reason == "norad_mismatch"
+
+
+def test_validate_physics_accepts_normal_starlink():
+    from services.telemetry.tle_validator import validate_tle_physics
+
+    parsed = {
+        "mean_motion": 15.34, "eccentricity": 0.000348,
+        "inclination": 53.15, "alt_km": 550.0,
+    }
+    assert validate_tle_physics(parsed) == (True, None)
+
+
+def test_validate_physics_rejects_hyperbolic_eccentricity():
+    from services.telemetry.tle_validator import validate_tle_physics
+
+    parsed = {
+        "mean_motion": 15.34, "eccentricity": 1.2,  # escape trajectory
+        "inclination": 53.15, "alt_km": 550.0,
+    }
+    ok, reason = validate_tle_physics(parsed)
+    assert ok is False
+    assert reason == "eccentricity_range"
+
+
+def test_validate_physics_rejects_impossible_mean_motion():
+    from services.telemetry.tle_validator import validate_tle_physics
+
+    for mm in (0.0, -1.0, 50.0):
+        parsed = {
+            "mean_motion": mm, "eccentricity": 0.0003,
+            "inclination": 53.15, "alt_km": 550.0,
+        }
+        ok, reason = validate_tle_physics(parsed)
+        assert ok is False
+        assert reason == "mean_motion_range"
+
+
+def test_validate_physics_rejects_out_of_range_inclination():
+    from services.telemetry.tle_validator import validate_tle_physics
+
+    for incl in (-10.0, 181.0, 360.0):
+        parsed = {
+            "mean_motion": 15.34, "eccentricity": 0.0003,
+            "inclination": incl, "alt_km": 550.0,
+        }
+        ok, reason = validate_tle_physics(parsed)
+        assert ok is False
+        assert reason == "inclination_range"
+
+
+def test_validate_physics_rejects_altitude_inside_earth():
+    from services.telemetry.tle_validator import validate_tle_physics
+
+    for alt in (0.0, 100.0, 149.9):
+        parsed = {
+            "mean_motion": 15.34, "eccentricity": 0.0003,
+            "inclination": 53.15, "alt_km": alt,
+        }
+        ok, reason = validate_tle_physics(parsed)
+        assert ok is False
+        assert reason == "altitude_range"
+
+
+def test_parse_tle_text_rejects_bad_checksum_end_to_end():
+    """A TLE with corrupted checksum must not appear in the parsed results."""
+    from services.telemetry.tle_fetcher import parse_tle_text
+
+    # First triplet is valid; second has a flipped checksum on line 1.
+    second_l1_bad = "1 44718C 19074F   26102.82965278 -.00009195  00000+0 -27482-3 0  1029"  # was ...0
+    second_l2 = "2 44718  53.1593  19.8308 0003906 134.6049 336.9563 15.34025274    15"
+    text = "\n".join([
+        "STARLINK-1008", VALID_TLE_1008_L1, VALID_TLE_1008_L2,
+        "STARLINK-1012", second_l1_bad, second_l2,
+    ])
+
+    tles, errors = parse_tle_text(text)
+    # Exactly one TLE survives; the corrupted one is rejected.
+    assert len(tles) == 1
+    assert tles[0]["norad_id"] == 44714
+    assert errors >= 1
+
+
 def test_archive_raw(tmp_path):
     from services.telemetry.tle_fetcher import archive_raw
     import gzip
@@ -431,10 +572,11 @@ def test_api_imports():
 def test_fetcher_labels_in_same_cycle(monkeypatch, tmp_path):
     """Integration: a fetch cycle must produce rule_v1 labels for fresh TLEs.
 
-    Seeds the store with an old TLE for a satellite, then runs one cycle
-    of run_tle_fetcher with a mocked Celestrak response delivering a new
-    TLE that constitutes a commanded orbit raise. After the cycle the
-    anomaly table must contain a rule_v1 label for that transition.
+    Seeds the store with an old TLE for a satellite at a higher altitude,
+    then runs one cycle of run_tle_fetcher with a mocked Celestrak response
+    delivering a new TLE at a lower altitude (uses the known-valid sample
+    TLE so it passes the cleaning layer). The ~200 km delta is an obvious
+    commanded maneuver; rule_v1 must write one label.
     """
     import asyncio
     from services.telemetry import tle_fetcher
@@ -443,24 +585,25 @@ def test_fetcher_labels_in_same_cycle(monkeypatch, tmp_path):
     db = tmp_path / "fetcher.db"
     store = StarlinkStore(str(db))
 
-    # Seed a baseline TLE so analyze_constellation has a pair to compare.
+    # Baseline TLE bypasses validation via direct upsert (its line1/line2
+    # strings are never re-parsed). mean_motion 14.50 → alt ~750 km, clearly
+    # different from the new TLE's ~550 km → rule_v1 fires.
     baseline = {
         "norad_id": 44714, "epoch_jd": 2460400.0,
         "name": "STARLINK-1008",
-        "line1": "1 44714C 19074B   26100.00000000  .00000000  00000+0  00000+0 0  1023",
-        "line2": "2 44714  53.1552  19.3277 0003480 144.5700 243.9067 15.34000000    14",
-        "inclination": 53.1552, "mean_motion": 15.34,
+        "line1": "x", "line2": "y",
+        "inclination": 53.1552, "mean_motion": 14.50,
         "eccentricity": 0.000348,
-        "shell_km": 550, "intl_designator": "19074B", "launch_group": "19074",
+        "shell_km": 750, "intl_designator": "19074B", "launch_group": "19074",
     }
     store.upsert_tles([baseline])
 
-    # Mocked Celestrak response: same satellite but mean_motion dropped,
-    # which -> ~+15 km altitude -> rule_v1 maneuver_candidate.
+    # Mocked Celestrak response uses the known-good sample TLE so it passes
+    # the cleaning layer end-to-end.
     mocked_text = (
         "STARLINK-1008\n"
-        "1 44714C 19074B   26102.00000000  .00000000  00000+0  00000+0 0  1023\n"
-        "2 44714  53.1552  19.3277 0003480 144.5700 243.9067 15.15000000    14\n"
+        f"{VALID_TLE_1008_L1}\n"
+        f"{VALID_TLE_1008_L2}\n"
     )
 
     async def fake_fetch():
