@@ -20,8 +20,10 @@ import httpx
 
 try:
     from services.telemetry.store import StarlinkStore
+    from services.brain.orbital_analyzer import analyze_constellation
 except ImportError:
-    from store import StarlinkStore
+    from store import StarlinkStore  # type: ignore
+    from brain.orbital_analyzer import analyze_constellation  # type: ignore
 
 CELESTRAK_URL = "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink&FORMAT=tle"
 FETCH_INTERVAL = 8 * 3600  # 8 hours
@@ -153,6 +155,7 @@ async def run_tle_fetcher(
     cycle = 0
     while True:
         cycle += 1
+        cycle_start_ts = time.time()
         t_start = time.perf_counter()
         status = "ok"
         error_msg: str | None = None
@@ -161,6 +164,7 @@ async def run_tle_fetcher(
         tles: list[dict] = []
         parse_errors = 0
         new_count = 0
+        new_labels = 0
 
         try:
             text = await fetch_celestrak()
@@ -168,10 +172,23 @@ async def run_tle_fetcher(
             tles, parse_errors = parse_tle_text(text)
             new_count = store.upsert_tles(tles)
 
+            # Label any satellite that got a fresh TLE this cycle.
+            # rule_v1 is idempotent (unique index on anomaly), so replays
+            # are free — new_labels counts only the newly-written rows.
+            try:
+                labels = analyze_constellation(store, since_ts=cycle_start_ts)
+                new_labels = len(labels)
+            except Exception as e:
+                print(
+                    f"[TLE][{cycle:04d}] rule_v1 pass failed: {type(e).__name__}: {e}",
+                    file=sys.stderr,
+                )
+
             elapsed_ms = int((time.perf_counter() - t_start) * 1000)
             print(
                 f"[TLE][{cycle:04d}] ok: {len(tles)} parsed "
-                f"({new_count} new, {parse_errors} errors) in {elapsed_ms}ms"
+                f"({new_count} new, {parse_errors} errors, "
+                f"{new_labels} labels) in {elapsed_ms}ms"
             )
 
             if on_complete:

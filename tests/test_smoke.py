@@ -426,3 +426,72 @@ def test_store_inventory_queries():
 def test_api_imports():
     from services.api.main import app
     assert app.title == "ArgusOrb API"
+
+
+def test_fetcher_labels_in_same_cycle(monkeypatch, tmp_path):
+    """Integration: a fetch cycle must produce rule_v1 labels for fresh TLEs.
+
+    Seeds the store with an old TLE for a satellite, then runs one cycle
+    of run_tle_fetcher with a mocked Celestrak response delivering a new
+    TLE that constitutes a commanded orbit raise. After the cycle the
+    anomaly table must contain a rule_v1 label for that transition.
+    """
+    import asyncio
+    from services.telemetry import tle_fetcher
+    from services.telemetry.store import StarlinkStore
+
+    db = tmp_path / "fetcher.db"
+    store = StarlinkStore(str(db))
+
+    # Seed a baseline TLE so analyze_constellation has a pair to compare.
+    baseline = {
+        "norad_id": 44714, "epoch_jd": 2460400.0,
+        "name": "STARLINK-1008",
+        "line1": "1 44714C 19074B   26100.00000000  .00000000  00000+0  00000+0 0  1023",
+        "line2": "2 44714  53.1552  19.3277 0003480 144.5700 243.9067 15.34000000    14",
+        "inclination": 53.1552, "mean_motion": 15.34,
+        "eccentricity": 0.000348,
+        "shell_km": 550, "intl_designator": "19074B", "launch_group": "19074",
+    }
+    store.upsert_tles([baseline])
+
+    # Mocked Celestrak response: same satellite but mean_motion dropped,
+    # which -> ~+15 km altitude -> rule_v1 maneuver_candidate.
+    mocked_text = (
+        "STARLINK-1008\n"
+        "1 44714C 19074B   26102.00000000  .00000000  00000+0  00000+0 0  1023\n"
+        "2 44714  53.1552  19.3277 0003480 144.5700 243.9067 15.15000000    14\n"
+    )
+
+    async def fake_fetch():
+        return mocked_text
+
+    monkeypatch.setattr(tle_fetcher, "fetch_celestrak", fake_fetch)
+    monkeypatch.setattr(tle_fetcher, "RAW_DIR", tmp_path / "raw")
+
+    # Short-circuit the infinite loop: sleep raises to break out after one cycle.
+    call_count = {"n": 0}
+
+    async def fake_sleep(_):
+        call_count["n"] += 1
+        raise RuntimeError("stop after one cycle")
+
+    monkeypatch.setattr(tle_fetcher.asyncio, "sleep", fake_sleep)
+
+    async def run_once():
+        try:
+            await tle_fetcher.run_tle_fetcher(store, interval=1)
+        except RuntimeError as e:
+            if "stop after one cycle" not in str(e):
+                raise
+
+    asyncio.run(run_once())
+
+    # Cycle ran → one fetch logged, one new TLE parsed, one rule_v1 label.
+    assert store.stats["fetches"] == 1
+    assert store.stats["tle_records"] == 2  # baseline + new
+    labels = store.get_anomalies()
+    rule_labels = [l for l in labels if l.get("classified_by") == "rule_v1"]
+    assert len(rule_labels) == 1
+    assert rule_labels[0]["cause"] == "maneuver_candidate"
+    assert rule_labels[0]["norad_id"] == 44714
