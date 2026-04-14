@@ -284,6 +284,39 @@ class StarlinkStore:
         conn.close()
         return [dict(r) for r in rows]
 
+    def get_anomalies_in_window(
+        self,
+        start_ts: float,
+        end_ts: float,
+        classified_by: str | None = None,
+    ) -> list[dict]:
+        """Labels with detected_at in [start_ts, end_ts).
+
+        If classified_by is given, restrict to labels from that one
+        classifier — the weekly report MUST pass this (otherwise rule_v1
+        and imm_ukf_v1 labels for the same event would both be counted).
+        """
+        conn = self._get_conn()
+        if classified_by is None:
+            rows = conn.execute(
+                """SELECT a.*, s.name FROM anomaly a
+                   LEFT JOIN satellite s ON a.norad_id = s.norad_id
+                   WHERE a.detected_at >= ? AND a.detected_at < ?
+                   ORDER BY a.detected_at DESC""",
+                (start_ts, end_ts),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                """SELECT a.*, s.name FROM anomaly a
+                   LEFT JOIN satellite s ON a.norad_id = s.norad_id
+                   WHERE a.detected_at >= ? AND a.detected_at < ?
+                     AND a.classified_by = ?
+                   ORDER BY a.detected_at DESC""",
+                (start_ts, end_ts, classified_by),
+            ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
     # ── Inventory queries (for weekly report) ──
 
     def get_new_satellites(self, since_ts: float) -> list[dict]:
@@ -360,6 +393,43 @@ class StarlinkStore:
         ).fetchall()
         conn.close()
         return [dict(r) for r in rows]
+
+    def get_fetch_log_in_window(
+        self, start_ts: float, end_ts: float
+    ) -> list[dict]:
+        """Fetch attempts with fetched_at in [start_ts, end_ts), oldest first.
+
+        Oldest-first ordering makes gap analysis trivial for the caller.
+        """
+        conn = self._get_conn()
+        rows = conn.execute(
+            """SELECT * FROM fetch_log
+               WHERE fetched_at >= ? AND fetched_at < ?
+               ORDER BY fetched_at ASC""",
+            (start_ts, end_ts),
+        ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
+    def count_fresh_by_shell(
+        self, as_of_ts: float, freshness_s: float = 86400
+    ) -> dict[float, int]:
+        """Shell population among satellites whose last_seen is fresh.
+
+        "Currently tracked" = last_seen within freshness_s of as_of_ts.
+        Satellites that haven't shown up in Celestrak recently are excluded
+        (they'll appear in get_stale_satellites instead).
+        """
+        cutoff = as_of_ts - freshness_s
+        conn = self._get_conn()
+        rows = conn.execute(
+            """SELECT shell_km, COUNT(*) as n FROM satellite
+               WHERE last_seen >= ?
+               GROUP BY shell_km""",
+            (cutoff,),
+        ).fetchall()
+        conn.close()
+        return {(r["shell_km"] or 0.0): r["n"] for r in rows}
 
     # ── Stats ──
 
