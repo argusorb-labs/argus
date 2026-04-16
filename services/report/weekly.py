@@ -40,9 +40,12 @@ STALE_THRESHOLD_S = 7 * 86400       # "departed" = no TLE in 7 days
 CONSTELLATION_FRESHNESS_S = 86400   # "currently tracked" = last_seen within 24h
 TOP_FLAGS_FOR_EDITOR = 8            # how many high-confidence flags to surface
 DEFAULT_REPORT_DIR = Path(os.environ.get("ARGUS_REPORTS_DIR", "reports"))
+SHELL_MIN_POPULATION = 100          # shells with fewer sats than this get bucketed into "other"
+MAX_LIST_ITEMS = 30                 # truncate new/departed/flagged lists beyond this in markdown
+MAX_PLAUSIBLE_NEW_PER_WEEK = 200    # if "new" count exceeds this, it's a data reset artifact, not real launches
 
 # Human-friendly ordering for the flagged-events table.
-CAUSE_ORDER = ["maneuver_candidate", "natural_decay", "reentry"]
+CAUSE_ORDER = ["maneuver_candidate", "atmospheric_anomaly", "natural_decay", "reentry"]
 ANOMALY_TYPE_ORDER = [
     "altitude_change",
     "inclination_shift",
@@ -126,15 +129,28 @@ def build_report(
     produce the same dict, so tests and render calls can inspect it directly.
     """
     # ── Constellation population (currently tracked) ──
+    # Clamp to "now" so partial-week reports don't treat all sats as stale
+    # (end_ts for an incomplete week is in the future, but last_seen is ≤ now).
+    effective_end = min(end_ts, time.time())
     shell_counts_raw = store.count_fresh_by_shell(
-        as_of_ts=end_ts, freshness_s=CONSTELLATION_FRESHNESS_S
+        as_of_ts=effective_end, freshness_s=CONSTELLATION_FRESHNESS_S
     )
-    shell_counts = {_shell_key(k): v for k, v in shell_counts_raw.items()}
+    # Consolidate small shells into "other" to keep the report table clean.
+    shell_counts: dict[str, int] = {}
+    other_count = 0
+    for km, n in shell_counts_raw.items():
+        key = _shell_key(km)
+        if n >= SHELL_MIN_POPULATION or key in ("decayed", "unknown"):
+            shell_counts[key] = n
+        else:
+            other_count += n
+    if other_count > 0:
+        shell_counts["other"] = other_count
     total_tracked = sum(shell_counts.values())
 
     # ── New / departed satellites ──
     new_sats_raw = store.get_new_satellites(since_ts=start_ts)
-    new_sats = [
+    new_sats_all = [
         {
             "norad_id": s["norad_id"],
             "name": s.get("name"),
@@ -144,11 +160,22 @@ def build_report(
             "intl_designator": s.get("intl_designator"),
         }
         for s in new_sats_raw
-        if (s.get("first_seen") or 0) < end_ts
+        if (s.get("first_seen") or 0) < effective_end
     ]
+    # Sanity check: if "new" count exceeds what's physically possible in a
+    # week, it's a data coverage expansion (e.g., DB reset), not real launches.
+    if len(new_sats_all) > MAX_PLAUSIBLE_NEW_PER_WEEK:
+        new_sats = []  # suppress the artifact; the report notes the omission
+        new_sats_note = (
+            f"{len(new_sats_all)} satellites appeared as 'new' — likely a data "
+            f"coverage expansion rather than actual launches. Suppressed."
+        )
+    else:
+        new_sats = new_sats_all
+        new_sats_note = None
 
     departed_sats_raw = store.get_stale_satellites(
-        max_age_s=STALE_THRESHOLD_S, now_ts=end_ts
+        max_age_s=STALE_THRESHOLD_S, now_ts=effective_end
     )
     departed_sats = [
         {
@@ -227,6 +254,7 @@ def build_report(
             "shells": shell_counts,
         },
         "new_satellites": new_sats,
+        "new_satellites_note": new_sats_note,
         "departed_satellites": departed_sats,
         "flagged_events": {
             "total": len(labels),
@@ -323,7 +351,10 @@ def render_markdown(
     shell_rows: list[str] = []
     for key in sorted(shells.keys(), key=lambda k: (k != "decayed", k)):
         count = shells[key]
-        label = f"{key} km shell" if key not in ("decayed", "unknown") else key
+        if key in ("decayed", "unknown", "other"):
+            label = key
+        else:
+            label = f"{key} km shell"
         d = _fmt_delta(shells_delta.get(key))
         shell_rows.append(f"| {label} | {count:,} | {d} |")
 
@@ -383,13 +414,21 @@ def render_markdown(
     # New
     lines.append("## New to orbit")
     lines.append("")
-    if new_rows:
+    new_note = r.get("new_satellites_note")
+    if new_note:
+        lines.append(f"*{new_note}*")
+    elif new_rows:
         noun = "satellite" if len(new_rows) == 1 else "satellites"
         lines.append(f"**{len(new_rows)} {noun}** first appeared in Celestrak during the window.")
         lines.append("")
         lines.append("| NORAD | Name | First seen | Shell |")
         lines.append("|---:|---|---|---:|")
-        lines.extend(new_rows)
+        if len(new_rows) > MAX_LIST_ITEMS:
+            lines.extend(new_rows[:MAX_LIST_ITEMS])
+            lines.append("")
+            lines.append(f"*… and {len(new_rows) - MAX_LIST_ITEMS} more (truncated).*")
+        else:
+            lines.extend(new_rows)
     else:
         lines.append("No new satellites appeared this week.")
     lines.append("")
@@ -408,7 +447,12 @@ def render_markdown(
         lines.append("")
         lines.append("| NORAD | Name | Last seen | Last shell |")
         lines.append("|---:|---|---|---:|")
-        lines.extend(departed_rows)
+        if len(departed_rows) > MAX_LIST_ITEMS:
+            lines.extend(departed_rows[:MAX_LIST_ITEMS])
+            lines.append("")
+            lines.append(f"*… and {len(departed_rows) - MAX_LIST_ITEMS} more (truncated).*")
+        else:
+            lines.extend(departed_rows)
     else:
         lines.append("No satellites have gone silent this week.")
     lines.append("")

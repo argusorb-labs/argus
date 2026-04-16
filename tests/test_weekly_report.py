@@ -185,7 +185,8 @@ def test_build_report_shape_and_filtering():
     # 44718 was backdated to 5 days before week_start, so it's stale (departed).
     const = report["constellation"]
     assert const["total"] >= 1
-    assert "550" in const["shells"] or "340" in const["shells"]
+    # With SHELL_MIN_POPULATION=100, the test's 2 sats get bucketed into "other".
+    assert "other" in const["shells"] or "550" in const["shells"]
 
     # New satellites: exactly 1 (59999, which first appeared inside the window).
     assert len(report["new_satellites"]) == 1
