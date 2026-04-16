@@ -24,7 +24,7 @@ from pathlib import Path
 
 DB_PATH = os.environ.get("ARGUS_DB_PATH", "data/starlink.db")
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 _SCHEMA_V1 = """
 CREATE TABLE IF NOT EXISTS tle (
@@ -101,6 +101,30 @@ _TLE_V4_COLUMNS = [
     ("bstar", "REAL"),
 ]
 
+# Schema v5 — supplemental GP table. Stores operator-sourced TLEs (e.g.,
+# Planet Labs precise-tracking-derived GP from Celestrak). Parallel to the
+# tle table but keyed by (norad_id, epoch_jd, source) so data from multiple
+# operators coexists. Used for precision calibration: comparing standard
+# NORAD TLEs against operator-quality TLEs reveals SGP4's systematic errors.
+_SCHEMA_V5 = """
+CREATE TABLE IF NOT EXISTS supplemental_gp (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    norad_id INTEGER NOT NULL,
+    epoch_jd REAL NOT NULL,
+    fetched_at REAL NOT NULL,
+    source TEXT NOT NULL,
+    line1 TEXT NOT NULL,
+    line2 TEXT NOT NULL,
+    inclination REAL,
+    mean_motion REAL,
+    eccentricity REAL,
+    bstar REAL,
+    UNIQUE(norad_id, epoch_jd, source)
+);
+CREATE INDEX IF NOT EXISTS idx_supgp_norad ON supplemental_gp(norad_id, epoch_jd DESC);
+CREATE INDEX IF NOT EXISTS idx_supgp_source ON supplemental_gp(source, fetched_at DESC);
+"""
+
 # Uniqueness semantics: one classifier can emit at most one label of a given
 # anomaly_type per TLE transition. Different classifiers (rule_v1 vs
 # imm_ukf_v1 vs human) can all label the same event — that's the A/B /
@@ -164,6 +188,9 @@ class StarlinkStore:
                     conn.execute(f"ALTER TABLE tle ADD COLUMN {col} {col_type}")
                 except sqlite3.OperationalError:
                     pass
+
+        if version < 5:
+            conn.executescript(_SCHEMA_V5)
 
         conn.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
         conn.commit()
@@ -447,6 +474,42 @@ class StarlinkStore:
         conn.close()
         return {(r["shell_km"] or 0.0): r["n"] for r in rows}
 
+    # ── Supplemental GP ──
+
+    def upsert_supgp_tles(self, tles: list[dict], source: str) -> int:
+        """Insert supplemental GP TLEs. Returns count of genuinely new rows."""
+        now = time.time()
+        new_count = 0
+        with self._lock:
+            conn = self._get_conn()
+            for t in tles:
+                cursor = conn.execute(
+                    """INSERT OR IGNORE INTO supplemental_gp
+                       (norad_id, epoch_jd, fetched_at, source, line1, line2,
+                        inclination, mean_motion, eccentricity, bstar)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        t["norad_id"], t["epoch_jd"], now, source,
+                        t["line1"], t["line2"],
+                        t.get("inclination"), t.get("mean_motion"),
+                        t.get("eccentricity"), t.get("bstar"),
+                    ),
+                )
+                if cursor.rowcount > 0:
+                    new_count += 1
+            conn.commit()
+            conn.close()
+        return new_count
+
+    def get_supgp_stats(self) -> dict:
+        """Supplemental GP row counts by source."""
+        conn = self._get_conn()
+        rows = conn.execute(
+            "SELECT source, COUNT(*) as n FROM supplemental_gp GROUP BY source"
+        ).fetchall()
+        conn.close()
+        return {r["source"]: r["n"] for r in rows}
+
     # ── Stats ──
 
     @property
@@ -456,10 +519,12 @@ class StarlinkStore:
         tle_count = conn.execute("SELECT COUNT(*) FROM tle").fetchone()[0]
         anomaly_count = conn.execute("SELECT COUNT(*) FROM anomaly").fetchone()[0]
         fetch_count = conn.execute("SELECT COUNT(*) FROM fetch_log").fetchone()[0]
+        supgp_count = conn.execute("SELECT COUNT(*) FROM supplemental_gp").fetchone()[0]
         conn.close()
         return {
             "satellites": sat_count,
             "tle_records": tle_count,
             "anomalies": anomaly_count,
             "fetches": fetch_count,
+            "supplemental_gp": supgp_count,
         }
