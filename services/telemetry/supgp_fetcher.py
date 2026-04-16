@@ -32,6 +32,18 @@ SUPGP_SOURCES = [
         "planet",
         "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=planet&FORMAT=tle",
     ),
+    (
+        "oneweb",
+        "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=oneweb&FORMAT=tle",
+    ),
+    (
+        "spire",
+        "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=spire&FORMAT=tle",
+    ),
+    (
+        "iridium",
+        "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=iridium-NEXT&FORMAT=tle",
+    ),
 ]
 
 FETCH_INTERVAL = 8 * 3600  # same cadence as Starlink fetcher
