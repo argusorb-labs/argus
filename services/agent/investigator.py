@@ -156,9 +156,16 @@ def _assess_severity(evidence: dict) -> dict[str, Any]:
 
     batch = evidence.get("batch_analysis", {})
     ecc_ratio = batch.get("ecc_ratio")
+    ecc_jump = tle.get("ecc_jump_detected", False)
     if ecc_ratio and ecc_ratio > 5:
-        score += 2
-        reasons.append(f"eccentricity {ecc_ratio:.1f}× batch average")
+        if ecc_jump:
+            # Sudden jump + high ratio = debris event signature
+            score += 2
+            reasons.append(f"eccentricity {ecc_ratio:.1f}× batch average (sudden jump)")
+        else:
+            # Gradual divergence = likely deorbiting, not debris
+            score += 1
+            reasons.append(f"eccentricity {ecc_ratio:.1f}× batch average (gradual — likely deorbit)")
     elif ecc_ratio and ecc_ratio > 2:
         score += 1
         reasons.append(f"eccentricity {ecc_ratio:.1f}× batch average")
@@ -218,11 +225,19 @@ def _draft_paragraph(evidence: dict) -> str:
     sev_label = severity.get("severity", "routine").upper()
     sentences.append(f"**{name}** ({norad}) — [{sev_label}]")
 
-    # Eccentricity jump
+    # Eccentricity analysis
+    ecc_ratio = batch.get("ecc_ratio")
     if tle.get("ecc_jump_detected"):
         sentences.append(
             f"Eccentricity jumped from {tle['ecc_before']:.5f} to "
-            f"{tle['ecc_after']:.5f} (Δ={tle['max_ecc_jump']:.4f})."
+            f"{tle['ecc_after']:.5f} (Δ={tle['max_ecc_jump']:.4f}) — "
+            f"sudden change consistent with a debris event."
+        )
+    elif ecc_ratio and ecc_ratio > 5 and not tle.get("ecc_jump_detected"):
+        sentences.append(
+            f"Eccentricity is {ecc_ratio:.1f}× the batch average but "
+            f"diverged gradually — consistent with deorbiting rather "
+            f"than a debris event."
         )
 
     # Batch comparison
