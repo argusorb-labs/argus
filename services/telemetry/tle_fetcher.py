@@ -24,14 +24,20 @@ try:
         validate_tle_structure,
         validate_tle_physics,
     )
-    from services.brain.orbital_analyzer import analyze_constellation
+    from services.brain.orbital_analyzer import (
+        analyze_constellation,
+        detect_tle_gaps,
+    )
 except ImportError:
     from store import StarlinkStore  # type: ignore
     from tle_validator import (  # type: ignore
         validate_tle_structure,
         validate_tle_physics,
     )
-    from brain.orbital_analyzer import analyze_constellation  # type: ignore
+    from brain.orbital_analyzer import (  # type: ignore
+        analyze_constellation,
+        detect_tle_gaps,
+    )
 
 CELESTRAK_URL = "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink&FORMAT=tle"
 FETCH_INTERVAL = 8 * 3600  # 8 hours
@@ -277,6 +283,24 @@ async def run_tle_fetcher(
             except Exception as e:
                 print(
                     f"[TLE][{cycle:04d}] rule_v1 pass failed: {type(e).__name__}: {e}",
+                    file=sys.stderr,
+                )
+
+            # Check for satellites that have gone silent (>24h without TLE).
+            try:
+                gaps = detect_tle_gaps(store)
+                if gaps:
+                    print(
+                        f"[TLE][{cycle:04d}] ⚠ {len(gaps)} satellites silent >24h: "
+                        + ", ".join(
+                            f"{g.get('name') or g['norad_id']} ({g['gap_hours']:.0f}h)"
+                            for g in gaps[:5]
+                        )
+                        + (" ..." if len(gaps) > 5 else "")
+                    )
+            except Exception as e:
+                print(
+                    f"[TLE][{cycle:04d}] gap detection failed: {type(e).__name__}: {e}",
                     file=sys.stderr,
                 )
 

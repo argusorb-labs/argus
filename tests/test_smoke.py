@@ -815,6 +815,93 @@ def test_store_inventory_queries():
     os.unlink(db)
 
 
+def test_detect_tle_gaps():
+    """Satellites silent >24h must be detected; fresh ones must not."""
+    from services.brain.orbital_analyzer import detect_tle_gaps
+    import sqlite3
+
+    store, db = _make_store()
+    store.upsert_tles(SAMPLE_TLES)
+    now = time.time()
+
+    # Backdate one satellite's last_seen to 48h ago → should be flagged.
+    conn = sqlite3.connect(db)
+    conn.execute(
+        "UPDATE satellite SET last_seen = ? WHERE norad_id = ?",
+        (now - 48 * 3600, 44714),
+    )
+    # Keep the other fresh → should NOT be flagged.
+    conn.execute(
+        "UPDATE satellite SET last_seen = ? WHERE norad_id = ?",
+        (now - 1 * 3600, 44718),
+    )
+    conn.commit()
+    conn.close()
+
+    gaps = detect_tle_gaps(store, max_gap_s=24 * 3600, now_ts=now)
+    assert len(gaps) == 1
+    assert gaps[0]["norad_id"] == 44714
+    assert gaps[0]["gap_hours"] >= 47
+
+    os.unlink(db)
+
+
+def test_detect_new_neighbors():
+    """Recently-appeared objects near a target's orbit must be found."""
+    from services.brain.orbital_analyzer import detect_new_neighbors
+    import sqlite3
+
+    store, db = _make_store()
+    now = time.time()
+
+    # Target satellite — Starlink at 53°, mm 15.34
+    target = {
+        "norad_id": 44714, "epoch_jd": 2460400.0,
+        "line1": "x", "line2": "y", "name": "STARLINK-TARGET",
+        "inclination": 53.15, "mean_motion": 15.34,
+        "eccentricity": 0.0003, "shell_km": 550,
+        "intl_designator": "19074B", "launch_group": "19074",
+    }
+    # Neighbor with similar orbit — should be detected
+    neighbor_similar = {
+        "norad_id": 99001, "epoch_jd": 2460401.0,
+        "line1": "x", "line2": "y", "name": "DEBRIS-001",
+        "inclination": 53.20, "mean_motion": 15.32,
+        "eccentricity": 0.002, "shell_km": 550,
+        "intl_designator": "19074Z", "launch_group": "19074",
+    }
+    # Distant object — different inclination, should NOT match
+    neighbor_far = {
+        "norad_id": 99002, "epoch_jd": 2460401.0,
+        "line1": "x", "line2": "y", "name": "UNRELATED",
+        "inclination": 97.6, "mean_motion": 15.34,
+        "eccentricity": 0.0001, "shell_km": 550,
+        "intl_designator": "25112A", "launch_group": "25112",
+    }
+    store.upsert_tles([target, neighbor_similar, neighbor_far])
+
+    # Backdate target's first_seen to 30 days ago; neighbors first_seen is "now".
+    conn = sqlite3.connect(db)
+    conn.execute(
+        "UPDATE satellite SET first_seen = ? WHERE norad_id = ?",
+        (now - 30 * 86400, 44714),
+    )
+    conn.commit()
+    conn.close()
+
+    # Search for neighbors that appeared in the last 7 days
+    neighbors = detect_new_neighbors(
+        store, norad_id=44714, since_ts=now - 7 * 86400
+    )
+
+    norad_ids = [n["norad_id"] for n in neighbors]
+    assert 99001 in norad_ids        # similar orbit → found
+    assert 99002 not in norad_ids    # different inclination → excluded
+    assert 44714 not in norad_ids    # target itself excluded
+
+    os.unlink(db)
+
+
 def test_api_imports():
     from services.api.main import app
     assert app.title == "ArgusOrb API"

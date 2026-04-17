@@ -272,6 +272,71 @@ def analyze_constellation(store, since_ts: float | None = None) -> list[dict]:
     return new_anomalies
 
 
+# ── Event detection (non-label, query-based) ──
+
+TLE_GAP_THRESHOLD_S = 24 * 3600  # 24h without TLE update = alert
+
+
+def detect_tle_gaps(
+    store, max_gap_s: float = TLE_GAP_THRESHOLD_S, now_ts: float | None = None
+) -> list[dict]:
+    """Find satellites with TLE gaps exceeding max_gap_s.
+
+    This is the "satellite went silent" detector. A 24h gap in Starlink
+    TLE updates is abnormal and may indicate: satellite failure, breakup
+    event, NORAD tracking loss, or catalog maintenance. The gap itself is
+    often detectable BEFORE the official announcement.
+
+    Returns enriched dicts (not written to anomaly table — gaps are
+    transient events, not permanent labels on TLE transitions).
+    """
+    return store.get_satellites_with_gap(max_gap_s=max_gap_s, now_ts=now_ts)
+
+
+def detect_new_neighbors(
+    store,
+    norad_id: int,
+    since_ts: float | None = None,
+    incl_tol: float = 0.5,
+    mm_tol: float = 0.2,
+) -> list[dict]:
+    """Find recently-cataloged objects near a given satellite's orbit.
+
+    After a debris event, NORAD catalogs debris pieces under new NORAD IDs
+    with similar orbital elements. This function looks for satellites that
+    appeared after since_ts in the same orbital neighborhood as norad_id.
+
+    If N new objects appear in the neighborhood of a satellite that went
+    silent → strong evidence of a breakup.
+    """
+    sat = store.get_satellite(norad_id)
+    if not sat:
+        return []
+
+    # Get target's orbital params from latest TLE
+    history = store.get_satellite_history(norad_id, limit=1)
+    if not history:
+        return []
+
+    target_incl = history[0].get("inclination", 0)
+    target_mm = history[0].get("mean_motion", 0)
+    if not target_incl or not target_mm:
+        return []
+
+    if since_ts is None:
+        since_ts = (sat.get("last_seen") or time.time()) - 7 * 86400
+
+    neighbors = store.find_new_neighbors(
+        target_incl=target_incl,
+        target_mm=target_mm,
+        since_ts=since_ts,
+        incl_tol=incl_tol,
+        mm_tol=mm_tol,
+    )
+    # Exclude the target itself
+    return [n for n in neighbors if n["norad_id"] != norad_id]
+
+
 def label_full_history(
     store, *, batch_log_interval: int = 500, max_history: int = 1000
 ) -> int:

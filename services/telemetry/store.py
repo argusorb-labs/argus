@@ -474,6 +474,74 @@ class StarlinkStore:
         conn.close()
         return {(r["shell_km"] or 0.0): r["n"] for r in rows}
 
+    # ── Event detection queries ──
+
+    def get_satellites_with_gap(
+        self, max_gap_s: float, now_ts: float | None = None
+    ) -> list[dict]:
+        """Satellites whose last TLE is older than max_gap_s.
+
+        Returns enriched dicts with gap_hours. Unlike get_stale_satellites
+        (which is for the weekly report's "departed" section with 7-day
+        threshold), this is for real-time gap alerting (~24h threshold).
+        """
+        cutoff = (now_ts if now_ts is not None else time.time()) - max_gap_s
+        now = now_ts if now_ts is not None else time.time()
+        conn = self._get_conn()
+        rows = conn.execute(
+            """SELECT norad_id, name, shell_km, last_seen, status,
+                      inclination, intl_designator
+               FROM satellite s
+               LEFT JOIN (
+                   SELECT norad_id as nid, inclination
+                   FROM tle
+                   GROUP BY norad_id
+                   HAVING MAX(epoch_jd)
+               ) t ON s.norad_id = t.nid
+               WHERE s.last_seen < ? AND s.last_seen > 0
+               ORDER BY s.last_seen ASC""",
+            (cutoff,),
+        ).fetchall()
+        conn.close()
+        result = []
+        for r in rows:
+            d = dict(r)
+            d["gap_hours"] = round((now - (d.get("last_seen") or 0)) / 3600, 1)
+            result.append(d)
+        return result
+
+    def find_new_neighbors(
+        self,
+        target_incl: float,
+        target_mm: float,
+        since_ts: float,
+        incl_tol: float = 0.5,
+        mm_tol: float = 0.2,
+    ) -> list[dict]:
+        """Satellites that first appeared after since_ts with similar orbit.
+
+        Used to detect debris pieces: if a satellite goes silent and new
+        catalog entries pop up in the same orbital neighborhood, it's
+        likely a breakup event.
+        """
+        conn = self._get_conn()
+        rows = conn.execute(
+            """SELECT s.norad_id, s.name, s.shell_km, s.first_seen,
+                      s.intl_designator, t.inclination, t.mean_motion
+               FROM satellite s
+               JOIN tle t ON s.norad_id = t.norad_id
+               WHERE s.first_seen >= ?
+                 AND t.epoch_jd = (
+                     SELECT MAX(epoch_jd) FROM tle WHERE norad_id = s.norad_id
+                 )
+                 AND ABS(t.inclination - ?) < ?
+                 AND ABS(t.mean_motion - ?) < ?
+               ORDER BY s.first_seen DESC""",
+            (since_ts, target_incl, incl_tol, target_mm, mm_tol),
+        ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
     # ── Supplemental GP ──
 
     def upsert_supgp_tles(self, tles: list[dict], source: str) -> int:
