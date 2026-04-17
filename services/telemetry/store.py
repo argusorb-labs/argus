@@ -498,6 +498,30 @@ class StarlinkStore:
         conn.close()
         return {(r["shell_km"] or 0.0): r["n"] for r in rows}
 
+    # ── Batch / launch group queries ──
+
+    def get_batch_siblings(self, intl_designator_prefix: str) -> list[dict]:
+        """All satellites from the same launch group, with latest orbital elements.
+
+        Used by the investigator to compare a flagged satellite against its
+        siblings — if one satellite's eccentricity is 14× the batch average,
+        that's strong evidence of a debris event.
+        """
+        conn = self._get_conn()
+        rows = conn.execute(
+            """SELECT s.norad_id, s.name, s.shell_km, s.intl_designator,
+                      s.first_seen, s.last_seen, s.status,
+                      t.mean_motion, t.eccentricity, t.inclination, t.bstar, t.epoch_jd
+               FROM satellite s
+               JOIN tle t ON s.norad_id = t.norad_id
+               WHERE s.intl_designator LIKE ? || '%'
+                 AND t.epoch_jd = (SELECT MAX(epoch_jd) FROM tle WHERE norad_id = s.norad_id)
+               ORDER BY s.norad_id""",
+            (intl_designator_prefix,),
+        ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
     # ── Event detection queries ──
 
     def get_satellites_with_gap(
