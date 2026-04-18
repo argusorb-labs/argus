@@ -150,9 +150,15 @@ def _altitude_adjusted_T(alt_km: float) -> np.ndarray:
 
 
 def _fx_wrapper(state: np.ndarray, dt: float, bstar: float = 0.0) -> np.ndarray:
-    """State transition function for the UKF."""
+    """State transition function for the UKF (single sigma point)."""
     result, success = propagate_state(state, dt, bstar=bstar)
     return result
+
+
+def _batch_fx_wrapper(sigmas: np.ndarray, dt: float, bstar: float = 0.0):
+    """Batch state transition: vectorized RK4 for all sigma points at once."""
+    from services.brain.dynamics import propagate_batch_rk4
+    return propagate_batch_rk4(sigmas, dt, bstar=bstar)
 
 
 def _hx_identity(state: np.ndarray) -> np.ndarray:
@@ -236,10 +242,11 @@ def classify_satellite_history(
 
         bstar = curr_tle.get("bstar") or prev_tle.get("bstar") or 0.0
 
-        # Predict
-        fx_args = [(bstar,)] * 3  # all models use same B*
+        # Predict (using batch propagation for speed)
+        fx_args = [(bstar,)] * 3
         try:
-            imm.predict(dt=dt_seconds, fx_args_per_model=fx_args)
+            imm.predict(dt=dt_seconds, fx_args_per_model=fx_args,
+                        batch_fx=_batch_fx_wrapper)
         except Exception:
             continue
 

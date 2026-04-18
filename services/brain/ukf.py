@@ -116,18 +116,31 @@ class UKF:
         self.innovation_cov = np.eye(n_obs)
         self.log_likelihood = 0.0
 
-    def predict(self, dt: float, fx_args: tuple = ()) -> None:
-        """Predict step: propagate sigma points through dynamics."""
+    def predict(self, dt: float, fx_args: tuple = (),
+                batch_fx: callable | None = None) -> None:
+        """Predict step: propagate sigma points through dynamics.
+
+        Args:
+            dt: time step
+            fx_args: extra args passed to self.fx
+            batch_fx: optional batch propagation function
+                f(sigmas_array, dt, *args) -> sigmas_pred_array.
+                If provided, all sigma points are propagated in one call
+                (much faster than 13 sequential calls).
+        """
         sigmas, wm, wc = _sigma_points(
             self.x, self.P, self.alpha, self.beta, self.kappa
         )
         n_sigma = len(sigmas)
         n = self.n_state
 
-        # Propagate each sigma point
-        sigmas_pred = np.zeros_like(sigmas)
-        for i in range(n_sigma):
-            sigmas_pred[i] = self.fx(sigmas[i], dt, *fx_args)
+        # Propagate sigma points
+        if batch_fx is not None:
+            sigmas_pred, _ = batch_fx(sigmas, dt, *fx_args)
+        else:
+            sigmas_pred = np.zeros_like(sigmas)
+            for i in range(n_sigma):
+                sigmas_pred[i] = self.fx(sigmas[i], dt, *fx_args)
 
         # Predicted mean
         x_pred = np.sum(wm[:, None] * sigmas_pred, axis=0)
