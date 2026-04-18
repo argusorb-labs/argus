@@ -10,6 +10,8 @@ dependencies = [
     "httpx>=0.28",
     "sgp4>=2.23",
     "certifi>=2024.0",
+    "numpy>=1.26",
+    "scipy>=1.14",
 ]
 
 [project.optional-dependencies]
