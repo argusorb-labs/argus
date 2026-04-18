@@ -6,6 +6,7 @@ ENV PYTHONUNBUFFERED=1
 
 COPY pyproject.toml .
 COPY services/ services/
+COPY scripts/ scripts/
 
 RUN pip install --no-cache-dir .
 
