@@ -126,12 +126,17 @@ def main(argv: list[str] | None = None) -> int:
     db_path = args.db or os.environ.get("ARGUS_DB_PATH", "data/starlink.db")
     store = StarlinkStore(db_path)
 
-    # Determine week
+    # Determine week. Default: the CURRENT ISO week (not the previous
+    # complete one), because this script is designed to run via cron on
+    # Sunday evening when the current week is 96% complete. The
+    # min(end_ts, now) clamp in build_report handles the remaining hours.
     if args.week:
         year_str, week_str = args.week.split("-W")
         year, week = int(year_str), int(week_str)
     else:
-        year, week = most_recent_complete_week()
+        now_utc = datetime.now(timezone.utc)
+        iso = now_utc.isocalendar()
+        year, week = iso[0], iso[1]
     iso_week = f"{year}-W{week:02d}"
     start_ts, end_ts = iso_week_bounds(year, week)
 
