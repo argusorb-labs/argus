@@ -53,14 +53,18 @@ def _make_Q(pos_sigma_m: float, vel_sigma_ms: float) -> np.ndarray:
         vel_sigma_ms**2, vel_sigma_ms**2, vel_sigma_ms**2,
     ])
 
+# Base Q values at 550 km reference altitude.
+# Scaled by (REF_ALT / actual_alt)² for altitude-adaptive behavior.
+REF_ALT_KM = 550.0
+
 # M0: station-keeping — small noise (elements drift ~100m/orbit, ~0.01 m/s)
-Q_STATION_KEEPING = _make_Q(pos_sigma_m=100.0, vel_sigma_ms=0.01)
+Q_SK_BASE = _make_Q(pos_sigma_m=100.0, vel_sigma_ms=0.01)
 
 # M1: maneuver — large velocity noise (allows ~1 m/s Δv between TLEs)
-Q_MANEUVER = _make_Q(pos_sigma_m=500.0, vel_sigma_ms=1.0)
+Q_MAN_BASE = _make_Q(pos_sigma_m=500.0, vel_sigma_ms=1.0)
 
-# M2: decay — large position noise in all directions (orbit shrinking)
-Q_DECAY = _make_Q(pos_sigma_m=2000.0, vel_sigma_ms=0.1)
+# M2: decay — large position noise (orbit shrinking due to drag)
+Q_DECAY_BASE = _make_Q(pos_sigma_m=2000.0, vel_sigma_ms=0.1)
 
 # Observation noise R: TLE → sgp4 gives ~1 km position, ~1 m/s velocity
 R_TLE = np.diag([
@@ -74,13 +78,75 @@ P0 = np.diag([
     2.0**2, 2.0**2, 2.0**2,             # 2 m/s velocity
 ])
 
-# IMM transition matrix: high persistence, low switching
-# P(stay in same model) = 0.97, P(switch) = 0.015 each
-T_MATRIX = np.array([
+# IMM transition matrix at reference altitude (550 km).
+# At lower altitudes, decay transition probability increases.
+T_MATRIX_BASE = np.array([
     [0.97, 0.015, 0.015],  # from station-keeping
     [0.10, 0.85,  0.05],   # from maneuver (short-lived, likely returns to SK)
     [0.02, 0.03,  0.95],   # from decay (tends to persist)
 ])
+
+
+def _altitude_scale(alt_km: float) -> float:
+    """Scaling factor for Q_decay: higher drag at lower altitude.
+
+    At 550 km: scale = 1.0
+    At 275 km: scale = 4.0 (drag ~100× stronger, Q needs to be wider)
+    At 200 km: scale = 7.6
+    Clamped to [1, 20] to avoid runaway.
+    """
+    if alt_km <= 0:
+        return 20.0
+    scale = (REF_ALT_KM / max(alt_km, 150.0)) ** 2
+    return min(scale, 20.0)
+
+
+def _altitude_adjusted_Qs(alt_km: float) -> list[np.ndarray]:
+    """Return [Q_sk, Q_maneuver, Q_decay] scaled for current altitude."""
+    s = _altitude_scale(alt_km)
+    return [
+        Q_SK_BASE,              # station-keeping Q doesn't scale
+        Q_MAN_BASE,             # maneuver Q doesn't scale (Δv is Δv)
+        Q_DECAY_BASE * s,       # decay Q scales with drag intensity
+    ]
+
+
+def _altitude_adjusted_priors(alt_km: float) -> np.ndarray:
+    """Model priors that shift toward decay at low altitude.
+
+    At 550 km:  [0.90, 0.05, 0.05]  — mostly station-keeping
+    At 350 km:  [0.60, 0.05, 0.35]  — decay becomes plausible
+    At 250 km:  [0.30, 0.05, 0.65]  — decay is dominant prior
+    At 200 km:  [0.10, 0.05, 0.85]  — almost certainly decaying
+    """
+    if alt_km >= 500:
+        return np.array([0.90, 0.05, 0.05])
+    elif alt_km >= 350:
+        # Linear interpolation 500→350: decay prior 0.05→0.35
+        t = (500 - alt_km) / 150.0
+        decay_prior = 0.05 + t * 0.30
+        sk_prior = 1.0 - 0.05 - decay_prior
+        return np.array([sk_prior, 0.05, decay_prior])
+    elif alt_km >= 200:
+        t = (350 - alt_km) / 150.0
+        decay_prior = 0.35 + t * 0.50
+        sk_prior = 1.0 - 0.05 - decay_prior
+        return np.array([max(sk_prior, 0.05), 0.05, decay_prior])
+    else:
+        return np.array([0.05, 0.05, 0.90])
+
+
+def _altitude_adjusted_T(alt_km: float) -> np.ndarray:
+    """Transition matrix that increases decay persistence at low altitude."""
+    T = T_MATRIX_BASE.copy()
+    if alt_km < 350:
+        # Increase P(sk → decay) and P(decay → decay) at low altitude
+        boost = min((350 - alt_km) / 150.0, 1.0) * 0.10
+        T[0, 2] += boost          # sk → decay
+        T[0, 0] -= boost          # less persistence in sk
+        T[2, 2] = min(T[2, 2] + boost * 0.5, 0.99)  # more decay persistence
+        T[2, 0] = max(T[2, 0] - boost * 0.5, 0.005)
+    return T
 
 
 def _fx_wrapper(state: np.ndarray, dt: float, bstar: float = 0.0) -> np.ndarray:
@@ -94,11 +160,19 @@ def _hx_identity(state: np.ndarray) -> np.ndarray:
     return state
 
 
-def create_imm(initial_state: np.ndarray) -> IMM:
-    """Create a fresh IMM-UKF instance with 3 models."""
-    filters = []
-    Qs = [Q_STATION_KEEPING, Q_MANEUVER, Q_DECAY]
+def create_imm(initial_state: np.ndarray, alt_km: float = REF_ALT_KM) -> IMM:
+    """Create a fresh IMM-UKF instance with altitude-adaptive parameters.
 
+    At high altitude (>500 km): standard Q, strong station-keeping prior.
+    At low altitude (<350 km): inflated Q_decay, strong decay prior.
+    This fixes the reentry detection gap where standard Q couldn't
+    distinguish decay from station-keeping at 200 km.
+    """
+    Qs = _altitude_adjusted_Qs(alt_km)
+    priors = _altitude_adjusted_priors(alt_km)
+    T = _altitude_adjusted_T(alt_km)
+
+    filters = []
     for i in range(3):
         ukf = UKF(
             n_state=6, n_obs=6,
@@ -113,8 +187,8 @@ def create_imm(initial_state: np.ndarray) -> IMM:
 
     return IMM(
         filters=filters,
-        model_probs=np.array([0.9, 0.05, 0.05]),  # prior: mostly station-keeping
-        transition_matrix=T_MATRIX,
+        model_probs=priors,
+        transition_matrix=T,
     )
 
 
@@ -143,7 +217,10 @@ def classify_satellite_history(
     if state0 is None:
         return []
 
-    imm = create_imm(state0)
+    # Estimate initial altitude for adaptive parameters
+    from services.brain.dynamics import R_EARTH
+    alt0_km = np.linalg.norm(state0[:3]) / 1000 - R_EARTH / 1000
+    imm = create_imm(state0, alt_km=alt0_km)
     labels: list[dict] = []
 
     for i in range(1, len(history)):
