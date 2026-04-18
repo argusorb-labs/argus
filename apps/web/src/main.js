@@ -49,7 +49,7 @@ const viewer = new Viewer("cesium-container", {
   infoBox: false,
   selectionIndicator: false,
   sceneMode: SceneMode.SCENE3D,
-  skyAtmosphere: true,  // blue atmospheric glow at Earth's limb
+  skyAtmosphere: false, // disabled — CesiumJS 1.140 setDynamicLighting bug
 });
 
 try {
