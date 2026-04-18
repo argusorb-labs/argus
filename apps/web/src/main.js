@@ -49,7 +49,7 @@ const viewer = new Viewer("cesium-container", {
   infoBox: false,
   selectionIndicator: false,
   sceneMode: SceneMode.SCENE3D,
-  skyAtmosphere: false,
+  skyAtmosphere: true,  // blue atmospheric glow at Earth's limb
 });
 
 try {
@@ -58,8 +58,31 @@ try {
   });
 } catch (e) { /* fallback to default */ }
 
-viewer.scene.globe.enableLighting = true;
+// ── Globe visual enhancements ──
+const globe = viewer.scene.globe;
+globe.enableLighting = true;
+
+// Darker ocean for space aesthetic
+globe.baseColor = Color.fromCssColorString("#0a1628");
+
+// Subtle depth atmosphere on the globe surface
+globe.showGroundAtmosphere = true;
+
+// Night side slightly visible (city lights effect when zoomed in)
+globe.nightFadeOutDistance = 1e7;
+globe.nightFadeInDistance = 5e6;
+
+// Atmosphere tuning — brighter limb glow
+if (viewer.scene.skyAtmosphere) {
+  viewer.scene.skyAtmosphere.brightnessShift = 0.1;
+  viewer.scene.skyAtmosphere.saturationShift = 0.1;
+}
+
+// High-DPI rendering
 viewer.resolutionScale = window.devicePixelRatio || 1;
+
+// Enable FXAA for smoother points
+viewer.scene.postProcessStages.fxaa.enabled = true;
 
 // Start zoomed out to see the full constellation
 viewer.camera.setView({
