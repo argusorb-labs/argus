@@ -28,6 +28,7 @@ except ImportError:
 
 # Each source: (name, Celestrak supplemental URL)
 SUPGP_SOURCES = [
+    # Operator-provided supplemental GP (from precise tracking)
     (
         "planet",
         "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=planet&FORMAT=tle",
@@ -43,6 +44,15 @@ SUPGP_SOURCES = [
     (
         "iridium",
         "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=iridium-NEXT&FORMAT=tle",
+    ),
+    # NORAD standard catalog (radar-tracked, NOT supplemental).
+    # For Starlink, comparing this against our primary feed (which IS
+    # supplemental/operator-provided) reveals the gap between NORAD's
+    # radar tracking and SpaceX's own precise tracking — exactly the
+    # residual we want for precision calibration.
+    (
+        "norad_catalog_starlink",
+        "https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle",
     ),
 ]
 
