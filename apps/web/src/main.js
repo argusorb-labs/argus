@@ -58,11 +58,16 @@ try {
   });
 } catch (e) { /* fallback to default */ }
 
-// ── Globe visual enhancements ──
+// ── CesiumJS 1.140 bug workaround ──
+// Scene.updateEnvironment calls globe.setDynamicLighting() on every frame,
+// but the function doesn't exist on the Globe object. Patch it as a no-op.
 const globe = viewer.scene.globe;
-// NOTE: enableLighting is disabled — CesiumJS 1.140 internally calls
-// setDynamicLighting during render which crashes. Dark baseColor gives
-// a space aesthetic without needing the lighting engine.
+if (globe && typeof globe.setDynamicLighting !== "function") {
+  globe.setDynamicLighting = function () {};
+}
+
+// ── Globe visual enhancements ──
+globe.enableLighting = true;
 globe.baseColor = Color.fromCssColorString("#0a1628");
 
 // High-DPI rendering
