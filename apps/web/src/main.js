@@ -59,30 +59,20 @@ try {
 } catch (e) { /* fallback to default */ }
 
 // ── Globe visual enhancements ──
+// Wrapped in try/catch because CesiumJS API changes across versions.
 const globe = viewer.scene.globe;
-globe.enableLighting = true;
-
-// Darker ocean for space aesthetic
-globe.baseColor = Color.fromCssColorString("#0a1628");
-
-// Subtle depth atmosphere on the globe surface
-globe.showGroundAtmosphere = true;
-
-// Night side slightly visible (city lights effect when zoomed in)
-globe.nightFadeOutDistance = 1e7;
-globe.nightFadeInDistance = 5e6;
-
-// Atmosphere tuning — brighter limb glow
-if (viewer.scene.skyAtmosphere) {
-  viewer.scene.skyAtmosphere.brightnessShift = 0.1;
-  viewer.scene.skyAtmosphere.saturationShift = 0.1;
-}
+try {
+  globe.enableLighting = true;
+  globe.baseColor = Color.fromCssColorString("#0a1628");
+} catch (e) { console.warn("Globe lighting setup:", e.message); }
 
 // High-DPI rendering
 viewer.resolutionScale = window.devicePixelRatio || 1;
 
-// Enable FXAA for smoother points
-viewer.scene.postProcessStages.fxaa.enabled = true;
+// FXAA for smoother satellite points
+try {
+  viewer.scene.postProcessStages.fxaa.enabled = true;
+} catch (e) { /* fxaa not available */ }
 
 // Start zoomed out to see the full constellation
 viewer.camera.setView({
