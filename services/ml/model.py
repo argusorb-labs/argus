@@ -152,9 +152,15 @@ class OrbitalTransformer(nn.Module):
         self.n_classes = n_classes
         self.use_physics = use_physics
 
-        # Physics branch
+        # Physics branch — FROZEN. Must not be updated by gradient descent.
+        # If physics parameters are trainable, f_neural's gradient leaks
+        # through and teaches physics to predict anomalies, erasing the
+        # innovation signal. Frozen physics = always "naive" prediction =
+        # clean innovation = reliable anomaly detection.
         if use_physics:
             self.physics = AnalyticalPhysics()
+            for p in self.physics.parameters():
+                p.requires_grad = False
 
         # Neural branch: input projection
         self.input_proj = nn.Linear(n_features, d_model)
@@ -247,26 +253,54 @@ class OrbitalTransformer(nn.Module):
         else:
             h = self.encoder(h)
 
-        # Neural residual
+        # Neural residual (for accurate prediction, NOT for anomaly detection)
         f_neural = self.pred_head(h)  # (B, T, F)
 
-        # Physics prediction
+        # Physics prediction (assumes everything is normal)
         if self.use_physics:
             f_physics = self.physics(x)  # (B, T, F)
             predictions = f_physics + f_neural
         else:
+            f_physics = torch.zeros_like(f_neural)
             predictions = f_neural
 
         # Noise estimation
         noise_sigma = self.noise_head(h)  # (B, T, 1)
         noise_sigma = noise_sigma.clamp(min=1e-6)
 
-        # Anomaly score = SNR
-        f_neural_norm = torch.norm(f_neural, dim=-1, keepdim=True)  # (B, T, 1)
-        anomaly_score = f_neural_norm / noise_sigma  # (B, T, 1)
+        # ── Anomaly detection: on the PREDICTED trajectory, not on f_neural ──
+        #
+        # The key insight: f_neural absorbs anomalies (it corrects physics
+        # to match actual data, including post-maneuver states). So
+        # ||f_neural|| is NOT a clean anomaly signal.
+        #
+        # Instead: compare the ACTUAL observation (x shifted by 1) against
+        # f_physics (which assumes normal dynamics). The difference is the
+        # INNOVATION — same concept as the UKF. Normal: innovation ≈ noise.
+        # Maneuver: innovation = noise + delta-v signal.
+        #
+        # innovation[t] = actual[t+1] - f_physics[t]
+        # anomaly_score = ||innovation|| / noise_sigma
 
-        # Classification: feed h + f_neural + anomaly_score
-        cls_input = torch.cat([h, f_neural, anomaly_score], dim=-1)
+        # Compute innovation: actual next observation vs physics-only prediction
+        # For t < T-1: innovation = x[t+1] - f_physics[t]
+        # For t = T-1: use f_neural as fallback (no next observation)
+        if self.use_physics and x.size(1) > 1:
+            actual_next = x[:, 1:, :]            # (B, T-1, F)
+            physics_pred = f_physics[:, :-1, :]   # (B, T-1, F)
+            innovation = actual_next - physics_pred  # (B, T-1, F)
+            # Pad last timestep with zeros
+            pad = torch.zeros(B, 1, F, device=x.device)
+            innovation = torch.cat([innovation, pad], dim=1)  # (B, T, F)
+        else:
+            innovation = f_neural  # fallback when no physics
+
+        innovation_norm = torch.norm(innovation, dim=-1, keepdim=True)  # (B, T, 1)
+        anomaly_score = innovation_norm / noise_sigma  # (B, T, 1)
+
+        # Classification: fed by h + innovation + anomaly_score
+        # (NOT f_neural — that absorbs anomalies; innovation preserves them)
+        cls_input = torch.cat([h, innovation, anomaly_score], dim=-1)
         classifications = self.cls_head(cls_input)  # (B, T, n_classes)
 
         return {
