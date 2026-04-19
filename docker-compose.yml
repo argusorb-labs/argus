@@ -7,6 +7,9 @@ services:
       - "8000:8000"
     volumes:
       - ./data:/app/data
+    env_file:
+      - path: /root/.argus-spacetrack.env
+        required: false
     restart: unless-stopped
 
   web:

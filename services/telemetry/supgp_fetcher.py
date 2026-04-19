@@ -45,15 +45,9 @@ SUPGP_SOURCES = [
         "iridium",
         "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=iridium&FORMAT=tle",
     ),
-    # NORAD standard catalog (radar-tracked, NOT supplemental).
-    # For Starlink, comparing this against our primary feed (which IS
-    # supplemental/operator-provided) reveals the gap between NORAD's
-    # radar tracking and SpaceX's own precise tracking — exactly the
-    # residual we want for precision calibration.
-    (
-        "norad_catalog_starlink",
-        "https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle",
-    ),
+    # NORAD radar-tracked Starlink catalog is fetched from Space-Track directly
+    # (see spacetrack_fetcher.py) — Celestrak's gp.php endpoint added WAF
+    # filtering that blocks server User-Agents.
 ]
 
 FETCH_INTERVAL = 8 * 3600  # same cadence as Starlink fetcher
