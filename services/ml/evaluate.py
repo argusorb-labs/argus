@@ -57,7 +57,8 @@ def evaluate_classification(
     X_t = torch.from_numpy(X).float().to(device)
     y_t = torch.from_numpy(y).long().to(device)
 
-    _, classifications = model(X_t, causal=True)
+    out = model(X_t, causal=True)
+    classifications = out["classifications"] if isinstance(out, dict) else out[1]
     preds = classifications.argmax(dim=-1)  # (B, T)
 
     # Flatten
@@ -95,7 +96,8 @@ def evaluate_detection_latency(
 ) -> dict:
     """How many steps after an event starts before the model detects it."""
     X_t = torch.from_numpy(X).float().to(device)
-    _, classifications = model(X_t, causal=True)
+    out = model(X_t, causal=True)
+    classifications = out["classifications"] if isinstance(out, dict) else out[1]
     preds = classifications.argmax(dim=-1).cpu().numpy()  # (B, T)
 
     latencies = {"maneuver": [], "decay": [], "breakup": []}
@@ -142,7 +144,8 @@ def evaluate_prediction(
 ) -> dict:
     """Next-step prediction accuracy (MSE per feature)."""
     X_t = torch.from_numpy(X).float().to(device)
-    predictions, _ = model(X_t, causal=True)
+    out = model(X_t, causal=True)
+    predictions = out["predictions"] if isinstance(out, dict) else out[0]
 
     # Compare predictions[t] vs actual[t+1]
     pred = predictions[:, :-1, :].cpu().numpy()

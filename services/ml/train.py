@@ -32,6 +32,31 @@ from torch.utils.data import DataLoader, TensorDataset
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from services.ml.model import create_model
 
+# ── Physics-constrained loss terms ──
+
+def kepler_loss(predictions: torch.Tensor) -> torch.Tensor:
+    """Penalize violations of Kepler's third law: mm² × a³ ≈ const.
+
+    In normalized space, mean_motion is feature index 1, alt_km is index 5.
+    We check that (mm_pred)² × (R + alt_pred)³ is approximately constant
+    across timesteps.
+    """
+    mm = predictions[:, :, 1]   # normalized mean motion
+    alt = predictions[:, :, 5]  # normalized altitude
+
+    # Kepler invariant (in normalized space, relative change matters)
+    kepler_val = mm ** 2 * (alt + 1) ** 3  # +1 to avoid zero
+    kepler_diff = kepler_val[:, 1:] - kepler_val[:, :-1]
+    return torch.mean(kepler_diff ** 2)
+
+
+def smoothness_loss(predictions: torch.Tensor) -> torch.Tensor:
+    """Penalize non-smooth predictions (second-order finite difference)."""
+    if predictions.size(1) < 3:
+        return torch.tensor(0.0, device=predictions.device)
+    d2 = predictions[:, 2:, :] - 2 * predictions[:, 1:-1, :] + predictions[:, :-2, :]
+    return torch.mean(d2 ** 2)
+
 
 def load_data(data_dir: Path, batch_size: int = 256) -> tuple:
     """Load preprocessed train/val numpy arrays into DataLoaders."""
@@ -111,22 +136,32 @@ def train_epoch(
         X, y = X.to(device), y.to(device)
         optimizer.zero_grad()
 
-        predictions, classifications = model(X, causal=True)
+        out = model(X, causal=True)
+        # v0.5: model returns dict with predictions, classifications, etc.
+        if isinstance(out, dict):
+            predictions = out["predictions"]
+            classifications = out["classifications"]
+        else:
+            predictions, classifications = out
 
         loss = torch.tensor(0.0, device=device)
 
         # Prediction loss: predict next step from current
         if mode in ("selfsup", "mixed"):
-            # Shift: predict X[t+1] from context up to X[t]
-            pred_target = X[:, 1:, :]  # (B, T-1, F)
-            pred_output = predictions[:, :-1, :]  # (B, T-1, F)
+            pred_target = X[:, 1:, :]
+            pred_output = predictions[:, :-1, :]
             p_loss = pred_criterion(pred_output, pred_target)
             loss = loss + pred_weight * p_loss
             total_pred_loss += p_loss.item()
 
+            # Physics constraints — weight must be tiny relative to data loss.
+            # Kepler/smoothness values are in normalized space where the
+            # numbers can be large. 1e-6 keeps them as gentle regularization.
+            loss = loss + 1e-6 * kepler_loss(predictions)
+            loss = loss + 1e-4 * smoothness_loss(predictions)
+
         # Classification loss
         if mode in ("supervised", "mixed"):
-            # Reshape for CrossEntropyLoss: (B*T, C) vs (B*T,)
             B, T, C = classifications.shape
             c_loss = cls_criterion(
                 classifications.reshape(B * T, C),
@@ -166,7 +201,12 @@ def validate(
 
     for X, y in loader:
         X, y = X.to(device), y.to(device)
-        predictions, classifications = model(X, causal=True)
+        out = model(X, causal=True)
+        if isinstance(out, dict):
+            predictions = out["predictions"]
+            classifications = out["classifications"]
+        else:
+            predictions, classifications = out
 
         if mode in ("selfsup", "mixed"):
             p_loss = pred_criterion(predictions[:, :-1, :], X[:, 1:, :])
