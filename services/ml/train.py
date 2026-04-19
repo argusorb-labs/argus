@@ -57,6 +57,33 @@ def load_data(data_dir: Path, batch_size: int = 256) -> tuple:
     return train_dl, val_dl
 
 
+class FocalLoss(nn.Module):
+    """Focal Loss with class weights.
+
+    Combines two ideas:
+    - Class weights: "maneuver is important" (fixed per-class multiplier)
+    - Focal modulation: "this sample is hard" (dynamic per-sample multiplier)
+
+    FL = -w_y · (1 - p_y)^γ · log(p_y)
+
+    When γ=0, this is exactly weighted CrossEntropy.
+    When γ>0, easy samples (high p_y) get loss → 0, hard samples dominate.
+    γ=2 is the standard value from the RetinaNet paper (Lin et al., 2017).
+    """
+
+    def __init__(self, weight: torch.Tensor | None = None, gamma: float = 2.0):
+        super().__init__()
+        self.gamma = gamma
+        self.weight = weight
+
+    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        ce = nn.functional.cross_entropy(logits, targets, weight=self.weight, reduction="none")
+        p = torch.softmax(logits, dim=-1)
+        p_t = p.gather(1, targets.unsqueeze(1)).squeeze(1)
+        focal_weight = (1 - p_t) ** self.gamma
+        return (focal_weight * ce).mean()
+
+
 def train_epoch(
     model: nn.Module,
     loader: DataLoader,
@@ -73,7 +100,10 @@ def train_epoch(
     n_batches = 0
 
     pred_criterion = nn.MSELoss()
-    cls_criterion = nn.CrossEntropyLoss()
+    # Focal Loss with class weights: combines "this class is important"
+    # (weights) with "this sample is hard" (focal γ modulation).
+    cls_weights = torch.tensor([0.5, 3.0, 3.0, 3.0], device=device)
+    cls_criterion = FocalLoss(weight=cls_weights, gamma=2.0)
 
     for X, y in loader:
         X, y = X.to(device), y.to(device)
