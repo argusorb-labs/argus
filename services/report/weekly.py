@@ -561,9 +561,7 @@ def render_substack_markdown(
         f"**Data source:** Celestrak sup-gp (Starlink), "
         f"{fetches['fetch_attempts']} fetches over the week  "
     )
-    lines.append(
-        f"**Classifier:** {r['classified_by']} (threshold-based, unaudited)"
-    )
+    lines.append(f"**Classifier:** {r['classified_by']} (threshold-based, unaudited)")
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -661,9 +659,7 @@ def render_substack_markdown(
         for cause in ordered_causes:
             count = cause_counts[cause]
             d = _fmt_delta(cause_delta.get(cause))
-            lines.append(
-                f"- **{cause.replace('_', ' ')}** — {count}{_delta_suffix(d)}"
-            )
+            lines.append(f"- **{cause.replace('_', ' ')}** — {count}{_delta_suffix(d)}")
     else:
         lines.append("No events flagged this week.")
     lines.append("")

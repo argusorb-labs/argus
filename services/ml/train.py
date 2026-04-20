@@ -34,6 +34,7 @@ from services.ml.model import create_model
 
 # ── Physics-constrained loss terms ──
 
+
 def kepler_loss(predictions: torch.Tensor) -> torch.Tensor:
     """Penalize violations of Kepler's third law: mm² × a³ ≈ const.
 
@@ -41,13 +42,13 @@ def kepler_loss(predictions: torch.Tensor) -> torch.Tensor:
     We check that (mm_pred)² × (R + alt_pred)³ is approximately constant
     across timesteps.
     """
-    mm = predictions[:, :, 1]   # normalized mean motion
+    mm = predictions[:, :, 1]  # normalized mean motion
     alt = predictions[:, :, 5]  # normalized altitude
 
     # Kepler invariant (in normalized space, relative change matters)
-    kepler_val = mm ** 2 * (alt + 1) ** 3  # +1 to avoid zero
+    kepler_val = mm**2 * (alt + 1) ** 3  # +1 to avoid zero
     kepler_diff = kepler_val[:, 1:] - kepler_val[:, :-1]
-    return torch.mean(kepler_diff ** 2)
+    return torch.mean(kepler_diff**2)
 
 
 def smoothness_loss(predictions: torch.Tensor) -> torch.Tensor:
@@ -55,7 +56,7 @@ def smoothness_loss(predictions: torch.Tensor) -> torch.Tensor:
     if predictions.size(1) < 3:
         return torch.tensor(0.0, device=predictions.device)
     d2 = predictions[:, 2:, :] - 2 * predictions[:, 1:-1, :] + predictions[:, :-2, :]
-    return torch.mean(d2 ** 2)
+    return torch.mean(d2**2)
 
 
 def load_data(data_dir: Path, batch_size: int = 256) -> tuple:

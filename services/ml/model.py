@@ -92,9 +92,9 @@ class AnalyticalPhysics(nn.Module):
         # Epoch: advances by step
         pred_epoch = epoch
 
-        return torch.stack([
-            pred_epoch, pred_mm, pred_ecc, pred_incl, pred_bstar, pred_alt
-        ], dim=-1)
+        return torch.stack(
+            [pred_epoch, pred_mm, pred_ecc, pred_incl, pred_bstar, pred_alt], dim=-1
+        )
 
 
 class PositionalEncoding(nn.Module):
@@ -225,9 +225,7 @@ class OrbitalTransformer(nn.Module):
             self._causal_mask_cache[seq_len] = mask
         return self._causal_mask_cache[seq_len]
 
-    def forward(
-        self, x: torch.Tensor, causal: bool = True
-    ) -> dict[str, torch.Tensor]:
+    def forward(self, x: torch.Tensor, causal: bool = True) -> dict[str, torch.Tensor]:
         """Forward pass.
 
         Args:
@@ -286,8 +284,8 @@ class OrbitalTransformer(nn.Module):
         # For t < T-1: innovation = x[t+1] - f_physics[t]
         # For t = T-1: use f_neural as fallback (no next observation)
         if self.use_physics and x.size(1) > 1:
-            actual_next = x[:, 1:, :]            # (B, T-1, F)
-            physics_pred = f_physics[:, :-1, :]   # (B, T-1, F)
+            actual_next = x[:, 1:, :]  # (B, T-1, F)
+            physics_pred = f_physics[:, :-1, :]  # (B, T-1, F)
             innovation = actual_next - physics_pred  # (B, T-1, F)
             # Pad last timestep with zeros
             pad = torch.zeros(B, 1, F, device=x.device)
