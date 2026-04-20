@@ -519,6 +519,185 @@ def render_markdown(
     return "\n".join(lines) + "\n"
 
 
+def render_substack_markdown(
+    report: dict,
+    previous: dict | None = None,
+    editor_notes: str | None = None,
+) -> str:
+    """Render a Substack-paste-friendly version of the weekly report.
+
+    Substack's paste handler converts common markdown (bold, headings, bullets,
+    inline code) but does NOT parse GFM tables, and inline code inside a
+    heading breaks the heading's formatting. This renderer produces the same
+    content as render_markdown() but replaces every table with a bullet list
+    and strips backticks from headings.
+    """
+    r = report
+    deltas = compute_deltas(r, previous)
+    window = r["window"]
+    iso_week = window.get("iso_week") or ""
+    title = f"ArgusOrb Weekly — {iso_week}" if iso_week else "ArgusOrb Weekly"
+
+    const = r["constellation"]
+    fetches = r["data_quality"]
+    flags = r["flagged_events"]
+    shells = const.get("shells", {})
+    shells_delta = deltas.get("shells", {})
+    constellation_delta = _fmt_delta(deltas.get("constellation_total"))
+
+    if editor_notes is not None and editor_notes.strip():
+        notable_section = editor_notes.strip()
+    else:
+        notable_section = _render_auto_notable(flags.get("top_by_confidence", []))
+
+    def _delta_suffix(d: str) -> str:
+        return f" ({d})" if d and d != "—" else ""
+
+    lines: list[str] = []
+    lines.append(f"# {title}")
+    lines.append("")
+    lines.append(f"**Reporting window:** {window['label']} UTC  ")
+    lines.append(
+        f"**Data source:** Celestrak sup-gp (Starlink), "
+        f"{fetches['fetch_attempts']} fetches over the week  "
+    )
+    lines.append(
+        f"**Classifier:** {r['classified_by']} (threshold-based, unaudited)"
+    )
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+    # Constellation — narrative + bullets
+    lines.append("## Constellation")
+    lines.append("")
+    lines.append(
+        f"**{const['total']:,} tracked Starlinks** this week"
+        f"{_delta_suffix(constellation_delta)}. Shell distribution:"
+    )
+    lines.append("")
+    for key in sorted(shells.keys(), key=lambda k: (k != "decayed", k)):
+        count = shells[key]
+        if key in ("decayed", "unknown", "other"):
+            label = key
+        else:
+            label = f"{key} km shell"
+        d = _fmt_delta(shells_delta.get(key))
+        lines.append(f"- **{label}** — {count:,}{_delta_suffix(d)}")
+    lines.append("")
+
+    # New — prose + bullets
+    lines.append("## New to orbit")
+    lines.append("")
+    new_note = r.get("new_satellites_note")
+    new_rows = r["new_satellites"]
+    if new_note:
+        lines.append(f"*{new_note}*")
+    elif new_rows:
+        noun = "satellite" if len(new_rows) == 1 else "satellites"
+        lines.append(
+            f"**{len(new_rows)} {noun}** first appeared in Celestrak during the window:"
+        )
+        lines.append("")
+        cap = min(MAX_LIST_ITEMS, len(new_rows))
+        for s in new_rows[:cap]:
+            name = s.get("name") or "—"
+            ts = _fmt_ts(s.get("first_seen_ts"))
+            shell = _shell_km_label(s.get("shell_km"))
+            lines.append(
+                f"- **{name}** (NORAD {s['norad_id']}) — first seen {ts}, {shell}"
+            )
+        if len(new_rows) > cap:
+            lines.append(f"- *… and {len(new_rows) - cap} more (truncated).*")
+    else:
+        lines.append("No new satellites appeared this week.")
+    lines.append("")
+
+    # Departed — prose + bullets
+    lines.append("## Departed")
+    lines.append("")
+    departed_rows = r["departed_satellites"]
+    if departed_rows:
+        noun = "satellite" if len(departed_rows) == 1 else "satellites"
+        has = "has" if len(departed_rows) == 1 else "have"
+        lines.append(
+            f"**{len(departed_rows)} {noun}** {has} not produced a TLE in more than "
+            f"{STALE_THRESHOLD_S // 86400} days. Likely deorbited, decommissioned, or renamed — "
+            "no Celestrak decay notice has been issued for any of them yet:"
+        )
+        lines.append("")
+        cap = min(MAX_LIST_ITEMS, len(departed_rows))
+        for s in departed_rows[:cap]:
+            name = s.get("name") or "—"
+            ts = _fmt_ts(s.get("last_seen_ts"))
+            shell = _shell_km_label(s.get("shell_km"))
+            lines.append(
+                f"- **{name}** (NORAD {s['norad_id']}) — last seen {ts}, {shell}"
+            )
+        if len(departed_rows) > cap:
+            lines.append(f"- *… and {len(departed_rows) - cap} more (truncated).*")
+    else:
+        lines.append("No satellites have gone silent this week.")
+    lines.append("")
+
+    # Flagged events — heading without backticks, table → bullets
+    lines.append(f"## Flagged events ({r['classified_by']})")
+    lines.append("")
+    lines.append(
+        f"`{r['classified_by']}` is a threshold-based rule classifier. Every flag below is a "
+        "**candidate anomaly** surfaced by the rules — not a confirmed event. "
+        "We plan to override these labels in future issues using the IMM-UKF "
+        "classifier and human review."
+    )
+    lines.append("")
+    cause_counts = flags.get("by_cause", {})
+    cause_delta = deltas.get("by_cause", {})
+    ordered_causes = [c for c in CAUSE_ORDER if c in cause_counts] + [
+        c for c in cause_counts if c not in CAUSE_ORDER
+    ]
+    if ordered_causes:
+        lines.append("This week's totals by cause:")
+        lines.append("")
+        for cause in ordered_causes:
+            count = cause_counts[cause]
+            d = _fmt_delta(cause_delta.get(cause))
+            lines.append(
+                f"- **{cause.replace('_', ' ')}** — {count}{_delta_suffix(d)}"
+            )
+    else:
+        lines.append("No events flagged this week.")
+    lines.append("")
+    lines.append("**Notable flags**")
+    lines.append("")
+    lines.append(notable_section)
+    lines.append("")
+
+    # Data quality — table → bullets
+    lines.append("## Data quality")
+    lines.append("")
+    lines.append(
+        "**Transparency disclosure** — we publish our own fetch audit so readers "
+        "can discount our claims accordingly."
+    )
+    lines.append("")
+    lines.append(f"- **Fetch attempts:** {fetches['fetch_attempts']}")
+    lines.append(f"- **Successful:** {fetches['fetch_successes']}")
+    lines.append(f"- **Parse errors:** {fetches['parse_errors']}")
+    lines.append(f"- **Longest fetch gap:** {fetches['longest_gap_human']}")
+    lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append(
+        f"*ArgusOrb ingests public Celestrak TLEs, persists every update to a SQLite "
+        f"archive, and runs `{r['classified_by']}` against consecutive TLEs. Every flagged "
+        f"event above is one opinion from one classifier and will be reviewed by human "
+        f"and IMM-UKF tracks. Raw archive and fetch audit are available on request.*"
+    )
+
+    return "\n".join(lines) + "\n"
+
+
 def _render_auto_notable(top_flags: list[dict]) -> str:
     """Auto-render the top-3 highest-confidence flags as bullets.
 
@@ -660,6 +839,13 @@ def main(argv: list[str] | None = None) -> int:
             render_markdown(report, previous=previous, editor_notes=editor_notes)
         )
         wrote.append(path)
+        substack_path = args.output_dir / f"{iso_week}-substack.md"
+        substack_path.write_text(
+            render_substack_markdown(
+                report, previous=previous, editor_notes=editor_notes
+            )
+        )
+        wrote.append(substack_path)
 
     print(
         f"[weekly] {iso_week}: {report['constellation']['total']:,} tracked, "

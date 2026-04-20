@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from services.telemetry.store import StarlinkStore
 from services.report.weekly import (
-    build_report, render_markdown, render_json,
+    build_report, render_markdown, render_substack_markdown, render_json,
     most_recent_complete_week, iso_week_bounds, load_previous_report,
 )
 from services.report.predictions import generate_predictions, resolve_predictions
@@ -184,14 +184,19 @@ def main(argv: list[str] | None = None) -> int:
     print("\n[step 5/5] Rendering...")
     json_path = args.output_dir / f"{iso_week}.json"
     md_path = args.output_dir / f"{iso_week}.md"
+    substack_path = args.output_dir / f"{iso_week}-substack.md"
     notes_path = args.output_dir / f"{iso_week}-editor-notes.md"
 
     json_path.write_text(render_json(report))
     md_path.write_text(render_markdown(report, previous=previous, editor_notes=editor_notes))
+    substack_path.write_text(
+        render_substack_markdown(report, previous=previous, editor_notes=editor_notes)
+    )
     notes_path.write_text(editor_notes)
 
     print(f"\n  wrote {json_path}")
     print(f"  wrote {md_path}")
+    print(f"  wrote {substack_path}")
     print(f"  wrote {notes_path}")
 
     # Summary
