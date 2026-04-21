@@ -151,21 +151,42 @@ def load_spacetrack(
     seq_len: int = 100,
     stride: int = 50,
     max_files: int = 0,
-) -> tuple[np.ndarray, np.ndarray]:
-    """Load all Space-Track JSON files and produce (N, seq_len, 12) sequences."""
+    exclude_norads: set[int] | None = None,
+) -> tuple[np.ndarray, np.ndarray, list[int]]:
+    """Load all Space-Track JSON files and produce (N, seq_len, 12) sequences.
+
+    Files named `{norad}.json.gz`. If exclude_norads is set, those NORAD
+    IDs are skipped entirely (used to hold out Phase 3 OOD validation
+    targets: Starlink-34343, Iridium-33, Cosmos-2251, BlueBird-7).
+
+    Returns:
+        X, y, included_norads — list of NORAD IDs actually used.
+    """
+    exclude = exclude_norads or set()
     json_files = sorted(input_dir.glob("*.json.gz"))
     if not json_files:
         print(f"No .json.gz in {input_dir}", file=sys.stderr)
-        return np.array([]), np.array([])
+        return np.array([]), np.array([]), []
     if max_files > 0:
         json_files = json_files[:max_files]
 
     all_X = []
     all_y = []
+    included_norads: list[int] = []
     skipped = 0
+    excluded = 0
     total_tle = 0
 
     for i, fpath in enumerate(json_files):
+        # Filename-based NORAD exclusion (cheap, applied before parse)
+        try:
+            norad_id = int(fpath.stem.split(".")[0])
+        except ValueError:
+            norad_id = -1
+        if norad_id in exclude:
+            excluded += 1
+            continue
+
         try:
             with gzip.open(fpath, "rt") as f:
                 records = json.load(f)
@@ -193,29 +214,31 @@ def load_spacetrack(
             continue
 
         total_tle += len(features)
+        if norad_id > 0:
+            included_norads.append(norad_id)
 
         # Sliding window
         for start in range(0, len(features) - seq_len + 1, stride):
             window = features[start : start + seq_len].copy()
-            # Make epoch relative to window start
-            window[:, 0] -= window[0, 0]
+            window[:, 0] -= window[0, 0]  # epoch relative to window start
             all_X.append(window)
             all_y.append(np.zeros(seq_len, dtype=np.int32))
 
         if (i + 1) % 50 == 0:
             print(
                 f"  [{i + 1}/{len(json_files)}] sequences: {len(all_X):,}, "
-                f"TLEs: {total_tle:,}, skipped: {skipped}"
+                f"TLEs: {total_tle:,}, skipped: {skipped}, excluded: {excluded}"
             )
 
     print(
-        f"Done loading: {len(all_X):,} sequences from {total_tle:,} TLEs ({skipped} files skipped)"
+        f"Done loading: {len(all_X):,} sequences from {total_tle:,} TLEs "
+        f"({skipped} files skipped, {excluded} NORADs excluded by request)"
     )
 
     if not all_X:
-        return np.array([]), np.array([])
+        return np.array([]), np.array([]), included_norads
 
-    return np.array(all_X), np.array(all_y)
+    return np.array(all_X), np.array(all_y), included_norads
 
 
 def split_dataset(
@@ -271,18 +294,44 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--no-normalize", action="store_true", help="Skip z-score normalization"
     )
+    parser.add_argument(
+        "--exclude-norads",
+        type=str,
+        default="64157,24946,22675,68765",
+        help=(
+            "Comma-separated NORAD IDs to exclude from training. "
+            "Default holds out the Phase 3 OOD validation targets: "
+            "64157 (Starlink-34343), 24946 (Iridium-33), 22675 (Cosmos-2251), "
+            "68765 (AST BlueBird 7). Pass empty string to disable."
+        ),
+    )
     args = parser.parse_args(argv)
 
+    exclude_set: set[int] = set()
+    if args.exclude_norads.strip():
+        try:
+            exclude_set = {
+                int(x.strip()) for x in args.exclude_norads.split(",") if x.strip()
+            }
+        except ValueError:
+            print(f"Bad --exclude-norads: {args.exclude_norads!r}", file=sys.stderr)
+            return 1
+
+    norads: list[int] = []
     if args.source == "synthetic":
         print(f"Loading synthetic_v06 from {args.input}...")
         X, y = load_synthetic_v06(args.input)
     else:
-        print(f"Loading Space-Track from {args.input} (max_files={args.max_files})...")
-        X, y = load_spacetrack(
+        print(
+            f"Loading Space-Track from {args.input} "
+            f"(max_files={args.max_files}, excluding {len(exclude_set)} NORADs)..."
+        )
+        X, y, norads = load_spacetrack(
             args.input,
             seq_len=args.seq_len,
             stride=args.stride,
             max_files=args.max_files,
+            exclude_norads=exclude_set,
         )
     if len(X) == 0:
         print("No data loaded!", file=sys.stderr)
@@ -304,6 +353,22 @@ def main(argv: list[str] | None = None) -> int:
     args.output.mkdir(parents=True, exist_ok=True)
     for key, arr in splits.items():
         np.save(args.output / f"{key}.npy", arr)
+
+    # Write the training-set NORAD manifest so Phase 3 validation can
+    # detect leakage accurately.
+    if args.source == "spacetrack" and norads:
+        manifest = args.output / "_norads.txt"
+        manifest.write_text("\n".join(str(n) for n in sorted(norads)) + "\n")
+        print(f"Wrote {manifest} ({len(norads)} NORAD IDs)")
+        if exclude_set:
+            excluded_present = exclude_set & set(norads)
+            if excluded_present:
+                print(
+                    f"⚠ exclusion check failed: {excluded_present} leaked through",
+                    file=sys.stderr,
+                )
+                return 1
+
     print(f"\nSaved to {args.output}/:")
     for key, arr in splits.items():
         print(f"  {key}: {arr.shape}")
