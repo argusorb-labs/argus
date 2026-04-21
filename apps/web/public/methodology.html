@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Methodology — ArgusOrb</title>
+    <meta name="description" content="How ArgusOrb tracks the Starlink constellation and flags orbital anomalies. Data sources, classifier rules, update cadence, limitations." />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { background: #05080f; color: #bbb; font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; line-height: 1.6; }
+      body { max-width: 720px; margin: 0 auto; padding: 56px 24px 80px; font-size: 14px; }
+      h1 { color: #00ccff; font-size: 32px; letter-spacing: 2px; margin-bottom: 8px; }
+      .sub { color: #667; font-size: 13px; margin-bottom: 40px; }
+      h2 { color: #00ccff; font-size: 16px; letter-spacing: 2px; margin: 36px 0 12px; font-weight: 600; }
+      h3 { color: #ccc; font-size: 13px; letter-spacing: 1.5px; margin: 20px 0 8px; font-weight: 600; }
+      p { margin-bottom: 12px; color: #bbb; }
+      code { background: rgba(0,200,255,0.08); color: #66d9ef; padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+      a { color: #00ccff; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      ul { margin: 8px 0 16px 20px; color: #bbb; }
+      li { margin-bottom: 4px; }
+      .back { color: #667; margin-bottom: 32px; display: inline-block; font-size: 12px; }
+      .back:hover { color: #00ccff; }
+      table { border-collapse: collapse; margin: 12px 0 20px; font-size: 12px; width: 100%; }
+      th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      th { color: #00ccff; font-weight: 600; letter-spacing: 1px; }
+      td { color: #ccc; }
+      .note { border-left: 2px solid #00ccff; padding: 8px 14px; margin: 20px 0; background: rgba(0,200,255,0.04); font-size: 13px; color: #aaa; }
+    </style>
+  </head>
+  <body>
+    <a href="/" class="back">← argusorb.io</a>
+
+    <h1>Methodology</h1>
+    <p class="sub">How ArgusOrb tracks the Starlink constellation and flags orbital anomalies.</p>
+
+    <h2>What this page is</h2>
+    <p>
+      Every number on argusorb.io and in the <a href="https://argusorb.substack.com/" target="_blank" rel="noopener">weekly report</a> traces back to a specific public TLE or an independent RF observation. This page lists the sources, the classifier rules, and the places where our current approach is provisional or wrong. If a claim on the site feels surprising, check here first.
+    </p>
+
+    <h2>Data sources</h2>
+    <table>
+      <tr><th>Source</th><th>Use</th><th>Cadence</th></tr>
+      <tr><td>Celestrak <code>sup-gp</code></td><td>Primary Starlink TLE feed (SpaceX operator-provided, ~10m accuracy)</td><td>Every 8h</td></tr>
+      <tr><td>Space-Track gp_history</td><td>NORAD radar catalog for cross-check; failed-launch tracking</td><td>Every 8h, authenticated</td></tr>
+      <tr><td>SatNOGS RF</td><td>Amateur ground-station signal detection on gap-flagged satellites</td><td>On-demand</td></tr>
+      <tr><td>Other supplemental GP</td><td>OneWeb, Kuiper, Iridium for cross-constellation context</td><td>Every 8h</td></tr>
+    </table>
+    <p>No radar, no proprietary feeds, no paid data. Anyone with a Space-Track account and Celestrak can reproduce any claim.</p>
+
+    <h2>Anomaly classifier — <code>rule_v1</code></h2>
+    <p>
+      The current production classifier is a set of seven physics thresholds applied between consecutive TLEs:
+    </p>
+    <ul>
+      <li><strong>reentry</strong>: altitude &lt; 250 km</li>
+      <li><strong>natural decay</strong>: monotonic altitude drop, B* positive, high drag</li>
+      <li><strong>altitude step</strong>: Δ altitude &gt; 10 km between consecutive TLEs</li>
+      <li><strong>inclination shift</strong>: Δ inclination &gt; 0.5°</li>
+      <li><strong>eccentricity jump</strong>: e vs same-launch-batch &gt; 2× average</li>
+      <li><strong>B* sign flip</strong>: drag coefficient changes sign</li>
+      <li><strong>B* magnitude jump</strong>: &gt; 200% change without altitude change</li>
+    </ul>
+    <p>
+      Every flag is a <em>candidate</em>, not a confirmed event. The next-layer classifier (<code>imm_ukf_v1</code>, IMM-UKF physics-based) and eventually a physics-informed transformer (<code>orbital_transformer_v06</code>) will re-evaluate and can override <code>rule_v1</code>. We expose both verdicts in the archive so readers can compare.
+    </p>
+
+    <h2>What we currently can't do</h2>
+    <ul>
+      <li><strong>Sub-300 km regime</strong> — IMM-UKF skips satellites below 300 km because our atmosphere model (static exponential, Vallado Table 8-4) can't resolve the 2-10× density variation driven by solar F10.7 / Ap. Rule_v1 handles these with threshold logic instead. An NRLMSISE-00 upgrade is scheduled.</li>
+      <li><strong>Sub-10 cm debris</strong> — invisible in public catalog data. Optical and radar domain.</li>
+      <li><strong>Real-time &lt; 8h latency</strong> — our primary feed's cadence is 8h. Faster sources require operator-direct access we don't have.</li>
+      <li><strong>Threat characterization</strong> — intent classification ("adversarial proximity", "co-planar maneuvering") is explicitly out of scope. That is threat intelligence; we are risk intelligence.</li>
+    </ul>
+
+    <h2>Cadence</h2>
+    <ul>
+      <li>TLE fetch every 8h</li>
+      <li>Position updates on the 3D globe every 5s</li>
+      <li>Anomaly analysis in-line with each TLE fetch</li>
+      <li>Weekly report: Sundays at 20:00 UTC (cron-generated, human-reviewed)</li>
+      <li>Daily backup to Cloudflare R2 at 04:00 UTC</li>
+    </ul>
+
+    <h2>Provenance policy</h2>
+    <p>
+      Every TLE update is stored permanently in a SQLite archive (now 256k+ records). Every classifier label is stored forever, with the classifier version that produced it. This archive is the moat: a second observer can re-run our code against our data and reach the same conclusions, or disagree visibly.
+    </p>
+    <div class="note">
+      If we are wrong, it is because the data is wrong, the code is wrong, or the interpretation is wrong. All three are inspectable. This is not a promise of correctness. It is a promise of auditability.
+    </div>
+
+    <h2>Corrections</h2>
+    <p>
+      When an error is found after publication, the weekly-report archive keeps the original and adds a correction post. The 2026-W16 correction of the B* narrative (in the <a href="https://argusorb.substack.com/p/argusorb-weekly-2026-w16" target="_blank" rel="noopener">first issue</a>) is an example. We aim to lose less trust by correcting in public than by silently editing.
+    </p>
+
+    <p style="margin-top: 48px; color: #556; font-size: 11px;">
+      Questions or corrections: <a href="mailto:larry.yong.fu@gmail.com">larry.yong.fu@gmail.com</a>
+    </p>
+  </body>
+</html>

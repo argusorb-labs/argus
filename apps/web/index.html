@@ -3,11 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ArgusOrb — Starlink Constellation Tracker — argusorb.io</title>
+    <title>ArgusOrb — Starlink Constellation Tracker</title>
+    <meta
+      name="description"
+      content="Real-time tracking of 10,000+ Starlink satellites from public TLEs. Weekly auditable report on orbital anomalies, debris events, and constellation health."
+    />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ArgusOrb" />
+    <meta property="og:title" content="ArgusOrb — Starlink Risk Intelligence" />
+    <meta
+      property="og:description"
+      content="10,000+ Starlinks tracked live from public TLEs. Weekly auditable report. No radar, no proprietary feeds."
+    />
+    <meta property="og:url" content="https://argusorb.io/" />
+    <meta property="og:image" content="https://argusorb.io/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ArgusOrb" />
+    <meta
+      name="twitter:description"
+      content="Public-data Starlink anomaly tracking. Weekly report. Auditable math, no radar."
+    />
+    <meta name="twitter:image" content="https://argusorb.io/og-image.png" />
+
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <div id="cesium-container"></div>
+
+    <!-- Top-right floating nav -->
+    <nav id="topnav">
+      <a href="/">Globe</a>
+      <a href="https://argusorb.substack.com/" target="_blank" rel="noopener">Weekly Report</a>
+      <a href="/blog/">Blog</a>
+      <a href="/methodology.html">Methodology</a>
+    </nav>
 
     <div id="sidebar">
       <div class="sidebar-header">
@@ -16,10 +49,19 @@
         <div id="connection-status" class="status-live">LIVE</div>
       </div>
 
-      <div class="section report-banner">
-        <a href="https://argusorb.substack.com/" target="_blank" rel="noopener">
-          📊 <strong>Weekly Report</strong> — orbital anomalies, debris events, constellation health
-        </a>
+      <!-- Substack subscribe form (iframe embed) -->
+      <div class="section subscribe-section">
+        <h3>WEEKLY REPORT</h3>
+        <div class="subscribe-blurb">
+          Orbital anomalies, debris events, constellation health. Every Sunday.
+        </div>
+        <iframe
+          class="substack-embed"
+          src="https://argusorb.substack.com/embed"
+          frameborder="0"
+          scrolling="no"
+          title="Subscribe to ArgusOrb Weekly"
+        ></iframe>
       </div>
 
       <div class="section">
@@ -44,6 +86,12 @@
       <div class="section">
         <div class="legend-bar"></div>
         <div class="legend-labels"><span>340 km</span><span>ALTITUDE</span><span>570 km</span></div>
+      </div>
+
+      <div class="section footer-section">
+        <a href="/methodology.html">Methodology</a> ·
+        <a href="/blog/">Blog</a> ·
+        <a href="https://argusorb.substack.com/" target="_blank" rel="noopener">Substack</a>
       </div>
     </div>
 

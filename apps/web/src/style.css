@@ -61,3 +61,41 @@ h3.h-orange { color: #ffaa00 !important; }
 #sidebar::-webkit-scrollbar { width: 4px; }
 #sidebar::-webkit-scrollbar-track { background: transparent; }
 #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+/* Top nav */
+#topnav {
+  position: absolute; top: 14px; right: 16px;
+  z-index: 20;
+  display: flex; gap: 18px;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px;
+  background: rgba(5, 8, 18, 0.85);
+  padding: 8px 14px; border-radius: 4px;
+  border: 1px solid rgba(0, 200, 255, 0.12);
+  backdrop-filter: blur(20px);
+}
+#topnav a {
+  color: #88a; text-decoration: none; text-transform: uppercase;
+  transition: color 120ms;
+}
+#topnav a:hover { color: #00ccff; }
+
+/* Substack subscribe */
+.subscribe-section { padding-bottom: 8px; }
+.subscribe-blurb {
+  color: #889; font-size: 10.5px; line-height: 1.5;
+  margin-bottom: 10px;
+}
+.substack-embed {
+  width: 100%; height: 82px;
+  border-radius: 3px; background: #fff;
+  display: block;
+}
+
+/* Footer */
+.footer-section {
+  font-size: 10px; letter-spacing: 1px; color: #556;
+  border-bottom: none !important; padding-top: 14px;
+}
+.footer-section a { color: #667; text-decoration: none; }
+.footer-section a:hover { color: #00ccff; }
