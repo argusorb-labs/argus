@@ -328,7 +328,11 @@ class OrbitalTransformer(nn.Module):
         )
 
 
-def create_model(size: str = "small", use_physics: bool = True) -> OrbitalTransformer:
+def create_model(
+    size: str = "small",
+    use_physics: bool = True,
+    n_features: int = 6,
+) -> OrbitalTransformer:
     """Factory for pre-configured model sizes."""
     configs = {
         "tiny": dict(d_model=64, n_heads=2, n_layers=2),
@@ -339,6 +343,8 @@ def create_model(size: str = "small", use_physics: bool = True) -> OrbitalTransf
     if size not in configs:
         raise ValueError(f"Unknown size: {size}. Choose from {list(configs)}")
 
-    model = OrbitalTransformer(**configs[size], use_physics=use_physics)
+    model = OrbitalTransformer(
+        **configs[size], use_physics=use_physics, n_features=n_features
+    )
     print(f"Created model: {model.summary()}")
     return model

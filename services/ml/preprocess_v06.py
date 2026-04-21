@@ -240,8 +240,24 @@ def split_dataset(
     }
 
 
+def load_synthetic_v06(input_dir: Path) -> tuple[np.ndarray, np.ndarray]:
+    """Load a synthetic_v06 dataset (already (N, T, 12) + (N, T) labels)."""
+    X = np.load(input_dir / "X.npy")
+    y = np.load(input_dir / "y.npy")
+    assert X.shape[-1] == N_FEATURES, (
+        f"expected {N_FEATURES} features, got {X.shape[-1]}"
+    )
+    return X, y
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--source",
+        choices=["spacetrack", "synthetic"],
+        default="spacetrack",
+        help="Input kind: Space-Track JSON history, or synthetic_v06 raw output",
+    )
     parser.add_argument("--input", type=Path, default=Path("data/spacetrack"))
     parser.add_argument("--output", type=Path, default=Path("data/ml_ready_v06"))
     parser.add_argument("--seq-len", type=int, default=100)
@@ -257,10 +273,17 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    print(f"Loading Space-Track from {args.input} (max_files={args.max_files})...")
-    X, y = load_spacetrack(
-        args.input, seq_len=args.seq_len, stride=args.stride, max_files=args.max_files
-    )
+    if args.source == "synthetic":
+        print(f"Loading synthetic_v06 from {args.input}...")
+        X, y = load_synthetic_v06(args.input)
+    else:
+        print(f"Loading Space-Track from {args.input} (max_files={args.max_files})...")
+        X, y = load_spacetrack(
+            args.input,
+            seq_len=args.seq_len,
+            stride=args.stride,
+            max_files=args.max_files,
+        )
     if len(X) == 0:
         print("No data loaded!", file=sys.stderr)
         return 1
