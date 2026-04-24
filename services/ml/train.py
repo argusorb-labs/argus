@@ -59,27 +59,46 @@ def smoothness_loss(predictions: torch.Tensor) -> torch.Tensor:
     return torch.mean(d2**2)
 
 
-def load_data(data_dir: Path, batch_size: int = 256) -> tuple:
-    """Load preprocessed train/val numpy arrays into DataLoaders."""
-    X_train = np.load(data_dir / "X_train.npy")
-    y_train = np.load(data_dir / "y_train.npy")
-    X_val = np.load(data_dir / "X_val.npy")
-    y_val = np.load(data_dir / "y_val.npy")
+class MemmapDataset(torch.utils.data.Dataset):
+    """Dataset backed by memory-mapped numpy files (no full RAM load)."""
 
-    train_ds = TensorDataset(
-        torch.from_numpy(X_train).float(),
-        torch.from_numpy(y_train).long(),
+    def __init__(self, X_path: Path, y_path: Path, max_samples: int = 0):
+        self.X = np.load(X_path, mmap_mode='r')
+        self.y = np.load(y_path, mmap_mode='r')
+        self.n = min(len(self.X), max_samples) if max_samples > 0 else len(self.X)
+
+    def __len__(self):
+        return self.n
+
+    def __getitem__(self, idx):
+        return (
+            torch.from_numpy(self.X[idx].copy()).float(),
+            torch.from_numpy(self.y[idx].copy()).long(),
+        )
+
+
+def load_data(data_dir: Path, batch_size: int = 256, max_train: int = 0) -> tuple:
+    """Load preprocessed train/val numpy arrays into DataLoaders.
+
+    Uses memory-mapped files so large datasets don't need full RAM.
+    """
+    train_ds = MemmapDataset(
+        data_dir / "X_train.npy", data_dir / "y_train.npy", max_samples=max_train
     )
-    val_ds = TensorDataset(
-        torch.from_numpy(X_val).float(),
-        torch.from_numpy(y_val).long(),
+    val_ds = MemmapDataset(
+        data_dir / "X_val.npy", data_dir / "y_val.npy",
+        max_samples=max_train // 8 if max_train > 0 else 0,
     )
 
-    train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True, drop_last=True)
-    val_dl = DataLoader(val_ds, batch_size=batch_size, shuffle=False)
+    train_dl = DataLoader(
+        train_ds, batch_size=batch_size, shuffle=True, drop_last=True, num_workers=2,
+    )
+    val_dl = DataLoader(
+        val_ds, batch_size=batch_size, shuffle=False, num_workers=2,
+    )
 
-    print(f"Train: {len(train_ds)} sequences, Val: {len(val_ds)} sequences")
-    print(f"Sequence shape: {X_train.shape[1:]} (steps × features)")
+    print(f"Train: {len(train_ds):,} sequences, Val: {len(val_ds):,} sequences")
+    print(f"Sequence shape: {train_ds.X.shape[1:]} (steps × features)")
     return train_dl, val_dl
 
 
@@ -256,6 +275,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--checkpoint-dir", type=Path, default=Path("checkpoints"))
     parser.add_argument("--device", default="auto", help="cpu, cuda, mps, or auto")
+    parser.add_argument("--max-train", type=int, default=0,
+                        help="Limit training samples (0 = all)")
+    parser.add_argument("--resume", type=Path, default=None,
+                        help="Resume from checkpoint (e.g. checkpoints/v07b/best_model.pt)")
     args = parser.parse_args(argv)
 
     # Device
@@ -271,10 +294,17 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Device: {device}")
 
     # Data
-    train_dl, val_dl = load_data(args.data, args.batch_size)
+    train_dl, val_dl = load_data(args.data, args.batch_size, max_train=args.max_train)
 
     # Model
     model = create_model(args.size).to(device)
+
+    if args.resume:
+        print(f"Resuming from {args.resume}")
+        ckpt = torch.load(args.resume, map_location=device, weights_only=True)
+        model.load_state_dict(ckpt["model_state_dict"])
+        print(f"  Loaded epoch {ckpt.get('epoch', '?')} "
+              f"(val_acc={ckpt.get('val_metrics', {}).get('accuracy', '?')})")
 
     # Optimizer + scheduler
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
