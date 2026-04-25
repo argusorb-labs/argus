@@ -18,8 +18,15 @@ backups/*.db
 backups/*.db-wal
 backups/*.db-shm
 CLAUDE.md
-data/ml_ready/
+data/ml_ready*/
 data/ml_ready_real/
-data/synthetic/
+data/ml_ready_labeled*/
+data/ml_imm_fused*/
+data/synthetic*/
 data/spacetrack/
+data/spacetrack_parsed*/
+data/spacetrack_raw_tle/
+data/bulk/
+data/imm_ukf_labeled*/
 checkpoints/
+.claude/
