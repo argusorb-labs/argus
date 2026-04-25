@@ -50,12 +50,17 @@ def classify_from_tles(
     tle_records: list[dict],
     norad_id: int,
 ) -> list[dict]:
-    """Run IMM-UKF over a satellite's TLE history (no database needed).
+    """Run IMM-UKF over a satellite's observation history (no database needed).
+
+    Each record can have an optional 'source' field ('tle' or 'supgp').
+    When source='supgp', uses tighter observation noise R_SUPGP for that
+    update step, yielding sharper anomaly detection from GPS-quality data.
 
     Args:
         tle_records: list of dicts with keys:
             line1, line2, epoch_year, epoch_day, mean_motion,
-            eccentricity, inclination, bstar, alt_km
+            eccentricity, inclination, bstar, alt_km,
+            and optionally 'source' ('tle' or 'supgp')
         norad_id: NORAD catalog ID
 
     Returns:
@@ -63,7 +68,7 @@ def classify_from_tles(
     """
     from services.brain.dynamics import tle_to_state, R_EARTH
     from services.brain.imm_classifier import (
-        create_imm, _batch_fx_wrapper, MODEL_NAMES,
+        create_imm, _batch_fx_wrapper, MODEL_NAMES, R_SUPGP,
     )
 
     if len(tle_records) < 2:
@@ -127,7 +132,10 @@ def classify_from_tles(
                 )
                 obs_state = tle_to_state(curr["line1"], curr["line2"])
                 if obs_state is not None:
-                    imm.update(obs_state)
+                    # Use tighter R for GPS-quality supGP observations
+                    source = curr.get("source", "tle")
+                    R = R_SUPGP if source == "supgp" else None
+                    imm.update(obs_state, R=R)
 
                     probs = imm.model_probabilities
                     best = imm.most_likely_model

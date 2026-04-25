@@ -327,6 +327,18 @@ class StarlinkStore:
         conn.close()
         return [dict(r) for r in rows]
 
+    def get_supgp_history(self, norad_id: int, limit: int = 200) -> list[dict]:
+        """Get supplemental GP history for a satellite (operator-quality TLEs)."""
+        conn = self._get_conn()
+        rows = conn.execute(
+            """SELECT * FROM supplemental_gp
+               WHERE norad_id = ?
+               ORDER BY epoch_jd DESC LIMIT ?""",
+            (norad_id, limit),
+        ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
     def get_satellite(self, norad_id: int) -> dict | None:
         """Get satellite metadata."""
         conn = self._get_conn()

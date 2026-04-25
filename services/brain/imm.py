@@ -113,15 +113,26 @@ class IMM:
         # Update mixing probabilities (before update step)
         self.mu = c_bar
 
-    def update(self, z: np.ndarray) -> None:
-        """IMM update: update each filter, then combine."""
+    def update(self, z: np.ndarray, R: np.ndarray | None = None) -> None:
+        """IMM update: update each filter, then combine.
+
+        Args:
+            z: observation vector
+            R: optional observation noise override (e.g. R_SUPGP for GPS-quality data).
+               If provided, temporarily replaces each filter's R for this update.
+        """
         n = self.n_models
 
         # ── Step 4: Update each filter ──
         likelihoods = np.zeros(n)
         for j in range(n):
+            if R is not None:
+                saved_R = self.filters[j].R
+                self.filters[j].R = R
             self.filters[j].update(z)
             likelihoods[j] = np.exp(self.filters[j].log_likelihood)
+            if R is not None:
+                self.filters[j].R = saved_R
 
         # ── Step 5: Update model probabilities ──
         c = self.mu * likelihoods

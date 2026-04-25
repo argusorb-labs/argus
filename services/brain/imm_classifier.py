@@ -74,7 +74,8 @@ Q_MAN_BASE = _make_Q(pos_sigma_m=500.0, vel_sigma_ms=1.0)
 # M2: decay — large position noise (orbit shrinking due to drag)
 Q_DECAY_BASE = _make_Q(pos_sigma_m=2000.0, vel_sigma_ms=0.1)
 
-# Observation noise R: TLE → sgp4 gives ~1 km position, ~1 m/s velocity
+# Observation noise R: depends on data source.
+# Standard TLE (NORAD radar → SGP4 fit): ~1 km position, ~1 m/s velocity
 R_TLE = np.diag(
     [
         1000.0**2,
@@ -83,6 +84,19 @@ R_TLE = np.diag(
         1.0**2,
         1.0**2,
         1.0**2,  # 1 m/s velocity noise
+    ]
+)
+
+# Supplemental GP (operator GPS → precise OD): ~50 m position, ~0.05 m/s velocity
+# 20× tighter position, 20× tighter velocity → 400× lower covariance
+R_SUPGP = np.diag(
+    [
+        50.0**2,
+        50.0**2,
+        50.0**2,  # 50 m position noise
+        0.05**2,
+        0.05**2,
+        0.05**2,  # 0.05 m/s velocity noise
     ]
 )
 
@@ -225,39 +239,33 @@ def create_imm(initial_state: np.ndarray, alt_km: float = REF_ALT_KM) -> IMM:
     )
 
 
-def classify_satellite_history(
-    store: StarlinkStore,
+def _run_imm_on_observations(
+    observations: list[dict],
     norad_id: int,
-    max_history: int = 200,
 ) -> list[dict]:
-    """Run IMM-UKF over a satellite's TLE history and return labels.
+    """Run IMM-UKF over a time-sorted list of observations.
 
-    Processes TLEs from oldest to newest. At each transition, records
-    the model probabilities as an anomaly label.
+    Each observation dict must have: line1, line2, epoch_jd, bstar,
+    and optionally 'source' ('tle' or 'supgp').
 
-    Returns list of label dicts (ready for store.insert_anomaly).
+    When source='supgp', uses R_SUPGP (20× tighter noise) for that
+    update step. This means GPS-quality observations produce sharper
+    innovations and more confident model probability estimates.
+
+    Returns list of label dicts with model probabilities.
     """
-    history = store.get_satellite_history(norad_id, limit=max_history)
-    if len(history) < 2:
+    if len(observations) < 2:
         return []
 
-    # Process oldest → newest
-    history.reverse()
-
-    # Initialize from the first TLE
-    first = history[0]
+    first = observations[0]
     state0 = tle_to_state(first.get("line1", ""), first.get("line2", ""))
     if state0 is None:
         return []
 
-    # Estimate initial altitude for adaptive parameters
     from services.brain.dynamics import R_EARTH
 
     alt0_km = np.linalg.norm(state0[:3]) / 1000 - R_EARTH / 1000
 
-    # Below 300 km, the atmosphere model is too crude for reliable
-    # physics-based classification. rule_v1's altitude threshold
-    # (reentry < 250 km) handles these cases better. Skip IMM-UKF.
     MIN_ALT_FOR_IMM = 300.0
     if alt0_km < MIN_ALT_FOR_IMM:
         return []
@@ -265,20 +273,17 @@ def classify_satellite_history(
     imm = create_imm(state0, alt_km=alt0_km)
     labels: list[dict] = []
 
-    for i in range(1, len(history)):
-        prev_tle = history[i - 1]
-        curr_tle = history[i]
+    for i in range(1, len(observations)):
+        prev_obs = observations[i - 1]
+        curr_obs = observations[i]
 
-        # Time between TLEs
-        dt_days = curr_tle.get("epoch_jd", 0) - prev_tle.get("epoch_jd", 0)
+        dt_days = curr_obs.get("epoch_jd", 0) - prev_obs.get("epoch_jd", 0)
         dt_seconds = dt_days * 86400.0
         if dt_seconds <= 0 or dt_seconds > 7 * 86400:
-            # Skip backwards or very large gaps (>7 days)
             continue
 
-        bstar = curr_tle.get("bstar") or prev_tle.get("bstar") or 0.0
+        bstar = curr_obs.get("bstar") or prev_obs.get("bstar") or 0.0
 
-        # Predict (using batch propagation for speed)
         fx_args = [(bstar,)] * 3
         try:
             imm.predict(
@@ -287,27 +292,25 @@ def classify_satellite_history(
         except Exception:
             continue
 
-        # Observe: current TLE → state vector
-        obs_state = tle_to_state(curr_tle.get("line1", ""), curr_tle.get("line2", ""))
+        obs_state = tle_to_state(curr_obs.get("line1", ""), curr_obs.get("line2", ""))
         if obs_state is None:
             continue
 
-        # Update
+        # Select R based on observation source
+        source = curr_obs.get("source", "tle")
+        R = R_SUPGP if source == "supgp" else None  # None = use filter's default R_TLE
+
         try:
-            imm.update(obs_state)
+            imm.update(obs_state, R=R)
         except Exception:
             continue
 
-        # Record label if a non-station-keeping model dominates
         probs = imm.model_probabilities
         best_model = imm.most_likely_model
         best_prob = probs[best_model]
 
         if best_model != 0 and best_prob > 0.3:
-            # Non-station-keeping model has significant probability
             model_name = MODEL_NAMES[best_model]
-
-            from services.brain.dynamics import R_EARTH
 
             alt_km = np.linalg.norm(imm.x[:3]) / 1000 - R_EARTH / 1000
 
@@ -316,17 +319,56 @@ def classify_satellite_history(
                 "anomaly_type": f"imm_{model_name}",
                 "cause": "maneuver_candidate" if best_model == 1 else "natural_decay",
                 "confidence": round(best_prob, 4),
-                "classified_by": "imm_ukf_v1",
-                "source_epoch_jd": curr_tle.get("epoch_jd"),
+                "classified_by": "imm_ukf_v2" if source == "supgp" else "imm_ukf_v1",
+                "source_epoch_jd": curr_obs.get("epoch_jd"),
+                "obs_source": source,
                 "altitude_before_km": None,
                 "altitude_after_km": round(alt_km, 1) if alt_km > 0 else None,
                 "details": (
-                    f"IMM-UKF: P(station_keeping)={probs[0]:.3f} "
-                    f"P(maneuver)={probs[1]:.3f} "
-                    f"P(decay)={probs[2]:.3f}"
+                    f"IMM-UKF({source}): P(sk)={probs[0]:.3f} "
+                    f"P(man)={probs[1]:.3f} "
+                    f"P(dec)={probs[2]:.3f}"
                 ),
             }
             labels.append(label)
+
+    return labels
+
+
+def classify_satellite_history(
+    store: StarlinkStore,
+    norad_id: int,
+    max_history: int = 200,
+    use_supgp: bool = True,
+) -> list[dict]:
+    """Run IMM-UKF over a satellite's observation history.
+
+    If use_supgp=True and supplemental GP data exists for this satellite,
+    merges TLE + supGP observations sorted by epoch. supGP observations
+    use R_SUPGP (20× tighter noise) for sharper anomaly detection.
+
+    Returns list of label dicts (ready for store.insert_anomaly).
+    """
+    history = store.get_satellite_history(norad_id, limit=max_history)
+    if len(history) < 2:
+        return []
+
+    # Tag TLE observations
+    for h in history:
+        h["source"] = "tle"
+
+    # Merge supplemental GP if available
+    if use_supgp:
+        supgp = store.get_supgp_history(norad_id, limit=max_history)
+        for s in supgp:
+            s["source"] = "supgp"
+        if supgp:
+            history = history + supgp
+
+    # Sort by epoch (oldest first)
+    history.sort(key=lambda r: r.get("epoch_jd", 0))
+
+    return _run_imm_on_observations(history, norad_id)
 
     return labels
 

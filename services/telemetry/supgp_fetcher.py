@@ -28,7 +28,12 @@ except ImportError:
 
 # Each source: (name, Celestrak supplemental URL)
 SUPGP_SOURCES = [
-    # Operator-provided supplemental GP (from precise tracking)
+    # Operator-provided supplemental GP (from precise GPS tracking, ~10-50m)
+    # These are fundamentally higher quality than standard NORAD TLEs (~1km).
+    (
+        "starlink",
+        "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=starlink&FORMAT=tle",
+    ),
     (
         "planet",
         "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=planet&FORMAT=tle",
@@ -45,9 +50,6 @@ SUPGP_SOURCES = [
         "iridium",
         "https://celestrak.org/NORAD/elements/supplemental/sup-gp.php?FILE=iridium&FORMAT=tle",
     ),
-    # NORAD radar-tracked Starlink catalog is fetched from Space-Track directly
-    # (see spacetrack_fetcher.py) — Celestrak's gp.php endpoint added WAF
-    # filtering that blocks server User-Agents.
 ]
 
 FETCH_INTERVAL = 8 * 3600  # same cadence as Starlink fetcher
