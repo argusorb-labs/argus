@@ -7,6 +7,7 @@ Usage:
 from __future__ import annotations
 
 import asyncio
+import os
 import signal
 import sys
 import time
@@ -24,6 +25,27 @@ from services.telemetry.supgp_fetcher import run_supgp_fetcher
 from services.telemetry.spacetrack_fetcher import run_spacetrack_fetcher
 from services.telemetry.satnogs_fetcher import run_satnogs_fetcher
 from services.brain.orbital_analyzer import analyze_constellation
+
+# ML classifier (loaded lazily on first use)
+_ml_classifier = None
+
+
+def _get_ml_classifier():
+    global _ml_classifier
+    if _ml_classifier is not None:
+        return _ml_classifier
+    model_path = os.environ.get(
+        "ARGUS_MODEL_PATH", "checkpoints/v11_medium_11feat_finetune/best_model.pt"
+    )
+    if os.path.exists(model_path):
+        try:
+            from services.ml.inference import MLClassifier
+            _ml_classifier = MLClassifier(model_path)
+        except Exception as e:
+            print(f"[ML] Failed to load model: {e}")
+    else:
+        print(f"[ML] No model at {model_path}, ML classifier disabled")
+    return _ml_classifier
 
 
 async def position_update_loop(interval: int = 5) -> None:
@@ -55,8 +77,25 @@ def on_tle_fetch_complete(total: int, new: int) -> None:
     loaded = propagator.load_tles(tles)
     print(f"[TLE] Propagator reloaded: {loaded} satellites")
 
-    # Run anomaly detection
+    # Run anomaly detection: rule_v1
     anomalies = analyze_constellation(store)
+
+    # Run ML classifier (if model available)
+    ml = _get_ml_classifier()
+    if ml:
+        t0 = time.perf_counter()
+        norad_ids = [t["norad_id"] for t in tles]
+        ml_labels = ml.classify_satellites(store, norad_ids)
+        ml_written = 0
+        for label in ml_labels:
+            if store.insert_anomaly(label):
+                ml_written += 1
+                anomalies.append(label)
+        elapsed_ms = int((time.perf_counter() - t0) * 1000)
+        if ml_written:
+            print(f"[ML] {ml_written} new labels from {len(ml_labels)} detections "
+                  f"({elapsed_ms}ms)")
+
     if anomalies:
         print(f"[ANOMALY] Detected {len(anomalies)} anomalies:")
         for a in anomalies[:5]:
