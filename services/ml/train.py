@@ -62,36 +62,84 @@ def smoothness_loss(predictions: torch.Tensor) -> torch.Tensor:
 class MemmapDataset(torch.utils.data.Dataset):
     """Dataset backed by memory-mapped numpy files (no full RAM load)."""
 
-    def __init__(self, X_path: Path, y_path: Path, max_samples: int = 0):
+    def __init__(self, X_path: Path, y_path: Path, max_samples: int = 0,
+                 soft_labels_path: Path | None = None):
         self.X = np.load(X_path, mmap_mode='r')
         self.y = np.load(y_path, mmap_mode='r')
         self.n = min(len(self.X), max_samples) if max_samples > 0 else len(self.X)
+        # Optional soft labels (IMM probabilities per timestep)
+        self.soft = None
+        if soft_labels_path and soft_labels_path.exists():
+            self.soft = np.load(soft_labels_path, mmap_mode='r')
 
     def __len__(self):
         return self.n
 
     def __getitem__(self, idx):
-        return (
-            torch.from_numpy(self.X[idx].copy()).float(),
-            torch.from_numpy(self.y[idx].copy()).long(),
-        )
+        x = torch.from_numpy(self.X[idx].copy()).float()
+        y = torch.from_numpy(self.y[idx].copy()).long()
+        if self.soft is not None:
+            s = torch.from_numpy(self.soft[idx].copy()).float()
+            return x, y, s
+        return x, y
 
 
-def load_data(data_dir: Path, batch_size: int = 256, max_train: int = 0) -> tuple:
+def _compute_sample_weights(y_path: Path, n: int) -> torch.Tensor:
+    """Compute per-sample weights for oversampling minority classes.
+
+    A sequence gets weight = max class weight across its timesteps.
+    This ensures sequences containing rare events get sampled more often.
+    """
+    y = np.load(y_path, mmap_mode='r')[:n]
+    # Per-class weight inversely proportional to frequency
+    flat = y.ravel()
+    counts = np.bincount(flat, minlength=4).astype(np.float64)
+    counts = np.maximum(counts, 1)
+    class_weights = 1.0 / counts
+    class_weights /= class_weights.sum()  # normalize
+
+    # Per-sequence weight = max class weight across timesteps
+    seq_weights = np.zeros(n)
+    for i in range(n):
+        labels_in_seq = y[i]
+        seq_weights[i] = max(class_weights[l] for l in set(labels_in_seq.ravel()))
+
+    return torch.from_numpy(seq_weights).double()
+
+
+def load_data(data_dir: Path, batch_size: int = 256, max_train: int = 0,
+              oversample: bool = False) -> tuple:
     """Load preprocessed train/val numpy arrays into DataLoaders.
 
     Uses memory-mapped files so large datasets don't need full RAM.
+    If oversample=True, uses WeightedRandomSampler to balance classes.
     """
+    # Check for soft labels
+    soft_path = data_dir / "soft_train.npy"
+
     train_ds = MemmapDataset(
-        data_dir / "X_train.npy", data_dir / "y_train.npy", max_samples=max_train
+        data_dir / "X_train.npy", data_dir / "y_train.npy",
+        max_samples=max_train,
+        soft_labels_path=soft_path if soft_path.exists() else None,
     )
     val_ds = MemmapDataset(
         data_dir / "X_val.npy", data_dir / "y_val.npy",
         max_samples=max_train // 8 if max_train > 0 else 0,
     )
 
+    sampler = None
+    shuffle = True
+    if oversample:
+        weights = _compute_sample_weights(data_dir / "y_train.npy", len(train_ds))
+        sampler = torch.utils.data.WeightedRandomSampler(
+            weights, num_samples=len(train_ds), replacement=True
+        )
+        shuffle = False  # sampler handles ordering
+        print("Oversampling enabled (WeightedRandomSampler)")
+
     train_dl = DataLoader(
-        train_ds, batch_size=batch_size, shuffle=True, drop_last=True, num_workers=2,
+        train_ds, batch_size=batch_size, shuffle=shuffle,
+        sampler=sampler, drop_last=True, num_workers=2,
     )
     val_dl = DataLoader(
         val_ds, batch_size=batch_size, shuffle=False, num_workers=2,
@@ -99,6 +147,8 @@ def load_data(data_dir: Path, batch_size: int = 256, max_train: int = 0) -> tupl
 
     print(f"Train: {len(train_ds):,} sequences, Val: {len(val_ds):,} sequences")
     print(f"Sequence shape: {train_ds.X.shape[1:]} (steps × features)")
+    if train_ds.soft is not None:
+        print("Soft labels: enabled (IMM probabilities)")
     return train_dl, val_dl
 
 
@@ -281,6 +331,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="Limit training samples (0 = all)")
     parser.add_argument("--resume", type=Path, default=None,
                         help="Resume from checkpoint (e.g. checkpoints/v07b/best_model.pt)")
+    parser.add_argument("--oversample", action="store_true",
+                        help="Oversample minority classes via WeightedRandomSampler")
     args = parser.parse_args(argv)
 
     # Device
@@ -296,7 +348,10 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Device: {device}")
 
     # Data
-    train_dl, val_dl = load_data(args.data, args.batch_size, max_train=args.max_train)
+    train_dl, val_dl = load_data(
+        args.data, args.batch_size, max_train=args.max_train,
+        oversample=args.oversample,
+    )
 
     # Detect n_features from data
     n_features = train_dl.dataset.X.shape[-1]

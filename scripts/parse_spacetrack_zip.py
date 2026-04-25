@@ -67,6 +67,15 @@ def parse_tle_lines(line1: str, line2: str) -> dict | None:
         else:
             bstar = 0.0
 
+        # Additional orbital elements
+        raan = float(line2[17:25].strip())          # Right Ascension of Ascending Node (deg)
+        argp = float(line2[34:42].strip())          # Argument of Perigee (deg)
+        mean_anomaly = float(line2[43:51].strip())  # Mean Anomaly (deg)
+
+        # n_dot: first derivative of mean motion (rev/day²), in line1[33:43]
+        n_dot_str = line1[33:43].strip()
+        n_dot = float(n_dot_str) if n_dot_str else 0.0
+
         # Altitude from mean motion
         import math
         MU = 3.986004418e14
@@ -87,6 +96,10 @@ def parse_tle_lines(line1: str, line2: str) -> dict | None:
             "inclination": inclination,
             "bstar": bstar,
             "alt_km": alt_km,
+            "raan": raan,
+            "argp": argp,
+            "mean_anomaly": mean_anomaly,
+            "n_dot": n_dot,
         }
     except (ValueError, IndexError):
         return None
@@ -150,13 +163,9 @@ def satellites_to_sequences(
 ) -> tuple[np.ndarray, list[int]]:
     """Convert per-satellite TLE records into fixed-length sequences.
 
-    Returns (X, norad_ids) where X shape is (N, seq_len, 7).
-    Features: [epoch_relative_hours, mean_motion, eccentricity, inclination,
-               bstar, alt_km, dt_hours]
-
-    dt_hours = real time since previous TLE (0 for first element in window).
-    This encodes update cadence — Space-Track increases frequency after events,
-    so a sudden drop in dt_hours is itself an anomaly signal.
+    Returns (X, norad_ids) where X shape is (N, seq_len, 11).
+    Features: [epoch_h, mean_motion, eccentricity, inclination, bstar, alt_km,
+               dt_hours, raan, argp, mean_anomaly, n_dot]
     """
     all_sequences = []
     all_norad_ids = []
@@ -165,13 +174,11 @@ def satellites_to_sequences(
         if len(records) < seq_len:
             continue
 
-        # Compute real epoch in hours from year + fractional day
         def _epoch_hours(r):
             return (r["epoch_year"] * 365.25 + r["epoch_day"]) * 24.0
 
-        # Build feature array with real epochs
         n = len(records)
-        arr = np.zeros((n, 7))
+        arr = np.zeros((n, 11))
         epoch_h = np.array([_epoch_hours(r) for r in records])
 
         for j, r in enumerate(records):
@@ -180,13 +187,16 @@ def satellites_to_sequences(
             arr[j, 3] = r["inclination"]
             arr[j, 4] = r["bstar"]
             arr[j, 5] = r["alt_km"]
+            arr[j, 7] = r.get("raan", 0.0)
+            arr[j, 8] = r.get("argp", 0.0)
+            arr[j, 9] = r.get("mean_anomaly", 0.0)
+            arr[j, 10] = r.get("n_dot", 0.0)
 
         arr[:, 0] = epoch_h
 
         # dt_hours: time since previous TLE (0 for first)
         arr[0, 6] = 0.0
         arr[1:, 6] = np.diff(epoch_h)
-        # Clip extreme gaps (>10 days = likely different tracking arc)
         arr[:, 6] = np.clip(arr[:, 6], 0.0, 240.0)
 
         # Sliding windows

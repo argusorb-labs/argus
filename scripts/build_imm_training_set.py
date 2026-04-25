@@ -83,7 +83,7 @@ def extract_satellite_features(
             records = records[-max_tles_per_sat:]
 
         n = len(records)
-        arr = np.zeros((n, 7), dtype=np.float64)
+        arr = np.zeros((n, 11), dtype=np.float64)
 
         def _epoch_hours(r):
             return (r["epoch_year"] * 365.25 + r["epoch_day"]) * 24.0
@@ -96,6 +96,10 @@ def extract_satellite_features(
             arr[j, 3] = r["inclination"]
             arr[j, 4] = r["bstar"]
             arr[j, 5] = r["alt_km"]
+            arr[j, 7] = r.get("raan", 0.0)
+            arr[j, 8] = r.get("argp", 0.0)
+            arr[j, 9] = r.get("mean_anomaly", 0.0)
+            arr[j, 10] = r.get("n_dot", 0.0)
 
         arr[:, 0] = epoch_h
 
@@ -118,10 +122,11 @@ def build_sequences(
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Build sliding-window sequences with IMM-UKF labels.
 
-    Returns: (X, y_imm, y_rv1) all as numpy arrays.
-    X: (N, seq_len, 7) normalized features
-    y_imm: (N, seq_len) IMM-UKF labels
+    Returns: (X, y_imm, y_rv1, soft_labels) all as numpy arrays.
+    X: (N, seq_len, 11) normalized features
+    y_imm: (N, seq_len) IMM-UKF hard labels
     y_rv1: (N, seq_len) rule_v1 labels (for comparison)
+    soft_labels: (N, seq_len, 3) IMM model probabilities [P(sk), P(man), P(dec)]
     """
     means = np.array(BULK_FEATURE_MEANS, dtype=np.float32)
     stds = np.maximum(np.array(BULK_FEATURE_STDS, dtype=np.float32), 1e-10)
@@ -129,6 +134,7 @@ def build_sequences(
     all_X = []
     all_y_imm = []
     all_y_rv1 = []
+    all_soft = []
 
     for nid, feat_arr in features.items():
         if nid not in imm_results:
@@ -137,39 +143,38 @@ def build_sequences(
         imm_recs = imm_results[nid]
         n_tles = len(feat_arr)
 
-        # IMM results should align with the feature array (same count, same order)
         if len(imm_recs) != n_tles:
-            # Length mismatch — align by taking the last min(n) records
             n = min(len(imm_recs), n_tles)
             feat_arr = feat_arr[-n:]
             imm_recs = imm_recs[-n:]
 
-        # Build label arrays
         y_imm_full = np.array([r["imm_ukf"] for r in imm_recs], dtype=np.int32)
         y_rv1_full = np.array([r["rule_v1"] for r in imm_recs], dtype=np.int32)
+        # Soft labels: IMM model probabilities [P(normal), P(maneuver), P(decay)]
+        soft_full = np.array([r["imm_probs"] for r in imm_recs], dtype=np.float32)
 
         if n_tles < seq_len:
             continue
 
-        # Sliding windows
         for start in range(0, n_tles - seq_len + 1, stride):
             window = feat_arr[start:start + seq_len].copy()
-            window[:, 0] -= window[0, 0]  # relative epoch
-            window[0, 6] = 0.0  # no dt for first element in window
+            window[:, 0] -= window[0, 0]
+            window[0, 6] = 0.0
 
-            # Clip B* and normalize
             window[:, 4] = np.clip(window[:, 4], -1.0, 1.0)
             window_norm = ((window - means) / stds).astype(np.float32)
 
             all_X.append(window_norm)
             all_y_imm.append(y_imm_full[start:start + seq_len])
             all_y_rv1.append(y_rv1_full[start:start + seq_len])
+            all_soft.append(soft_full[start:start + seq_len])
 
     X = np.array(all_X)
     y_imm = np.array(all_y_imm)
     y_rv1 = np.array(all_y_rv1)
+    soft = np.array(all_soft)
 
-    return X, y_imm, y_rv1
+    return X, y_imm, y_rv1, soft
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -202,7 +207,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # Build sequences
     print("\nBuilding sequences...")
-    X, y_imm, y_rv1 = build_sequences(
+    X, y_imm, y_rv1, soft = build_sequences(
         features, imm_results, seq_len=args.seq_len, stride=args.stride
     )
     print(f"  {len(X):,} sequences, shape {X.shape}")
@@ -222,9 +227,12 @@ def main(argv: list[str] | None = None) -> int:
     np.save(args.output / "X_test.npy", X[idx[n_train + n_val:]])
     np.save(args.output / "y_test.npy", y_imm[idx[n_train + n_val:]])
 
-    # Also save rule_v1 labels for comparison
+    # Also save rule_v1 labels and soft labels
     np.save(args.output / "y_train_rv1.npy", y_rv1[idx[:n_train]])
     np.save(args.output / "y_test_rv1.npy", y_rv1[idx[n_train + n_val:]])
+    np.save(args.output / "soft_train.npy", soft[idx[:n_train]])
+    np.save(args.output / "soft_val.npy", soft[idx[n_train:n_train + n_val]])
+    np.save(args.output / "soft_test.npy", soft[idx[n_train + n_val:]])
 
     # Summary
     from collections import Counter

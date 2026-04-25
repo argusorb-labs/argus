@@ -28,12 +28,17 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-# Normalization stats for ALL Space-Track satellites (not just Starlink).
-# 7 features: [epoch_h, mm, ecc, incl, bstar, alt_km, dt_hours]
-# Computed from 29k-sample across all years with real epochs.
-# B* is clipped to [-1, 1] before normalization.
-BULK_FEATURE_MEANS = [660.4, 12.1691, 0.0616, 74.0276, 0.0, 4224.95, 22.94]
-BULK_FEATURE_STDS = [2170.74, 4.2558, 0.1681, 27.2085, 0.01, 8856.03, 26.79]
+# Normalization stats for ALL Space-Track satellites.
+# 11 features: [epoch_h, mm, ecc, incl, bstar, alt_km, dt_hours,
+#               raan, argp, mean_anomaly, n_dot]
+# B* clipped to [-1, 1]. Angular features (raan/argp/ma) in degrees [0,360).
+# Stats will be recomputed after first parse; placeholders based on physics:
+# - raan/argp/mean_anomaly: uniform [0,360) → mean=180, std=104
+# - n_dot: typically tiny (1e-4 to 1e-7 rev/day²), mean≈0, std≈1e-4
+BULK_FEATURE_MEANS = [660.4, 12.17, 0.062, 74.03, 0.0, 4225.0, 22.94,
+                      180.0, 180.0, 180.0, 0.0]
+BULK_FEATURE_STDS = [2170.7, 4.256, 0.168, 27.21, 0.01, 8856.0, 26.79,
+                     104.0, 104.0, 104.0, 1e-4]
 
 # rule_v1 thresholds (same as orbital_analyzer.py)
 REENTRY_ALT_KM = 250.0
