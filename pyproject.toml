@@ -12,6 +12,7 @@ dependencies = [
     "certifi>=2024.0",
     "numpy>=1.26",
     "scipy>=1.14",
+    "matplotlib>=3.8",
 ]
 
 [project.optional-dependencies]
