@@ -306,6 +306,17 @@ fetch("/api/starlink/anomalies?limit=10")
   .then((d) => { if (d.anomalies) d.anomalies.forEach(addAnomaly); })
   .catch(() => {});
 
+// Pipeline stats
+fetch("/api/status")
+  .then((r) => r.json())
+  .then((d) => {
+    const tleEl = document.getElementById("tle-count");
+    const anomEl = document.getElementById("anomaly-count");
+    if (tleEl && d.tle_records) tleEl.textContent = d.tle_records.toLocaleString();
+    if (anomEl && d.anomalies) anomEl.textContent = d.anomalies.toLocaleString();
+  })
+  .catch(() => {});
+
 
 // ── Periodic refresh ──
 // The constellation endpoint is ~1.25 MB. The backend's position cache
