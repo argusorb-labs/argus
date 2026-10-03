@@ -1,0 +1,154 @@
+{
+  "calculation_source_commit": "83f3572e65343a54e98025d3ca9c8ede7676ab87",
+  "development_observations": [
+    "8 intended missing-module RED failures before implementation; independently repeated with captured exit 1 and module restored in finally",
+    "Added missing-Pc classification after a behavioral RED test; corrected anisotropic axis test to use asymmetric relative-velocity projection",
+    "Initial scoped style failures resolved by formatting and replacing two assigned lambdas; no dependency/linter configuration changes",
+    "Initial full suite 77 passed included existing node_model invalid escape DeprecationWarning; final suite 83 passed"
+  ],
+  "file_sha256": {
+    "scripts/build_epic49_packet.py": "bd0d75f665d37e3b9b2b4118cd62119cc17c0347464cc96e7b78f71054a892ee",
+    "scripts/epic49_reference.py": "48eb5fdb6b2e6ceadf3f44fcbf191de9dd385292dfeb30d545a7cf99f8c71c3a",
+    "services/demo_numerics.py": "bd54fbb3bf133e541fd250cd092243155b66a341f6f3ccadbc66aeefc698af58",
+    "tests/fixtures/epic49/README.md": "3e1221bd37fa344170ee51e7c7f5a30e7b89c64d5026cb56606708c6d0df793e",
+    "tests/fixtures/epic49/computed.json": "63c13a4110b465685f73e6334d2f60f1810fd078a2ebff4ac889e90740ad879e",
+    "tests/fixtures/epic49/independent.json": "d6795053e2e27034e5ef23d972954bdfd178049cccccfc114c356a85beefe0d2",
+    "tests/fixtures/epic49/inputs.json": "81fab9cc7c8e6415384aa9ea2d95918df00b384ab5c5d2512725eeac579f23d1",
+    "tests/fixtures/epic49/red.txt": "39303e2c2434042186319f4c6cfeb33050223d402e045ace4dbc0fb67a7fe6da",
+    "tests/test_demo_numerics.py": "54d7f19a113b97c4e85843667fb94f0a15afce36f4bf80bd26e266eef8827b70"
+  },
+  "freeze_command": "PYTHONPATH=. /Users/yong/projects/substratum/argus/.venv/bin/python scripts/build_epic49_packet.py --freeze-from-archive /Users/yong/projects/substratum/argus/data/spacetrack_raw_tle/tle2019.txt",
+  "generation_reference_runs": [
+    {
+      "command": "PYTHONPATH=. /Users/yong/projects/substratum/argus/.venv/bin/python scripts/build_epic49_packet.py --output tests/fixtures/epic49/computed.json --reference-output tests/fixtures/epic49/independent.json",
+      "elapsed_s": 13.52965791686438,
+      "exit_code": 0,
+      "historical_geometry": {
+        "boundary_minimum": false,
+        "distance_m": 2592.260911893018,
+        "relative_speed_mps": 14403.873351350843,
+        "time_s": 41.6619999878353
+      },
+      "results_sha256": "63c13a4110b465685f73e6334d2f60f1810fd078a2ebff4ac889e90740ad879e"
+    },
+    {
+      "command": "PYTHONPATH=. /Users/yong/projects/substratum/argus/.venv/bin/python scripts/build_epic49_packet.py --output /private/tmp/epic49-run2.json --reference-output /private/tmp/epic49-reference2.json",
+      "elapsed_s": 13.401141709182411,
+      "exit_code": 0,
+      "historical_geometry": {
+        "boundary_minimum": false,
+        "distance_m": 2592.260911893018,
+        "relative_speed_mps": 14403.873351350843,
+        "time_s": 41.6619999878353
+      },
+      "results_sha256": "63c13a4110b465685f73e6334d2f60f1810fd078a2ebff4ac889e90740ad879e"
+    }
+  ],
+  "limitations": [
+    "Retrospective TLE epochs do not verify contemporaneous publication availability",
+    "Historical Pc not evaluated: covariance missing; real radii unverified",
+    "Constructed catalog contains one synthetic crossing trajectory, separate from real catalog",
+    "Finite dated subset and two-hour horizon provide no global safety assurance",
+    "Assumed TCA covariance; no calibration, dynamics transport, drag or flight accuracy",
+    "All recommendations are drafts; no spacecraft commands"
+  ],
+  "models": {
+    "J2": 0.001082616,
+    "covariance": "independent RIC position assumptions at each TCA; no OD/transport",
+    "earth_radius_m": 6378135.0,
+    "mu_m3_s2": 398600800000000.0,
+    "production_integrator": "RK4 5s + cubic Hermite dense output",
+    "reference_integrator": "DOP853 rtol 2e-13, atol 1e-7, max_step20s",
+    "state_model": "frozen TEME-axis two-body/J2; no drag or axis precession"
+  },
+  "owner": "Codex",
+  "red": {
+    "command": [
+      "/Users/yong/projects/substratum/argus/.venv/bin/python",
+      "-m",
+      "pytest",
+      "tests/test_demo_numerics.py::test_si_conversion_and_ric_axes",
+      "tests/test_demo_numerics.py::test_covariance_missing_invalid_and_low_speed_abstain",
+      "tests/test_demo_numerics.py::test_centered_isotropic_probability_and_rotation",
+      "tests/test_demo_numerics.py::test_continuous_minimum_catches_between_sample_event",
+      "tests/test_demo_numerics.py::test_pinned_archive_geometry",
+      "tests/test_demo_numerics.py::test_integrator_independent_reference_and_convergence",
+      "tests/test_demo_numerics.py::test_candidate_physics_invariant_to_names_and_order_and_sensitive",
+      "tests/test_demo_numerics.py::test_constructed_hazard_follows_states_and_bounded_scope",
+      "-q"
+    ],
+    "elapsed_s": 0.2633118750527501,
+    "exit_code": 1,
+    "expected_cause": "services.demo_numerics absent; no unrelated collection/dependency failure",
+    "tests_failed": 8
+  },
+  "reproducibility": {
+    "computed_bytes_equal": true,
+    "independent_bytes_equal": true,
+    "reference_and_computed_hashes": {
+      "computed": "63c13a4110b465685f73e6334d2f60f1810fd078a2ebff4ac889e90740ad879e",
+      "independent": "d6795053e2e27034e5ef23d972954bdfd178049cccccfc114c356a85beefe0d2",
+      "inputs": "81fab9cc7c8e6415384aa9ea2d95918df00b384ab5c5d2512725eeac579f23d1"
+    }
+  },
+  "reviewer": "actual Grok (pending; parent dispatches after physical executor terminates)",
+  "source_base_commit": "d7d0fbe10e8bc7619d83485903709d7b2060caf6",
+  "source_repo": "argusorb-labs/argus",
+  "task": "T-388-A1",
+  "validation": {
+    "baseline_command": "PYTHONPATH=. /Users/yong/projects/substratum/argus/.venv/bin/python -m pytest tests/test_demo_scenarios.py -q",
+    "baseline_result": "8 passed in 0.02s; exit 0",
+    "diff_check": "git diff --check: exit 0",
+    "format_result": "4 files already formatted; exit 0",
+    "full_suite_command": "PYTHONPATH=. /Users/yong/projects/substratum/argus/.venv/bin/python -m pytest -q",
+    "full_suite_result": "83 passed in 7.35s; exit 0",
+    "lint_result": "All checks passed; exit 0",
+    "max_isolated_quadrature_abs_error": 1.0842021724855044e-18,
+    "measured_max_errors": {
+      "distance_m": 0.0003540713805705309,
+      "pc_absolute": 2.2960281462550136e-11,
+      "position_m": 0.0012994712869606579,
+      "time_s": 1.2440506907296367e-05
+    },
+    "new_behavioral_tests": 14,
+    "scoped_format_command": "/Users/yong/projects/substratum/argonavis/.venv/bin/ruff format --check services/demo_numerics.py scripts/build_epic49_packet.py scripts/epic49_reference.py tests/test_demo_numerics.py",
+    "scoped_lint_command": "/Users/yong/projects/substratum/argonavis/.venv/bin/ruff check services/demo_numerics.py scripts/build_epic49_packet.py scripts/epic49_reference.py tests/test_demo_numerics.py",
+    "sensitivity": [
+      {
+        "baseline_distance_m": 2963.2028946134074,
+        "changed_distance_m": 5956.984567614589,
+        "distance_change_m": 2993.7816730011814,
+        "perturbation": "magnitude"
+      },
+      {
+        "baseline_distance_m": 2963.2028946134074,
+        "changed_distance_m": 2615.038003571709,
+        "distance_change_m": -348.1648910416984,
+        "perturbation": "time"
+      },
+      {
+        "baseline_distance_m": 2963.2028946134074,
+        "changed_distance_m": 2158.2686479404815,
+        "distance_change_m": -804.9342466729258,
+        "perturbation": "state"
+      },
+      {
+        "perturbation": "renamed_reordered",
+        "physical_results_identical": true
+      }
+    ],
+    "tolerances": {
+      "distance_m": 1,
+      "pc_abs": 1e-12,
+      "pc_rel": 1e-05,
+      "position_m": 1,
+      "time_s": 0.01
+    }
+  },
+  "versions": {
+    "numpy": "2.4.4",
+    "python": "3.11.15",
+    "scipy": "1.17.1",
+    "sgp4": "2.25"
+  }
+}
