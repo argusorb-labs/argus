@@ -1,0 +1,2958 @@
+{
+  "alternate_geometry": {
+    "boundary_minimum": false,
+    "distance_m": 2880.302343144291,
+    "relative_speed_mps": 14403.90277152106,
+    "time_s": 41.614031704066456
+  },
+  "benchmark": {
+    "options": [
+      {
+        "delta_v_mps": 0.0,
+        "evaluation_status": "rejected_assumed_constraints",
+        "id": "no-burn",
+        "primary_encounter": {
+          "alert": true,
+          "boundary_minimum": false,
+          "distance_m": 100.00000268965992,
+          "object_id": "constructed-secondary",
+          "probability": {
+            "covariance_mode": "assumed_at_tca",
+            "hbr_m": 8.0,
+            "linear_encounter_duration_s": 0.06360941056211279,
+            "log_pc": -7.146257033631479,
+            "pc": 0.0007878073059303572,
+            "status": "evaluated_assumed",
+            "underflow": false
+          },
+          "rejected": true,
+          "relative_speed_mps": 10671.69758768772,
+          "time_s": 3599.9999999112842
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": true,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 3799.3810292623684,
+            "object_id": "synthetic-crossing",
+            "probability": {
+              "covariance_mode": "assumed_at_tca",
+              "hbr_m": 5.0,
+              "linear_encounter_duration_s": 0.0632408951960822,
+              "log_pc": -152.2248988456517,
+              "pc": 7.754725387290583e-67,
+              "status": "evaluated_assumed",
+              "underflow": false
+            },
+            "rejected": false,
+            "relative_speed_mps": 10686.445241005365,
+            "time_s": 5399.6441747230665
+          }
+        ]
+      },
+      {
+        "delta_v_mps": 0.3,
+        "evaluation_status": "rejected_assumed_constraints",
+        "id": "along-plus",
+        "primary_encounter": {
+          "alert": false,
+          "boundary_minimum": false,
+          "distance_m": 2963.2028946134074,
+          "object_id": "constructed-secondary",
+          "probability": {
+            "covariance_mode": "assumed_at_tca",
+            "hbr_m": 8.0,
+            "linear_encounter_duration_s": 0.06361253815311158,
+            "log_pc": -105.93425129028188,
+            "pc": 9.84780000447544e-47,
+            "status": "evaluated_assumed",
+            "underflow": false
+          },
+          "rejected": false,
+          "relative_speed_mps": 10671.172641007008,
+          "time_s": 3600.2654800693244
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": true,
+        "secondary_encounters": [
+          {
+            "alert": true,
+            "boundary_minimum": false,
+            "distance_m": 2.5908941719211544e-06,
+            "object_id": "synthetic-crossing",
+            "probability": {
+              "covariance_mode": "assumed_at_tca",
+              "hbr_m": 5.0,
+              "linear_encounter_duration_s": 0.06323993255664491,
+              "log_pc": -7.83612363941709,
+              "pc": 0.00039519800530159,
+              "status": "evaluated_assumed",
+              "underflow": false
+            },
+            "rejected": true,
+            "relative_speed_mps": 10686.608380623982,
+            "time_s": 5399.999999880136
+          }
+        ]
+      },
+      {
+        "delta_v_mps": 0.3,
+        "evaluation_status": "eligible_for_draft_within_assumed_scope",
+        "id": "along-minus",
+        "primary_encounter": {
+          "alert": false,
+          "boundary_minimum": false,
+          "distance_m": 3027.194359776649,
+          "object_id": "constructed-secondary",
+          "probability": {
+            "covariance_mode": "assumed_at_tca",
+            "hbr_m": 8.0,
+            "linear_encounter_duration_s": 0.0636062765078829,
+            "log_pc": -115.54960104116871,
+            "pc": 6.568192638176313e-51,
+            "status": "evaluated_assumed",
+            "underflow": false
+          },
+          "rejected": false,
+          "relative_speed_mps": 10672.223152085267,
+          "time_s": 3599.734470753752
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": false,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 7597.758554741728,
+            "object_id": "synthetic-crossing",
+            "probability": {
+              "covariance_mode": "assumed_at_tca",
+              "hbr_m": 5.0,
+              "linear_encounter_duration_s": 0.06324184459583551,
+              "log_pc": -585.2388805487398,
+              "pc": 6.823129003056934e-255,
+              "status": "evaluated_assumed",
+              "underflow": false
+            },
+            "rejected": false,
+            "relative_speed_mps": 10686.283403336534,
+            "time_s": 5399.288448679063
+          }
+        ]
+      },
+      {
+        "delta_v_mps": 0.3,
+        "evaluation_status": "rejected_assumed_constraints",
+        "id": "cross-plus",
+        "primary_encounter": {
+          "alert": true,
+          "boundary_minimum": false,
+          "distance_m": 167.7288355424013,
+          "object_id": "constructed-secondary",
+          "probability": {
+            "covariance_mode": "assumed_at_tca",
+            "hbr_m": 8.0,
+            "linear_encounter_duration_s": 0.06360794973570658,
+            "log_pc": -7.327465630801164,
+            "pc": 0.000657237159795714,
+            "status": "evaluated_assumed",
+            "underflow": false
+          },
+          "rejected": true,
+          "relative_speed_mps": 10671.851441332432,
+          "time_s": 3599.9873912743146
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": true,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 3716.026184705734,
+            "object_id": "synthetic-crossing",
+            "probability": {
+              "covariance_mode": "assumed_at_tca",
+              "hbr_m": 5.0,
+              "linear_encounter_duration_s": 0.06324270687161573,
+              "log_pc": -145.95812393445806,
+              "pc": 4.0850011799479245e-64,
+              "status": "evaluated_assumed",
+              "underflow": false
+            },
+            "rejected": false,
+            "relative_speed_mps": 10686.253334626379,
+            "time_s": 5399.63638865455
+          }
+        ]
+      },
+      {
+        "delta_v_mps": 0.3,
+        "evaluation_status": "rejected_assumed_constraints",
+        "id": "cross-minus",
+        "primary_encounter": {
+          "alert": true,
+          "boundary_minimum": false,
+          "distance_m": 167.63849037689255,
+          "object_id": "constructed-secondary",
+          "probability": {
+            "covariance_mode": "assumed_at_tca",
+            "hbr_m": 8.0,
+            "linear_encounter_duration_s": 0.06361087154470305,
+            "log_pc": -7.327173769563674,
+            "pc": 0.0006574290098419305,
+            "status": "evaluated_assumed",
+            "underflow": false
+          },
+          "rejected": true,
+          "relative_speed_mps": 10671.543712942112,
+          "time_s": 3600.012619459259
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": true,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 3882.5853366968495,
+            "object_id": "synthetic-crossing",
+            "probability": {
+              "covariance_mode": "assumed_at_tca",
+              "hbr_m": 5.0,
+              "linear_encounter_duration_s": 0.06323908355364491,
+              "log_pc": -158.61919762040688,
+              "pc": 1.2958590006054673e-69,
+              "status": "evaluated_assumed",
+              "underflow": false
+            },
+            "rejected": false,
+            "relative_speed_mps": 10686.63715113963,
+            "time_s": 5399.651974647676
+          }
+        ]
+      }
+    ],
+    "screen_scope": {
+      "catalog_objects": 1,
+      "conjunctions_inside_volume": 1,
+      "global_safety_claim": false,
+      "horizon_s": 7200,
+      "meaning": "bounded trajectory minima; missing Pc remains not evaluated",
+      "radius_m": 50000
+    }
+  },
+  "historical_dynamics": {
+    "options": [
+      {
+        "delta_v_mps": 0.0,
+        "evaluation_status": "abstain_missing_primary_probability",
+        "id": "no-burn",
+        "primary_encounter": {
+          "alert": false,
+          "boundary_minimum": false,
+          "distance_m": 2745.0696952264657,
+          "object_id": "44278",
+          "probability": {
+            "covariance_mode": "missing",
+            "hbr_m": 8.0,
+            "log_pc": null,
+            "pc": null,
+            "status": "missing_covariance"
+          },
+          "rejected": false,
+          "relative_speed_mps": 14403.879842091463,
+          "time_s": 3641.6791907266847
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": false,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 64814.05756780455,
+            "object_id": "42711",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 5936.18808365677,
+            "time_s": 6893.091286072048
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 256874.65002819928,
+            "object_id": "32477",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11544.84960634505,
+            "time_s": 857.1478464668339
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 306183.4434491282,
+            "object_id": "44473",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12979.543519378962,
+            "time_s": 5759.347324592468
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 430783.3223659756,
+            "object_id": "44179",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12827.317281235406,
+            "time_s": 3067.201347654379
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 437017.227155051,
+            "object_id": "7004",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15120.299495901918,
+            "time_s": 2506.4313417569683
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 476300.0638859445,
+            "object_id": "44460",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15074.198557729047,
+            "time_s": 3346.6450137374313
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 540919.8798525213,
+            "object_id": "16623",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10688.507743473432,
+            "time_s": 2474.5316774670273
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 658462.4708545916,
+            "object_id": "44117",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15144.097969757875,
+            "time_s": 3065.913627814591
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 698117.355836383,
+            "object_id": "44214",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15183.29220283861,
+            "time_s": 6819.6518066646395
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 728393.7592667288,
+            "object_id": "44470",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15175.357420580367,
+            "time_s": 3602.1826122636053
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 747132.6008601821,
+            "object_id": "89067",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 2148.4504343733965,
+            "time_s": 1345.02067290931
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 837145.2473113255,
+            "object_id": "44467",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14573.945547282767,
+            "time_s": 5899.449284521273
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 879462.6596947717,
+            "object_id": "44164",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12666.236311601566,
+            "time_s": 5643.041129489405
+          },
+          {
+            "alert": false,
+            "boundary_minimum": true,
+            "distance_m": 927453.2792371237,
+            "object_id": "44210",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "boundary_minimum_inapplicable"
+            },
+            "rejected": false,
+            "relative_speed_mps": 1653.2279058423155,
+            "time_s": 0.0
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1194578.50840674,
+            "object_id": "44196",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14608.631476866061,
+            "time_s": 5621.937097177441
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1259225.5602052417,
+            "object_id": "41635",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15095.29820025159,
+            "time_s": 5526.828105271129
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1340374.3504630534,
+            "object_id": "44469",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14397.225053878745,
+            "time_s": 5705.868130386592
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1355564.0479496852,
+            "object_id": "44354",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12974.305499352437,
+            "time_s": 7107.672855373699
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1442576.7656762302,
+            "object_id": "44466",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15404.897859285333,
+            "time_s": 5416.195608863408
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1485473.500113355,
+            "object_id": "44347",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13000.600923615953,
+            "time_s": 7090.254537468149
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1487275.4263852334,
+            "object_id": "44203",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13266.940333291883,
+            "time_s": 3217.8171886113737
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1498032.9174368477,
+            "object_id": "44445",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14902.46776301129,
+            "time_s": 1422.719855012591
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1617888.9286943497,
+            "object_id": "44381",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15381.917215057161,
+            "time_s": 2001.8999673458236
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1628105.0775979813,
+            "object_id": "44147",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14102.496943102358,
+            "time_s": 5610.110905028949
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1743811.2379990746,
+            "object_id": "38744",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12344.309303278036,
+            "time_s": 2447.527069622716
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1782983.3641036411,
+            "object_id": "44157",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14388.875644160076,
+            "time_s": 5561.263251247274
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1856948.0549631338,
+            "object_id": "42798",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10217.836179157479,
+            "time_s": 5341.6925834251615
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1921041.8579004798,
+            "object_id": "44154",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14406.857449149114,
+            "time_s": 798.9017806198492
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1964914.630729075,
+            "object_id": "87021",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 4411.878857426343,
+            "time_s": 7097.200022964408
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2128518.3544144733,
+            "object_id": "44319",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11963.97059790247,
+            "time_s": 4706.081291259097
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2201037.5325898286,
+            "object_id": "614",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14866.836787422431,
+            "time_s": 5210.894751364547
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2223371.6511137807,
+            "object_id": "44377",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15343.56149273594,
+            "time_s": 4633.97316550169
+          }
+        ]
+      },
+      {
+        "delta_v_mps": 0.3,
+        "evaluation_status": "abstain_missing_primary_probability",
+        "id": "along-plus",
+        "primary_encounter": {
+          "alert": false,
+          "boundary_minimum": false,
+          "distance_m": 4337.137187454839,
+          "object_id": "44278",
+          "probability": {
+            "covariance_mode": "missing",
+            "hbr_m": 8.0,
+            "log_pc": null,
+            "pc": null,
+            "status": "missing_covariance"
+          },
+          "rejected": false,
+          "relative_speed_mps": 14403.323813657074,
+          "time_s": 3641.949873017857
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": false,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 60034.49389984087,
+            "object_id": "42711",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 5935.978393831961,
+            "time_s": 6893.427754351784
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 256808.87173195012,
+            "object_id": "32477",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11544.878454906897,
+            "time_s": 857.1412226861437
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 306710.6210933469,
+            "object_id": "44473",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12979.828828430487,
+            "time_s": 5759.676172405163
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 428927.23412787286,
+            "object_id": "44179",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12826.505527530127,
+            "time_s": 3067.4128583478414
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 436405.3888062567,
+            "object_id": "7004",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15119.423622609496,
+            "time_s": 2506.564252913996
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 475463.3022548934,
+            "object_id": "44460",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15073.412127491112,
+            "time_s": 3346.8824114452677
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 539621.1720443259,
+            "object_id": "16623",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10687.854794588793,
+            "time_s": 2474.6754000908454
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 659276.4378408893,
+            "object_id": "44117",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15143.265266468936,
+            "time_s": 3066.115071790523
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 698319.625107749,
+            "object_id": "44214",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15183.067194146088,
+            "time_s": 6819.992580883403
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 727366.8827943356,
+            "object_id": "44470",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15174.865159036179,
+            "time_s": 3602.4524669645557
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 746629.7166395163,
+            "object_id": "89067",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 2148.2579175547216,
+            "time_s": 1345.1852998387546
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 837571.595655171,
+            "object_id": "44467",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14574.239652916525,
+            "time_s": 5899.7889528344185
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 882185.153591758,
+            "object_id": "44164",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12666.818725361221,
+            "time_s": 5643.360356055641
+          },
+          {
+            "alert": false,
+            "boundary_minimum": true,
+            "distance_m": 927453.2792371237,
+            "object_id": "44210",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "boundary_minimum_inapplicable"
+            },
+            "rejected": false,
+            "relative_speed_mps": 1653.2868315554458,
+            "time_s": 0.0
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1196029.2905305238,
+            "object_id": "44196",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14609.150985403343,
+            "time_s": 5622.257913757952
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1260086.4075733726,
+            "object_id": "41635",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15095.719000148238,
+            "time_s": 5527.1497125976375
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1341144.3701522779,
+            "object_id": "44469",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14397.648148841994,
+            "time_s": 5706.21585156812
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1357835.6626649336,
+            "object_id": "44354",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12974.281303168995,
+            "time_s": 7108.048948079908
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1442861.0841607326,
+            "object_id": "44466",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15405.310905376518,
+            "time_s": 5416.516110590755
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1487804.3821508132,
+            "object_id": "44347",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13000.622463466822,
+            "time_s": 7090.627711497646
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1485588.459663866,
+            "object_id": "44203",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13265.964368521314,
+            "time_s": 3218.0542916396084
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1497858.7676477537,
+            "object_id": "44445",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14902.108945595302,
+            "time_s": 1422.738885458475
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1617799.956183859,
+            "object_id": "44381",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15381.150211929144,
+            "time_s": 2001.9712634741475
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1629264.566154823,
+            "object_id": "44147",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14103.011955397053,
+            "time_s": 5610.461615169305
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1742732.026722735,
+            "object_id": "38744",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12343.311183344545,
+            "time_s": 2447.665809513549
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1783917.8012727576,
+            "object_id": "44157",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14389.365476480876,
+            "time_s": 5561.612867159943
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1860484.2062670428,
+            "object_id": "42798",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10218.832262278218,
+            "time_s": 5342.043452441708
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1921017.747341465,
+            "object_id": "44154",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14406.883102714932,
+            "time_s": 798.8964327255335
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1960804.1652034665,
+            "object_id": "87021",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 4410.985264476022,
+            "time_s": 7098.1717630673775
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2131777.508333389,
+            "object_id": "44319",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11964.772070859852,
+            "time_s": 4706.400667898867
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2202476.942647243,
+            "object_id": "614",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14867.252071040728,
+            "time_s": 5211.218508861699
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2224250.533874959,
+            "object_id": "44377",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15343.751504222666,
+            "time_s": 4634.2942285089475
+          }
+        ]
+      },
+      {
+        "delta_v_mps": 0.3,
+        "evaluation_status": "abstain_missing_primary_probability",
+        "id": "along-minus",
+        "primary_encounter": {
+          "alert": false,
+          "boundary_minimum": false,
+          "distance_m": 1400.6393417460997,
+          "object_id": "44278",
+          "probability": {
+            "covariance_mode": "missing",
+            "hbr_m": 8.0,
+            "log_pc": null,
+            "pc": null,
+            "status": "missing_covariance"
+          },
+          "rejected": false,
+          "relative_speed_mps": 14404.435781983815,
+          "time_s": 3641.408521120721
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": false,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 69596.12856204121,
+            "object_id": "42711",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 5936.404172143836,
+            "time_s": 6892.754575709276
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 255900.07443399372,
+            "object_id": "32477",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11517.537706073974,
+            "time_s": 6305.016079357362
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 305675.3470254666,
+            "object_id": "44473",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12979.259009283836,
+            "time_s": 5759.0185644478815
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 432639.91887143254,
+            "object_id": "44179",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12828.129266388032,
+            "time_s": 3066.9898185261236
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 437630.6537639505,
+            "object_id": "7004",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15121.175468611933,
+            "time_s": 2506.298422510286
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 477138.5943440537,
+            "object_id": "44460",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15074.984872003984,
+            "time_s": 3346.407621936043
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 542220.3271700714,
+            "object_id": "16623",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10689.161021207734,
+            "time_s": 2474.3879179060123
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 657649.9899563831,
+            "object_id": "44117",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15144.93063611948,
+            "time_s": 3065.7121824988485
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 697915.8492337527,
+            "object_id": "44214",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15183.517739566947,
+            "time_s": 6819.311064427076
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 729420.8754100881,
+            "object_id": "44470",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15175.849463269647,
+            "time_s": 3601.912769835836
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 747635.3373712694,
+            "object_id": "89067",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 2148.6429731524413,
+            "time_s": 1344.8560277338447
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 836719.9445939072,
+            "object_id": "44467",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14573.65178157838,
+            "time_s": 5899.109699756559
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 876741.013147353,
+            "object_id": "44164",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12665.654849986771,
+            "time_s": 5642.721989299516
+          },
+          {
+            "alert": false,
+            "boundary_minimum": true,
+            "distance_m": 927453.2792371237,
+            "object_id": "44210",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "boundary_minimum_inapplicable"
+            },
+            "rejected": false,
+            "relative_speed_mps": 1653.1690324697263,
+            "time_s": 0.0
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1193128.047314493,
+            "object_id": "44196",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14608.112292344966,
+            "time_s": 5621.616364525409
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1258364.801206014,
+            "object_id": "41635",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15094.877524003057,
+            "time_s": 5526.506584249515
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1339604.875408756,
+            "object_id": "44469",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14396.80224114032,
+            "time_s": 5705.520496806348
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1353294.8452315992,
+            "object_id": "44354",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12974.3309370377,
+            "time_s": 7107.296755477026
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1442292.342926105,
+            "object_id": "44466",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15404.484798395824,
+            "time_s": 5415.875190885111
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1483144.5754213936,
+            "object_id": "44347",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13000.580609415543,
+            "time_s": 7089.8813576509265
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1488962.4306190796,
+            "object_id": "44203",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13267.916439512011,
+            "time_s": 3217.580080657093
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1498207.2467815229,
+            "object_id": "44445",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14902.826650005709,
+            "time_s": 1422.700820290657
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1617978.3019884508,
+            "object_id": "44381",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15382.684330946173,
+            "time_s": 2001.828664749115
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1626946.1580483573,
+            "object_id": "44147",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14101.982248585027,
+            "time_s": 5609.760283432994
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1744890.7387103087,
+            "object_id": "38744",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12345.307668483803,
+            "time_s": 2447.388310676493
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1782049.1942982941,
+            "object_id": "44157",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14388.386030899394,
+            "time_s": 5560.913724343735
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1853412.8010987584,
+            "object_id": "42798",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10216.84168840532,
+            "time_s": 5341.341817273309
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1921065.9935515407,
+            "object_id": "44154",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14406.831813375624,
+            "time_s": 798.9071276225909
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1969024.3503858428,
+            "object_id": "87021",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 4412.774975021376,
+            "time_s": 7096.227745784581
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2125259.7290276345,
+            "object_id": "44319",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11963.16988915651,
+            "time_s": 4705.761981194744
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2199598.2223062734,
+            "object_id": "614",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14866.421505211458,
+            "time_s": 5210.571084688342
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2222492.7223036303,
+            "object_id": "44377",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15343.37114414189,
+            "time_s": 4633.652169955239
+          }
+        ]
+      },
+      {
+        "delta_v_mps": 0.3,
+        "evaluation_status": "abstain_missing_primary_probability",
+        "id": "cross-plus",
+        "primary_encounter": {
+          "alert": false,
+          "boundary_minimum": false,
+          "distance_m": 2533.672111864664,
+          "object_id": "44278",
+          "probability": {
+            "covariance_mode": "missing",
+            "hbr_m": 8.0,
+            "log_pc": null,
+            "pc": null,
+            "status": "missing_covariance"
+          },
+          "rejected": false,
+          "relative_speed_mps": 14403.827020813886,
+          "time_s": 3641.6848210460344
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": false,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 64913.94867274313,
+            "object_id": "42711",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 5936.215006670591,
+            "time_s": 6893.131587693898
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 256712.1425279804,
+            "object_id": "32477",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11544.740240756862,
+            "time_s": 857.1605786444718
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 306203.08103918924,
+            "object_id": "44473",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12979.68714877283,
+            "time_s": 5759.343616741116
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 430700.36109902983,
+            "object_id": "44179",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12827.467668624206,
+            "time_s": 3067.197672004371
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 437076.83254598564,
+            "object_id": "7004",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15120.33938972636,
+            "time_s": 2506.432430003292
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 476135.68018887535,
+            "object_id": "44460",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15074.255910013913,
+            "time_s": 3346.6425721448386
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 540933.4288132794,
+            "object_id": "16623",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10688.70346111402,
+            "time_s": 2474.5365669999037
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 658559.2725623035,
+            "object_id": "44117",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15144.16568822046,
+            "time_s": 3065.911225243509
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 698364.6565884692,
+            "object_id": "44214",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15183.291974360614,
+            "time_s": 6819.650447094863
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 728188.7312234389,
+            "object_id": "44470",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15175.387494536162,
+            "time_s": 3602.1803217636893
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 747195.6300089629,
+            "object_id": "89067",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 2148.488396202838,
+            "time_s": 1345.1076784244233
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 837219.6716223955,
+            "object_id": "44467",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14573.996375022954,
+            "time_s": 5899.446966750706
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 879510.4573558712,
+            "object_id": "44164",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12666.401966537836,
+            "time_s": 5643.0371866289015
+          },
+          {
+            "alert": false,
+            "boundary_minimum": true,
+            "distance_m": 927453.2792371237,
+            "object_id": "44210",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "boundary_minimum_inapplicable"
+            },
+            "rejected": false,
+            "relative_speed_mps": 1653.0018573710854,
+            "time_s": 0.0
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1194627.8582427723,
+            "object_id": "44196",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14608.720288823064,
+            "time_s": 5621.934429658104
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1259202.3635425705,
+            "object_id": "41635",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15095.245221028872,
+            "time_s": 5526.830019009584
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1340436.2944570228,
+            "object_id": "44469",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14397.287716787812,
+            "time_s": 5705.865466769696
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1355356.3896223623,
+            "object_id": "44354",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12974.354094464075,
+            "time_s": 7107.681432100449
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1442567.1327473556,
+            "object_id": "44466",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15404.915004736304,
+            "time_s": 5416.193797519119
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1485261.4891562045,
+            "object_id": "44347",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13000.646433597733,
+            "time_s": 7090.263106653936
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1487153.9033137425,
+            "object_id": "44203",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13267.064822073806,
+            "time_s": 3217.813753867344
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1497784.6668535757,
+            "object_id": "44445",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14902.465594559908,
+            "time_s": 1422.7179542290614
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1617697.487045878,
+            "object_id": "44381",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15381.91048977605,
+            "time_s": 2001.8981444963304
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1628147.3810088548,
+            "object_id": "44147",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14102.581747951033,
+            "time_s": 5610.1077909847045
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1743875.205903715,
+            "object_id": "38744",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12344.480511170039,
+            "time_s": 2447.533739932649
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1783014.3672382142,
+            "object_id": "44157",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14388.941700342202,
+            "time_s": 5561.260354161813
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1856970.2459898447,
+            "object_id": "42798",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10217.623595396328,
+            "time_s": 5341.694101833372
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1920847.3555731445,
+            "object_id": "44154",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14406.905977533377,
+            "time_s": 798.8994396266594
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1965036.126807278,
+            "object_id": "87021",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 4411.998721031979,
+            "time_s": 7097.251713821326
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2128371.8613775824,
+            "object_id": "44319",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11964.094459184978,
+            "time_s": 4706.089802075887
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2201104.5043734726,
+            "object_id": "614",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14866.753388527723,
+            "time_s": 5210.896158679642
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2223574.9499364286,
+            "object_id": "44377",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15343.53206119964,
+            "time_s": 4633.972484450143
+          }
+        ]
+      },
+      {
+        "delta_v_mps": 0.3,
+        "evaluation_status": "abstain_missing_primary_probability",
+        "id": "cross-minus",
+        "primary_encounter": {
+          "alert": false,
+          "boundary_minimum": false,
+          "distance_m": 2956.566548406395,
+          "object_id": "44278",
+          "probability": {
+            "covariance_mode": "missing",
+            "hbr_m": 8.0,
+            "log_pc": null,
+            "pc": null,
+            "status": "missing_covariance"
+          },
+          "rejected": false,
+          "relative_speed_mps": 14403.932641065923,
+          "time_s": 3641.6735709613636
+        },
+        "recommendation_status": "DRAFT_PENDING_HUMAN_APPROVAL",
+        "rejected": false,
+        "secondary_encounters": [
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 64713.98083930023,
+            "object_id": "42711",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 5936.161165218468,
+            "time_s": 6893.0509971728325
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 257037.15492982542,
+            "object_id": "32477",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11544.958974148485,
+            "time_s": 857.1351142620186
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 306163.84602243203,
+            "object_id": "44473",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12979.399896946159,
+            "time_s": 5759.3510452843
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 430866.2121217939,
+            "object_id": "44179",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12827.166858545474,
+            "time_s": 3067.205031601785
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 436957.59915582347,
+            "object_id": "7004",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15120.25956270854,
+            "time_s": 2506.4302586702133
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 476464.41517228255,
+            "object_id": "44460",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15074.141171863068,
+            "time_s": 3346.6474645733865
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 540906.2861856563,
+            "object_id": "16623",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10688.311997106406,
+            "time_s": 2474.5267933631294
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 658365.7005005687,
+            "object_id": "44117",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15144.030214198121,
+            "time_s": 3065.9160382303976
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 697870.074834443,
+            "object_id": "44214",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15183.292422606999,
+            "time_s": 6819.653179471858
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 728598.7563213342,
+            "object_id": "44470",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15175.32732584732,
+            "time_s": 3602.1849132699126
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 747069.5884074767,
+            "object_id": "89067",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 2148.4125054332167,
+            "time_s": 1344.9336713818852
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 837070.8540683102,
+            "object_id": "44467",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14573.894726840323,
+            "time_s": 5899.451615470596
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 879414.9674410461,
+            "object_id": "44164",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12666.070674826653,
+            "time_s": 5643.045084845825
+          },
+          {
+            "alert": false,
+            "boundary_minimum": true,
+            "distance_m": 927453.2792371237,
+            "object_id": "44210",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "boundary_minimum_inapplicable"
+            },
+            "rejected": false,
+            "relative_speed_mps": 1653.4539778413177,
+            "time_s": 0.0
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1194529.2144811922,
+            "object_id": "44196",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14608.542679808417,
+            "time_s": 5621.93977718375
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1259248.7898035306,
+            "object_id": "41635",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15095.351190200616,
+            "time_s": 5526.826204033621
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1340312.4376964264,
+            "object_id": "44469",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14397.16240243546,
+            "time_s": 5705.870807507652
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1355771.7988988336,
+            "object_id": "44354",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12974.256904421309,
+            "time_s": 7107.664293192536
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1442586.409110663,
+            "object_id": "44466",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15404.88072413073,
+            "time_s": 5416.19743265829
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1485685.6046746946,
+            "object_id": "44347",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13000.555415657762,
+            "time_s": 7090.245982701896
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1487396.8834790427,
+            "object_id": "44203",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 13266.815803774993,
+            "time_s": 3217.8206344788186
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1498281.16727764,
+            "object_id": "44445",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14902.469917556917,
+            "time_s": 1422.7217565438277
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1618080.367062083,
+            "object_id": "44381",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15381.923907719434,
+            "time_s": 2001.9017929621712
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1628062.8189640748,
+            "object_id": "44147",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14102.412153138268,
+            "time_s": 5610.114032774342
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1743747.2275715047,
+            "object_id": "38744",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 12344.138052821392,
+            "time_s": 2447.5204059171087
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1782952.3967147039,
+            "object_id": "44157",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14388.809601707215,
+            "time_s": 5561.266161926924
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1856926.0005232203,
+            "object_id": "42798",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 10218.048798175496,
+            "time_s": 5341.691078741398
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1921236.3617555492,
+            "object_id": "44154",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14406.80892048393,
+            "time_s": 798.9041213985047
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 1964792.9781292814,
+            "object_id": "87021",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 4411.758978077108,
+            "time_s": 7097.148370058422
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2128664.9731970285,
+            "object_id": "44319",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 11963.846767705818,
+            "time_s": 4706.072792603132
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2200970.615869811,
+            "object_id": "614",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 14866.920197351721,
+            "time_s": 5210.8933566402975
+          },
+          {
+            "alert": false,
+            "boundary_minimum": false,
+            "distance_m": 2223168.3855782347,
+            "object_id": "44377",
+            "probability": {
+              "covariance_mode": "missing",
+              "hbr_m": 5.0,
+              "log_pc": null,
+              "pc": null,
+              "status": "outside_screened_volume"
+            },
+            "rejected": false,
+            "relative_speed_mps": 15343.590929786162,
+            "time_s": 4633.973859009968
+          }
+        ]
+      }
+    ],
+    "screen_scope": {
+      "catalog_objects": 32,
+      "conjunctions_inside_volume": 0,
+      "global_safety_claim": false,
+      "horizon_s": 7200,
+      "meaning": "bounded trajectory minima; missing Pc remains not evaluated",
+      "radius_m": 50000
+    }
+  },
+  "historical_geometry": {
+    "boundary_minimum": false,
+    "distance_m": 2592.260911893018,
+    "relative_speed_mps": 14403.873351350843,
+    "time_s": 41.6619999878353
+  },
+  "inputs_sha256": "81fab9cc7c8e6415384aa9ea2d95918df00b384ab5c5d2512725eeac579f23d1",
+  "limitations": [
+    "Retrospective TLE epochs do not verify contemporaneous publication availability",
+    "Historical Pc not evaluated: covariance missing; real radii unverified",
+    "Constructed catalog contains one synthetic crossing trajectory, separate from real catalog",
+    "Finite dated subset and two-hour horizon provide no global safety assurance",
+    "Assumed TCA covariance; no calibration, dynamics transport, drag or flight accuracy",
+    "All recommendations are drafts; no spacecraft commands"
+  ],
+  "schema_version": 1
+}

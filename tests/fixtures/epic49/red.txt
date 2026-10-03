@@ -1,0 +1,348 @@
+FFFFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+_______________________ test_si_conversion_and_ric_axes ________________________
+
+    def numerics():
+        try:
+>           return importlib.import_module("services.demo_numerics")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_demo_numerics.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/yong/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'services.demo_numerics', import_ = <function _gcd_import at 0x100eefd80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'services.demo_numerics'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_si_conversion_and_ric_axes():
+>       n = numerics()
+            ^^^^^^^^^^
+
+tests/test_demo_numerics.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def numerics():
+        try:
+            return importlib.import_module("services.demo_numerics")
+        except ModuleNotFoundError:
+>           pytest.fail("numerical implementation absent: services.demo_numerics")
+E           Failed: numerical implementation absent: services.demo_numerics
+
+tests/test_demo_numerics.py:18: Failed
+____________ test_covariance_missing_invalid_and_low_speed_abstain _____________
+
+    def numerics():
+        try:
+>           return importlib.import_module("services.demo_numerics")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_demo_numerics.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/yong/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'services.demo_numerics', import_ = <function _gcd_import at 0x100eefd80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'services.demo_numerics'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_covariance_missing_invalid_and_low_speed_abstain():
+>       n = numerics()
+            ^^^^^^^^^^
+
+tests/test_demo_numerics.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def numerics():
+        try:
+            return importlib.import_module("services.demo_numerics")
+        except ModuleNotFoundError:
+>           pytest.fail("numerical implementation absent: services.demo_numerics")
+E           Failed: numerical implementation absent: services.demo_numerics
+
+tests/test_demo_numerics.py:18: Failed
+_______________ test_centered_isotropic_probability_and_rotation _______________
+
+    def numerics():
+        try:
+>           return importlib.import_module("services.demo_numerics")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_demo_numerics.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/yong/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'services.demo_numerics', import_ = <function _gcd_import at 0x100eefd80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'services.demo_numerics'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_centered_isotropic_probability_and_rotation():
+>       n = numerics()
+            ^^^^^^^^^^
+
+tests/test_demo_numerics.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def numerics():
+        try:
+            return importlib.import_module("services.demo_numerics")
+        except ModuleNotFoundError:
+>           pytest.fail("numerical implementation absent: services.demo_numerics")
+E           Failed: numerical implementation absent: services.demo_numerics
+
+tests/test_demo_numerics.py:18: Failed
+_____________ test_continuous_minimum_catches_between_sample_event _____________
+
+    def numerics():
+        try:
+>           return importlib.import_module("services.demo_numerics")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_demo_numerics.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/yong/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'services.demo_numerics', import_ = <function _gcd_import at 0x100eefd80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'services.demo_numerics'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_continuous_minimum_catches_between_sample_event():
+>       n = numerics()
+            ^^^^^^^^^^
+
+tests/test_demo_numerics.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def numerics():
+        try:
+            return importlib.import_module("services.demo_numerics")
+        except ModuleNotFoundError:
+>           pytest.fail("numerical implementation absent: services.demo_numerics")
+E           Failed: numerical implementation absent: services.demo_numerics
+
+tests/test_demo_numerics.py:18: Failed
+_________________________ test_pinned_archive_geometry _________________________
+
+    def numerics():
+        try:
+>           return importlib.import_module("services.demo_numerics")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_demo_numerics.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/yong/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'services.demo_numerics', import_ = <function _gcd_import at 0x100eefd80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'services.demo_numerics'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_pinned_archive_geometry():
+>       n = numerics()
+            ^^^^^^^^^^
+
+tests/test_demo_numerics.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def numerics():
+        try:
+            return importlib.import_module("services.demo_numerics")
+        except ModuleNotFoundError:
+>           pytest.fail("numerical implementation absent: services.demo_numerics")
+E           Failed: numerical implementation absent: services.demo_numerics
+
+tests/test_demo_numerics.py:18: Failed
+____________ test_integrator_independent_reference_and_convergence _____________
+
+    def numerics():
+        try:
+>           return importlib.import_module("services.demo_numerics")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_demo_numerics.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/yong/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'services.demo_numerics', import_ = <function _gcd_import at 0x100eefd80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'services.demo_numerics'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_integrator_independent_reference_and_convergence():
+>       n = numerics()
+            ^^^^^^^^^^
+
+tests/test_demo_numerics.py:110: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def numerics():
+        try:
+            return importlib.import_module("services.demo_numerics")
+        except ModuleNotFoundError:
+>           pytest.fail("numerical implementation absent: services.demo_numerics")
+E           Failed: numerical implementation absent: services.demo_numerics
+
+tests/test_demo_numerics.py:18: Failed
+______ test_candidate_physics_invariant_to_names_and_order_and_sensitive _______
+
+    def numerics():
+        try:
+>           return importlib.import_module("services.demo_numerics")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_demo_numerics.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/yong/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'services.demo_numerics', import_ = <function _gcd_import at 0x100eefd80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'services.demo_numerics'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_candidate_physics_invariant_to_names_and_order_and_sensitive():
+>       n = numerics()
+            ^^^^^^^^^^
+
+tests/test_demo_numerics.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def numerics():
+        try:
+            return importlib.import_module("services.demo_numerics")
+        except ModuleNotFoundError:
+>           pytest.fail("numerical implementation absent: services.demo_numerics")
+E           Failed: numerical implementation absent: services.demo_numerics
+
+tests/test_demo_numerics.py:18: Failed
+___________ test_constructed_hazard_follows_states_and_bounded_scope ___________
+
+    def numerics():
+        try:
+>           return importlib.import_module("services.demo_numerics")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_demo_numerics.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/yong/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'services.demo_numerics', import_ = <function _gcd_import at 0x100eefd80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'services.demo_numerics'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_constructed_hazard_follows_states_and_bounded_scope():
+>       n = numerics()
+            ^^^^^^^^^^
+
+tests/test_demo_numerics.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def numerics():
+        try:
+            return importlib.import_module("services.demo_numerics")
+        except ModuleNotFoundError:
+>           pytest.fail("numerical implementation absent: services.demo_numerics")
+E           Failed: numerical implementation absent: services.demo_numerics
+
+tests/test_demo_numerics.py:18: Failed
+=========================== short test summary info ============================
+FAILED tests/test_demo_numerics.py::test_si_conversion_and_ric_axes - Failed:...
+FAILED tests/test_demo_numerics.py::test_covariance_missing_invalid_and_low_speed_abstain
+FAILED tests/test_demo_numerics.py::test_centered_isotropic_probability_and_rotation
+FAILED tests/test_demo_numerics.py::test_continuous_minimum_catches_between_sample_event
+FAILED tests/test_demo_numerics.py::test_pinned_archive_geometry - Failed: nu...
+FAILED tests/test_demo_numerics.py::test_integrator_independent_reference_and_convergence
+FAILED tests/test_demo_numerics.py::test_candidate_physics_invariant_to_names_and_order_and_sensitive
+FAILED tests/test_demo_numerics.py::test_constructed_hazard_follows_states_and_bounded_scope
+8 failed in 0.11s
