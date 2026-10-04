@@ -1,0 +1,546 @@
+{
+  "status": "internal_knowledge_v0_documentation_backed",
+  "owner": "Codex",
+  "reviewer": "Yong",
+  "checked_on": "2026-10-04",
+  "scope": "representative initial space operations inventory; not exhaustive or market-share ranking",
+  "runtime_note": "No provider requests or installations. Existing demo sgp4 usage is separate from verification of a new callable adapter.",
+  "tools": [
+    {
+      "id": "celestrak",
+      "name": "CelesTrak",
+      "kind": "data_service",
+      "capabilities": [
+        "catalog_gp"
+      ],
+      "required_inputs": "GP/OMM/TLE query criteria, objects and time range",
+      "outputs": "GP elements and catalog-related data",
+      "documented_interface": "Public HTTP downloads and queries, subject to usage policy",
+      "limitations": "Format compatibility does not improve orbital accuracy. GP elements must use the matching SGP4 model; operational covariance is not guaranteed.",
+      "workflow_implication": "Retrieve data, check epoch and element theory, then propagate with SGP4. These data alone do not establish high-accuracy maneuver screening.",
+      "access_prerequisite": "public_query_policy",
+      "sources": [
+        "https://celestrak.org/NORAD/documentation/gp-data-formats.php",
+        "https://www.celestrak.org/usage-policy.php"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "space_track",
+      "name": "Space-Track",
+      "kind": "data_service",
+      "capabilities": [
+        "catalog_gp",
+        "cdm_delivery"
+      ],
+      "required_inputs": "Account, query permissions, objects and time criteria",
+      "outputs": "GP, historical data and related CDM products within authorized access",
+      "documented_interface": "Authenticated HTTP API; CDM products require appropriate permissions",
+      "limitations": "Public API documentation does not establish that the current account can access a particular spacecraft CDM. Verify rate limits and use restrictions.",
+      "workflow_implication": "Check product permissions and data coverage before requesting. Treat catalog elements and CDMs as distinct evidence types.",
+      "access_prerequisite": "account_and_product_permissions",
+      "sources": [
+        "https://www.space-track.org/documentation",
+        "https://www.space-track.org/documents/Spacetrack_Handbook_for_Operators.pdf"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "discos",
+      "name": "ESA DISCOSweb",
+      "kind": "data_service",
+      "capabilities": [
+        "object_metadata"
+      ],
+      "required_inputs": "Object identifiers and account/API access",
+      "outputs": "Object registration, launch and physical-property metadata",
+      "documented_interface": "Portal and API; exact fields and token requirements need integration verification",
+      "limitations": "Object metadata does not automatically establish an attitude-dependent hard-body radius (HBR) or current covariance.",
+      "workflow_implication": "Enrich object information with field-level provenance and missing-data flags; do not fabricate absent parameters.",
+      "access_prerequisite": "api_access_to_verify",
+      "sources": [
+        "https://discosweb.esoc.esa.int/"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "sgp4",
+      "name": "python-sgp4 / SGP4",
+      "kind": "local_library",
+      "capabilities": [
+        "gp_propagation"
+      ],
+      "required_inputs": "Compatible TLE/OMM GP elements and target epoch",
+      "outputs": "TEME position and velocity, with propagation error codes",
+      "documented_interface": "Python library; pin the underlying implementation and version",
+      "limitations": "Not a universal substitute for high-fidelity propagation. GP data do not supply operational covariance; frame conversion must be explicit.",
+      "workflow_implication": "Propagate with the matching GP theory, check epoch and errors, and convert frames when required. Missing covariance blocks quantitative Pc estimation.",
+      "access_prerequisite": "open_source_license_to_pin",
+      "sources": [
+        "https://github.com/brandon-rhodes/python-sgp4",
+        "https://www.celestrak.org/software/tutorials/sgp4.php"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "orekit",
+      "name": "Orekit",
+      "kind": "local_library",
+      "capabilities": [
+        "state_propagation",
+        "orbit_determination",
+        "frames_time",
+        "cdm_pc",
+        "event_geometry"
+      ],
+      "required_inputs": "State, observations or CDM; frames and time scales; required EOP, gravity and celestial data; covariance and HBR for Pc",
+      "outputs": "Orbits, estimation results, transformations, geometric events and Pc under applicable assumptions",
+      "documented_interface": "Java API; actual bridge and deployment require verification",
+      "limitations": "Short-term two-dimensional Pc assumes conditions including linear relative motion and independent Gaussian position uncertainty. Record environmental data and calculation method.",
+      "workflow_implication": "Load environmental data, validate prerequisites, select propagation/estimation/Pc methods, and return versioned outputs with assumptions.",
+      "access_prerequisite": "open_source_license_to_pin",
+      "sources": [
+        "https://www.orekit.org/site-orekit-13.0/index.html",
+        "https://www.orekit.org/site-orekit-13.1/apidocs/org/orekit/ssa/collision/shorttermencounter/probability/twod/AbstractShortTermEncounter2DPOCMethod.html"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "tudat",
+      "name": "Tudat / TudatPy",
+      "kind": "local_library",
+      "capabilities": [
+        "state_propagation",
+        "orbit_determination",
+        "variational_equations"
+      ],
+      "required_inputs": "Initial state, environment and force models, integration and termination settings; observations and estimated parameters for estimation",
+      "outputs": "State histories, variational-equation results, and parameter/state estimates",
+      "documented_interface": "Python interfaces with a C++ core",
+      "limitations": "Propagation and estimation support does not establish catalog screening or mission-constraint coverage.",
+      "workflow_implication": "Build the environment and dynamics, propagate or estimate, and retain residuals and configuration. Pc needs a separate capability.",
+      "access_prerequisite": "open_source_license_to_pin",
+      "sources": [
+        "https://py.api.tudat.space/en/latest/",
+        "https://docs.tudat.space/en/latest/user-guide/state-propagation/propagation-setup.html"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "gmat",
+      "name": "NASA GMAT",
+      "kind": "local_application",
+      "capabilities": [
+        "state_propagation",
+        "trajectory_design",
+        "trajectory_optimization",
+        "navigation"
+      ],
+      "required_inputs": "Mission script, initial orbit, environment models, objectives and constraints",
+      "outputs": "Trajectories, optimization/targeting and analysis results",
+      "documented_interface": "GUI, mission scripts, Python and Java; verify modules in the selected version",
+      "limitations": "Mission design and navigation software is not itself an external conjunction catalog service. Verify API features by version.",
+      "workflow_implication": "Generate mission configuration, run it, check convergence and constraints, and export trajectories for independent screening.",
+      "access_prerequisite": "open_source",
+      "sources": [
+        "https://software.nasa.gov/software/GSC-19640-1",
+        "https://data.nasa.gov/dataset/general-mission-analysis-tool-project"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "spice",
+      "name": "NAIF SPICE",
+      "kind": "local_library",
+      "capabilities": [
+        "frames_time",
+        "ephemeris_geometry",
+        "event_geometry"
+      ],
+      "required_inputs": "Kernels such as SPK/CK/PCK/FK/LSK covering the target and epoch, plus object and frame identifiers",
+      "outputs": "State, attitude, time/frame transformations and geometric events",
+      "documented_interface": "Toolkits for C, Fortran, IDL and MATLAB; third-party Python wrappers need separate verification",
+      "limitations": "Computes geometry from available kernels; does not automatically determine arbitrary spacecraft orbits or generate operational trajectories.",
+      "workflow_implication": "Check kernel types, versions and coverage, compute geometry, and retain the kernel manifest. Missing coverage blocks the calculation.",
+      "access_prerequisite": "toolkit_terms_to_verify",
+      "sources": [
+        "https://naif.jpl.nasa.gov/naif/toolkit.html",
+        "https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/info/mostused.html"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "stk",
+      "name": "Ansys STK / Astrogator",
+      "kind": "licensed_application",
+      "capabilities": [
+        "event_geometry",
+        "access_analysis",
+        "trajectory_design"
+      ],
+      "required_inputs": "Scenario, orbits, sensors and sites; engine models and constraints for maneuver design",
+      "outputs": "Visibility/contact windows, scenario analysis, and Astrogator trajectory/maneuver results",
+      "documented_interface": "STK Python API and Engine; Engine documentation supports Windows/Linux; module licenses required",
+      "limitations": "Verify installation, product modules and Engine entitlement. Geometric access does not mean a physical station is reserved.",
+      "workflow_implication": "Build the scenario, run analysis/targeting, and export results. Station reservation is a separate service step.",
+      "access_prerequisite": "licensed_modules",
+      "sources": [
+        "https://help.agi.com/stkdevkit/Content/python/pythonGettingStarted.htm",
+        "https://www.ansys.com/content/dam/amp/2022/june/webpage-requests/stk-product-page/brochures/stk-premium-space-brochure.pdf"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "odtk",
+      "name": "Ansys ODTK",
+      "kind": "licensed_application",
+      "capabilities": [
+        "orbit_determination",
+        "covariance_analysis"
+      ],
+      "required_inputs": "Tracking observations, measurement models, initial state and uncertainty",
+      "outputs": "Filtering/estimation and orbital-uncertainty products",
+      "documented_interface": "Application automation; the referenced COM integration is Windows-specific; verify other deployments separately",
+      "limitations": "Requires observations and measurement-quality configuration. Do not transfer STK Python/platform support claims to ODTK.",
+      "workflow_implication": "Configure observations and priors, filter and check quality, then export orbit/covariance products for risk analysis.",
+      "access_prerequisite": "licensed_runtime_to_verify",
+      "sources": [
+        "https://help.agi.com/odtk/Content/od/odtkIntegratingTop.htm",
+        "https://help.agi.com/odtk/content/od/ODObjectsSatelliteOrbitUncertainty.htm"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "freeflyer",
+      "name": "FreeFlyer",
+      "kind": "licensed_application",
+      "capabilities": [
+        "state_propagation",
+        "orbit_determination",
+        "mission_analysis"
+      ],
+      "required_inputs": "Mission Plan/script, orbit or observations, and model settings",
+      "outputs": "Propagation, estimation and mission-analysis results",
+      "documented_interface": "Referenced Runtime API documents C/C++, C#, Java and Python; restricted to Mission tier in that reference",
+      "limitations": "Recheck documentation version, tier and current license. Local deployment and generic interchangeability have not been verified.",
+      "workflow_implication": "Generate a Mission Plan, invoke the licensed runtime, check exceptions and estimation/analysis quality, then extract results.",
+      "access_prerequisite": "mission_tier_per_reference",
+      "sources": [
+        "https://www.ai-solutions.com/_help_Files/using_the_runtime_api.htm",
+        "https://www.ai-solutions.com/_help_Files/spacecraft_od_setup.htm"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "kayhan_dynamics",
+      "name": "Kayhan Dynamics",
+      "kind": "commercial_compute_service",
+      "capabilities": [
+        "state_propagation",
+        "orbit_determination"
+      ],
+      "required_inputs": "State or observations and model configuration; exact interface schema to obtain",
+      "outputs": "Orbit simulation and estimation results; exact output contract to verify",
+      "documented_interface": "Official product page lists Managed API, SDK and local deployment",
+      "limitations": "Product descriptions do not establish endpoints, entitlement, accuracy or covariance fields. The page title says Elements while the body says Dynamics; verify naming.",
+      "workflow_implication": "Verify current interface, deployment and product access; configure computation; validate outputs and model/data versions.",
+      "access_prerequisite": "commercial_entitlement_to_verify",
+      "sources": [
+        "https://kayhan.space/products/dynamics",
+        "https://kayhan.space/products"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "kayhan_screening",
+      "name": "Kayhan SDK screening service (documented as Pathfinder)",
+      "kind": "commercial_screening_service",
+      "capabilities": [
+        "ephemeris_screening"
+      ],
+      "required_inputs": "Account permissions, primary NORAD ID and ephemeris in a supported format",
+      "outputs": "Screening job identifier, completion status and conjunction results",
+      "documented_interface": "Public SDK/CLI documents upload, submission/waiting and queries; authentication configuration includes password and M2M modes",
+      "limitations": "Verify older product naming and interfaces. Historical catalog coverage and maneuver-planning API access are unconfirmed. Represent maneuver discontinuities in separate blocks.",
+      "workflow_implication": "Validate/upload ephemeris, submit, await/query and retrieve events. Changing screening providers requires checking the same time-window coverage.",
+      "access_prerequisite": "authenticated_product_access_to_verify",
+      "sources": [
+        "https://kayhan-oss.gitlab.io/kayhan-sdk/pages/CLI/gettingstarted.html",
+        "https://kayhan-oss.gitlab.io/kayhan-sdk/pages/configuration.html"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "leolabs",
+      "name": "LeoLabs Collision Avoidance",
+      "kind": "commercial_data_and_screening",
+      "capabilities": [
+        "cdm_delivery",
+        "ephemeris_screening",
+        "secondary_tracking"
+      ],
+      "required_inputs": "Operator ephemeris/object and authorization; actual job interface to verify",
+      "outputs": "CDMs/events, on-demand screening, secondary tracking and orbit/covariance-related products",
+      "documented_interface": "Official product material describes cloud services and a REST API",
+      "limitations": "Referenced product material is under a 2021 URL. Verify current schema/SLA, catalog population/coverage and historical support. Do not treat old timing claims as guarantees.",
+      "workflow_implication": "Submit compatible ephemeris, retrieve input-bound screening results and retain catalog/observation epochs. Additional tracking is a separate request with external effects.",
+      "access_prerequisite": "commercial_access_to_verify",
+      "sources": [
+        "https://www.leolabs.space/wp-content/uploads/2021/06/LeoLabs-Collision-Avoidance.pdf"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "eu_sst",
+      "name": "EU SST services",
+      "kind": "operational_service",
+      "capabilities": [
+        "cdm_delivery",
+        "collision_assessment",
+        "reentry_assessment",
+        "fragmentation_analysis"
+      ],
+      "required_inputs": "Registration approval and service-specific operator configuration/orbit inputs",
+      "outputs": "CDMs, risk reports, re-entry and fragmentation-related products",
+      "documented_interface": "Portal; older official material describes REST access; verify current API contracts",
+      "limitations": "Free service still requires approval and configuration. Eligibility differs by service. Full-catalog bulk access is not established.",
+      "workflow_implication": "Confirm registration and service configuration, submit authorized trajectories or retrieve products, and involve the operations center for high-interest events.",
+      "access_prerequisite": "registration_and_service_agreement",
+      "sources": [
+        "https://www.eusst.eu/sites/default/files/documents/EUSST_Service_Portfolio.pdf",
+        "https://www.eusst.eu/wp-content/uploads/2020/11/EUSST_2WBR_16_11_2020.pdf"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "basilisk",
+      "name": "Basilisk",
+      "kind": "local_simulation",
+      "capabilities": [
+        "spacecraft_dynamics",
+        "attitude_control_simulation",
+        "maneuver_simulation"
+      ],
+      "required_inputs": "Spacecraft, actuators, sensors, initial orbit/attitude, control algorithms and environment",
+      "outputs": "Coupled dynamics and attitude/actuator/control simulation histories",
+      "documented_interface": "Python configuration and C/C++ modules",
+      "limitations": "Not a ready-made catalog screener or flight-command authorization system. Fidelity depends on the selected models and parameters.",
+      "workflow_implication": "Insert a candidate maneuver into the spacecraft model, simulate actuator/attitude behavior, check feasibility and return the trajectory for renewed screening.",
+      "access_prerequisite": "open_source_license_to_pin",
+      "sources": [
+        "https://hanspeterschaub.info/basilisk/",
+        "https://www.hanspeterschaub.info/research-Attitude.html"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "yamcs",
+      "name": "Yamcs",
+      "kind": "mission_control",
+      "capabilities": [
+        "telemetry_access",
+        "alarms",
+        "commanding"
+      ],
+      "required_inputs": "Deployed instance, mission database, telemetry links and user/command permissions",
+      "outputs": "Parameters/packets, alarms, events and command-status data",
+      "documented_interface": "HTTP JSON/Protobuf, WebSocket and a Python client",
+      "limitations": "Requires mission-specific database and links. Authorize read-only telemetry and command effects separately.",
+      "workflow_implication": "Read telemetry/alarms for analysis. Commands require explicit authority and mission review; successful computation does not automatically authorize uplink.",
+      "access_prerequisite": "deployment_and_mission_permissions",
+      "sources": [
+        "https://docs.yamcs.org/yamcs-http-api/",
+        "https://docs.yamcs.org/yamcs-http-api/overview/"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "openc3",
+      "name": "OpenC3 COSMOS",
+      "kind": "mission_control",
+      "capabilities": [
+        "telemetry_access",
+        "alarms",
+        "commanding",
+        "procedure_execution"
+      ],
+      "required_inputs": "Target/packet definitions, plugins, interfaces and instance authentication",
+      "outputs": "Telemetry, limits/logs, commands and procedure-execution data",
+      "documented_interface": "HTTP JSON-RPC, scripts and WebSocket streaming; some interfaces are Enterprise-only",
+      "limitations": "Mission configuration is not generic plug-and-play. Documented methods that bypass checks do not grant Argus permission to use them.",
+      "workflow_implication": "Read mission-matched telemetry, analyze and draft procedures; execute procedures/commands only after separate permission checks.",
+      "access_prerequisite": "deployment_and_edition_permissions",
+      "sources": [
+        "https://docs.openc3.com/docs/development/json-api",
+        "https://docs.openc3.com/docs/configuration/interfaces",
+        "https://docs.openc3.com/docs/development/streaming-api"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "aws_ground_station",
+      "name": "AWS Ground Station",
+      "kind": "ground_network_service",
+      "capabilities": [
+        "contact_opportunities",
+        "contact_reservation"
+      ],
+      "required_inputs": "Configured/authorized satellite, mission profile, IAM, time window and covering ephemeris",
+      "outputs": "Contact opportunities, contact identifiers/status and associated data-transfer resources",
+      "documented_interface": "AWS API/SDK/CLI; documented TLE/OEM/azimuth-elevation workflows",
+      "limitations": "An available window does not guarantee reservation. Reservations affect resources and billing; check that the contact reaches SCHEDULED.",
+      "workflow_implication": "Validate ephemeris availability, list/select contacts, obtain reservation authority and confirm status or resolve conflicts. Recheck windows after trajectory changes.",
+      "access_prerequisite": "aws_account_onboarding_iam_and_billing",
+      "sources": [
+        "https://docs.aws.amazon.com/ground-station/latest/ug/contacts.html",
+        "https://docs.aws.amazon.com/ground-station/latest/ug/reserving-contacts-with-custom-ephemeris.html"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    },
+    {
+      "id": "drama_master",
+      "name": "ESA DRAMA / MASTER",
+      "kind": "analysis_suite",
+      "capabilities": [
+        "debris_flux",
+        "disposal_analysis",
+        "reentry_risk",
+        "mitigation_analysis"
+      ],
+      "required_inputs": "Mission/spacecraft and orbit models, environmental data, software license and applicable version",
+      "outputs": "Debris flux, mitigation/disposal and re-entry analyses",
+      "documented_interface": "ESA software portal; DRAMA depends on MASTER; programmatic interface to verify",
+      "limitations": "Not a direct replacement for catalog screening of a current individual conjunction. Verify current license eligibility, models and standards versions.",
+      "workflow_implication": "Load environment/mission inputs, run applicable modules and interpret results under their models/standards. Regulatory compliance requires separate verification.",
+      "access_prerequisite": "portal_license_application",
+      "sources": [
+        "https://www.sdo.esoc.esa.int/",
+        "https://conference.sdo.esoc.esa.int/proceedings/sdc9/paper/290"
+      ],
+      "checked_on": "2026-10-04",
+      "verification_level": "public_documentation",
+      "argus_call_verified": false,
+      "endpoint_schema_verified": false,
+      "runtime_availability": "unknown",
+      "cost_latency_accuracy": "not_measured",
+      "claim_status": "documented_capabilities_only"
+    }
+  ],
+  "language": "en",
+  "knowledge_role": "argus_internal_tool_prior",
+  "entrypoint": "INDEX.md"
+}
