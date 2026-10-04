@@ -1,0 +1,186 @@
+{
+  "algorithms": {
+    "production": "96x96 polar Gauss-Legendre; accepted pure disk_probability",
+    "reference": "independent RTN construction/encounter axes; nested adaptive Cartesian scipy quad",
+    "shared_assumptions": "same source interpretation, nominal Earth spin, Gaussian short encounter and N-18 density hypothesis"
+  },
+  "artifact_sha256": {
+    "computed.json": "f1611140bd2f38ff46f0dd96873d24b0340d8c4457ab066e001ca0489e62d4b3",
+    "independent.json": "07b4969397f3a065ba454b33267533cab5deed95e88393abc71d677b8552de87",
+    "source_cdm.json": "d3e71bfb373b9bfdd6645ba490406c9a441c43e62fc88a9c75ebb0d3c7f21c52"
+  },
+  "baseline_verification": "source_and_independent_integral_agree",
+  "code_sha256": {
+    "scripts/build_epic49_cdm_packet.py": "8789d67d89e0b0c9e4e378747de3335a5efc48e83c7494ece375953b30330483",
+    "scripts/epic49_cdm_reference.py": "6736a5d83cbf6444a5f92649aa00a6515e42b9463e006553194a252603ed7946",
+    "services/demo_cdm_reference.py": "93f29976a85e586c1126bbf970f26c51aaa8e1c60aba9b8043c87762552ab820",
+    "services/demo_numerics.py": "bd54fbb3bf133e541fd250cd092243155b66a341f6f3ccadbc66aeefc698af58"
+  },
+  "independent_agreement": {
+    "baseline": {
+      "absolute_difference": 6.613633252161577e-18,
+      "adaptive_error_estimate": 1.2468324983583301e-18,
+      "adaptive_inner_error_bound_estimate": 2.2578172785209518e-18,
+      "relative_difference": 4.13033932151643e-14,
+      "relative_tolerance": 2e-09,
+      "status": "agrees"
+    },
+    "correlation_sensitivity": {
+      "absolute_difference": 2.1047074673374855e-17,
+      "adaptive_error_estimate": 8.454500120824715e-15,
+      "adaptive_inner_error_bound_estimate": 1.1334018494009341e-18,
+      "relative_difference": 2.617663509406039e-13,
+      "relative_tolerance": 2e-09,
+      "status": "agrees"
+    }
+  },
+  "model_conditions": {
+    "common_frame": "instantaneous inertial orientation aligned with ITRF at TCA",
+    "covariances_supplied_at_tca": true,
+    "disk_hbr_summed_spheres": true,
+    "earth_rotation": "nominal z-axis spin; no EOP/polar-motion/LOD rates",
+    "flight_authority": false,
+    "flight_calibration": false,
+    "gaussian_marginal_position_errors": true,
+    "missing": [
+      "pre-TCA operational ephemeris",
+      "planned burn",
+      "mission constraints",
+      "other-object catalog"
+    ],
+    "operational_replay": false,
+    "propagator": null,
+    "short_linear_encounter": true,
+    "source_force_models_are_input_metadata_only": true
+  },
+  "optional_corrected_source_pc_verification": "incomplete_source_pc_mismatch",
+  "rebuild_command": "python -m scripts.build_epic49_cdm_packet",
+  "round1_preservation": {
+    "all_base_files_unchanged": true,
+    "base": "2db2eaaf2bfc8b6081f91a475089525b47a50c07",
+    "base_file_manifest_sha256": "81e5949a601e8f2e618d27a4e2590bfe00c23d4ae72bdc923a0ccee88da5f010",
+    "checked_regular_files": 128,
+    "science_anchor": "3f49212",
+    "science_files": {
+      "scripts/build_epic49_packet.py": {
+        "sha256": "bd0d75f665d37e3b9b2b4118cd62119cc17c0347464cc96e7b78f71054a892ee",
+        "unchanged": true
+      },
+      "scripts/epic49_reference.py": {
+        "sha256": "48eb5fdb6b2e6ceadf3f44fcbf191de9dd385292dfeb30d545a7cf99f8c71c3a",
+        "unchanged": true
+      },
+      "services/demo_numerics.py": {
+        "sha256": "bd54fbb3bf133e541fd250cd092243155b66a341f6f3ccadbc66aeefc698af58",
+        "unchanged": true
+      },
+      "tests/fixtures/epic49/README.md": {
+        "sha256": "3e1221bd37fa344170ee51e7c7f5a30e7b89c64d5026cb56606708c6d0df793e",
+        "unchanged": true
+      },
+      "tests/fixtures/epic49/computed.json": {
+        "sha256": "63c13a4110b465685f73e6334d2f60f1810fd078a2ebff4ac889e90740ad879e",
+        "unchanged": true
+      },
+      "tests/fixtures/epic49/independent.json": {
+        "sha256": "d6795053e2e27034e5ef23d972954bdfd178049cccccfc114c356a85beefe0d2",
+        "unchanged": true
+      },
+      "tests/fixtures/epic49/inputs.json": {
+        "sha256": "81fab9cc7c8e6415384aa9ea2d95918df00b384ab5c5d2512725eeac579f23d1",
+        "unchanged": true
+      },
+      "tests/fixtures/epic49/receipt.json": {
+        "sha256": "13784d4cdfcdfd03c59949256849472f4190fb8f4eb52a19cf8588cc5b9d3a89",
+        "unchanged": true
+      },
+      "tests/fixtures/epic49/red.txt": {
+        "sha256": "39303e2c2434042186319f4c6cfeb33050223d402e045ace4dbc0fb67a7fe6da",
+        "unchanged": true
+      },
+      "tests/test_demo_numerics.py": {
+        "sha256": "54d7f19a113b97c4e85843667fb94f0a15afce36f4bf80bd26e266eef8827b70",
+        "unchanged": true
+      }
+    }
+  },
+  "schema_version": 1,
+  "source_arithmetic_conflict": {
+    "computed_corrected_to_baseline_ratio": 0.5021385298337075,
+    "diagnosis": "N-18, DCP data, N-28 invariants and two integrals imply about 8.04e-5; printed exponent conflicts with reduction prose. Possible source typo is an inference, not confirmed erratum.",
+    "pdf_page_1_based": 94,
+    "printed_baseline_pc": 0.00016,
+    "printed_corrected_pc": 0.000804,
+    "printed_values_ratio": 5.0249999999999995,
+    "resolution": "preserve source target; optional published-Pc reproduction incomplete; no fitting or data substitution"
+  },
+  "source_comparisons": {
+    "baseline_determinant_m6": {
+      "actual": 925228595231333.6,
+      "max_relative_difference": 1.5182913074562876e-06,
+      "relative_tolerance": 6e-05,
+      "status": "within_source_rounding",
+      "target": 925230000000000.0
+    },
+    "baseline_eigenvalues_m2": {
+      "actual": [
+        202.81604820480422,
+        546260.3100955077,
+        8351165.363776904
+      ],
+      "max_relative_difference": 1.948424808095872e-05,
+      "relative_tolerance": 6e-05,
+      "status": "within_source_rounding",
+      "target": [
+        202.82,
+        546260,
+        8351200
+      ]
+    },
+    "baseline_pc": {
+      "actual": 0.00016012324260402769,
+      "max_relative_difference": 0.0001451755404602295,
+      "relative_tolerance": 0.0004,
+      "status": "within_source_rounding",
+      "target": 0.0001601
+    },
+    "corrected_determinant_m6": {
+      "actual": 81019687476301.88,
+      "max_relative_difference": 3.857364824999543e-06,
+      "relative_tolerance": 0.0001,
+      "status": "within_source_rounding",
+      "target": 81020000000000.0
+    },
+    "corrected_pc": {
+      "actual": 8.040404963339254e-05,
+      "max_relative_difference": 0.8999949631425466,
+      "relative_tolerance": 0.001,
+      "status": "incomplete_source_pc_mismatch",
+      "target": 0.000804
+    },
+    "corrected_sigma_m": {
+      "actual": [
+        13.979932632806785,
+        189.5876059343059,
+        3396.0983653008243
+      ],
+      "max_relative_difference": 1.2627594778713558e-05,
+      "relative_tolerance": 6e-05,
+      "status": "within_source_rounding",
+      "target": [
+        13.98,
+        189.59,
+        3396.13
+      ]
+    }
+  },
+  "source_hashes": {
+    "kvn_sha256": "c18a84d50c4467e64d3b547036243407a383141e910fcdf2925d4cb03d8d693a",
+    "pdf_sha256": "cc5acf7de44526d7bfc187f21e457e5969bedffdacaef69227ba619637a3b6dd",
+    "provenance_sha256": "d644bb485a8107d054aac4567f25415b244dba9c978097fe265689254e8e1fc0"
+  },
+  "versions": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1"
+  }
+}

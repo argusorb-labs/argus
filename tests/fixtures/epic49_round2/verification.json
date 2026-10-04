@@ -1,0 +1,48 @@
+{
+  "author_review": "separate scoped code/receipt inspection; no independent-review or acceptance claim",
+  "base_symlinks": {
+    "AGENTS.md": {
+      "sha256": "0653f4ead98ed2f17a4650e7f7957e9b2163e9902504171e6154232acaa693bd",
+      "unchanged": true
+    },
+    "GEMINI.md": {
+      "sha256": "0653f4ead98ed2f17a4650e7f7957e9b2163e9902504171e6154232acaa693bd",
+      "unchanged": true
+    },
+    "GEMINI_SPECIFIC.md": {
+      "sha256": "36e1f1ab2b235708ebe4aa0c00b961a7cbd2b1e769c668ae3a6a86e788389e5a",
+      "unchanged": true
+    }
+  },
+  "baseline_suite": "83 passed, preexisting SyntaxWarning in services/ml/node_model.py:171",
+  "deterministic_rebuild": "all five JSON source/output files equal on two successive rebuilds",
+  "full_suite": "110 passed in 12.45s",
+  "logs": {
+    "builder_red": {
+      "path": "/private/tmp/epic49-r2-builder-red.txt",
+      "sha256": "9bb13d6b9419d8f22db9dcd98fa0c8f1b22fb9560dc5e3c22f40c95c1d3b699e",
+      "summary": "1 failed, 26 passed in 0.53s"
+    },
+    "full_suite": {
+      "path": "/private/tmp/epic49-r2-all-tests.txt",
+      "sha256": "d658436e0c65d4efec3bcd9541d3634bcda75b0c0099656740e9804859062ae0",
+      "summary": "110 passed in 12.45s"
+    },
+    "initial_red": {
+      "path": "/private/tmp/epic49-r2-red.txt",
+      "sha256": "3be1c5f15de48cc568fda520f43cc37d20abcd4fdb3aa767bb2d603a0444bf5e",
+      "summary": "20 failed in 0.16s"
+    },
+    "reference_red": {
+      "path": "/private/tmp/epic49-r2-reference-red.txt",
+      "sha256": "c15be10975a9d21d8bc00bf89f6504e4e440c30aed07e61a3fe074ad02689558",
+      "summary": "1 failed in 0.08s"
+    }
+  },
+  "no_subagents": true,
+  "owner": "physical Codex T-388-R2-NUM",
+  "preservation": "128 base regular files and 3 symlinks unchanged; science-anchor module/scripts/test/fixtures identical",
+  "red_failure_reason": "required implementations absent; production behavior tests, no placeholder success",
+  "review_status": "pending parent-dispatched physical Grok",
+  "scoped_ruff": "All checks passed; 4 new Python files"
+}
