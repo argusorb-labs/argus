@@ -110,3 +110,7 @@ ArgusOrb is in active development. The Starlink tracker is live; broader SSA fea
 ## License
 
 TBD.
+
+## Internal Knowledge
+
+- [Space operations tool knowledge](knowledge/space-operations-tools/INDEX.md): capability-based tool inventory and planning prerequisites, with primary sources and explicit verification limits.
