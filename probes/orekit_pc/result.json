@@ -1,0 +1,189 @@
+{
+  "scope": "projected_2d_pc_feasibility_probe",
+  "orekit_version": "13.1",
+  "java_version": "openjdk version \"26.0.2.1\" 2026-08-18\nOpenJDK Runtime Environment Homebrew (build 26.0.2.1)\nOpenJDK 64-Bit Server VM Homebrew (build 26.0.2.1, mixed mode, sharing)",
+  "source_path": "/private/tmp/argonavis-epic49-round2/src/argonavis/data/epic49_round2/source_cdm.kvn",
+  "argonavis_source_commit": "1e50f8631bfb2ff8583e875cd52b3adc82544fa6",
+  "preprocessor_sha256": "0b8781fc9110eb416622cd8633730c8ee87bab387cd9a90763c30b3f05fd1afe",
+  "source_sha256": "c18a84d50c4467e64d3b547036243407a383141e910fcdf2925d4cb03d8d693a",
+  "java_source_sha256": "ca054d35072ec1a996c89ad424b95a6ac3efdceb32e031a9c9173a046b8fb48c",
+  "dependencies": [
+    {
+      "name": "orekit",
+      "version": "13.1",
+      "url": "https://repo.maven.apache.org/maven2/org/orekit/orekit/13.1/orekit-13.1.jar",
+      "filename": "orekit-13.1.jar",
+      "sha256": "bbda7dae7ddaf6b5b4464548ee2519c545b59f24117ef790fc34d5bbef3f7407"
+    },
+    {
+      "name": "hipparchus-core",
+      "version": "4.0.1",
+      "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-core/4.0.1/hipparchus-core-4.0.1.jar",
+      "filename": "hipparchus-core-4.0.1.jar",
+      "sha256": "944a55c3a1b13b0a0c9c4db6dbb79c33b1b49511ab7430b6cdc69dc046154a87"
+    },
+    {
+      "name": "hipparchus-geometry",
+      "version": "4.0.1",
+      "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-geometry/4.0.1/hipparchus-geometry-4.0.1.jar",
+      "filename": "hipparchus-geometry-4.0.1.jar",
+      "sha256": "75eb277e4dbb59f981ad26eb56ba32a9a13420dd83d2ee7796d9b1f49c05f516"
+    },
+    {
+      "name": "hipparchus-ode",
+      "version": "4.0.1",
+      "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-ode/4.0.1/hipparchus-ode-4.0.1.jar",
+      "filename": "hipparchus-ode-4.0.1.jar",
+      "sha256": "ae1266fc1c1570a7ca8879a98cb44ccabf43692e411c1310226d87f6163d0f44"
+    },
+    {
+      "name": "hipparchus-fitting",
+      "version": "4.0.1",
+      "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-fitting/4.0.1/hipparchus-fitting-4.0.1.jar",
+      "filename": "hipparchus-fitting-4.0.1.jar",
+      "sha256": "5c57a879eaec6adc05034d6e301def260abaef6291a6b65b621321266c3bb6cf"
+    },
+    {
+      "name": "hipparchus-optim",
+      "version": "4.0.1",
+      "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-optim/4.0.1/hipparchus-optim-4.0.1.jar",
+      "filename": "hipparchus-optim-4.0.1.jar",
+      "sha256": "a5af8e00aed1623a1f39340aa291de8ab586f8875ffd74e8a305dd4516ad43cf"
+    },
+    {
+      "name": "hipparchus-filtering",
+      "version": "4.0.1",
+      "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-filtering/4.0.1/hipparchus-filtering-4.0.1.jar",
+      "filename": "hipparchus-filtering-4.0.1.jar",
+      "sha256": "d15bf8a00f9b2b434028b498ed7c453b1f1c9fe5109e33475a49cac786fadc6c"
+    },
+    {
+      "name": "hipparchus-stat",
+      "version": "4.0.1",
+      "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-stat/4.0.1/hipparchus-stat-4.0.1.jar",
+      "filename": "hipparchus-stat-4.0.1.jar",
+      "sha256": "fda3097a7840e5db86d822a79d89947639f13d0832863a6d135be427cf6e3bd4"
+    }
+  ],
+  "geometry": {
+    "mean_plane_m": [
+      1676.6342956424342,
+      974.0477592037748
+    ],
+    "covariance_plane_m2": [
+      [
+        1497792.9054634196,
+        879284.3128277196
+      ],
+      [
+        879284.3128277196,
+        516462.1077364562
+      ]
+    ],
+    "eigenvalues_m2": [
+      204.75066144258255,
+      2014050.2625384333
+    ],
+    "proper_rotation": [
+      [
+        0.5063141340565293,
+        0.862349115877431
+      ],
+      [
+        -0.862349115877431,
+        0.5063141340565293
+      ]
+    ],
+    "rotated_mean_m": [
+      8.93441755590986,
+      1939.0182502279943
+    ],
+    "hbr_m": 4.5
+  },
+  "reported_pc": 0.0001601,
+  "fresh_local_baseline_pc": 0.00016012324260402769,
+  "density_sensitivity_status": "incomplete_source_pc_mismatch",
+  "observations": [
+    {
+      "radius_m": 2.25,
+      "input": [
+        8.93441755590986,
+        1939.0182502279943,
+        14.309111133909841,
+        1419.1723864768626,
+        2.25
+      ],
+      "orekit": {
+        "method": "Patera2005",
+        "default_pc": 4.0257384552773655e-05,
+        "tighter_pc": 4.025738455276131e-05
+      },
+      "local_gl128_pc": 4.02573845527768e-05,
+      "relative_difference": 3.847875044907299e-13,
+      "pid": 71311,
+      "start_time": "2026-10-04T23:32:30.574966+00:00",
+      "end_time": "2026-10-04T23:32:30.683438+00:00",
+      "elapsed_s": 0.108472,
+      "exit_code": 0,
+      "stdout": "{\"method\":\"Patera2005\",\"default_pc\":4.0257384552773655E-5,\"tighter_pc\":4.025738455276131E-5}\n",
+      "stderr": ""
+    },
+    {
+      "radius_m": 4.5,
+      "input": [
+        8.93441755590986,
+        1939.0182502279943,
+        14.309111133909841,
+        1419.1723864768626,
+        4.5
+      ],
+      "orekit": {
+        "method": "Patera2005",
+        "default_pc": 0.0001601232426040213,
+        "tighter_pc": 0.0001601232426039784
+      },
+      "local_gl128_pc": 0.00016012324260402853,
+      "relative_difference": 3.129916969460719e-13,
+      "pid": 71312,
+      "start_time": "2026-10-04T23:32:30.685739+00:00",
+      "end_time": "2026-10-04T23:32:30.792136+00:00",
+      "elapsed_s": 0.106397,
+      "exit_code": 0,
+      "stdout": "{\"method\":\"Patera2005\",\"default_pc\":1.601232426040213E-4,\"tighter_pc\":1.601232426039784E-4}\n",
+      "stderr": ""
+    },
+    {
+      "radius_m": 9.0,
+      "input": [
+        8.93441755590986,
+        1939.0182502279943,
+        14.309111133909841,
+        1419.1723864768626,
+        9.0
+      ],
+      "orekit": {
+        "method": "Patera2005",
+        "default_pc": 0.0006262935612829935,
+        "tighter_pc": 0.0006262935612829237
+      },
+      "local_gl128_pc": 0.0006262935612829786,
+      "relative_difference": 8.776882526527903e-14,
+      "pid": 71313,
+      "start_time": "2026-10-04T23:32:30.794469+00:00",
+      "end_time": "2026-10-04T23:32:30.903185+00:00",
+      "elapsed_s": 0.108716,
+      "exit_code": 0,
+      "stdout": "{\"method\":\"Patera2005\",\"default_pc\":6.262935612829935E-4,\"tighter_pc\":6.262935612829237E-4}\n",
+      "stderr": ""
+    }
+  ],
+  "qualifications": {
+    "real_orekit_invoked": true,
+    "shared_geometry_preprocessor": true,
+    "independent_full_cdm_frame_validation": false,
+    "full_eop_or_trajectory_propagation": false,
+    "argus_demo_runtime_integrated": false,
+    "physical_accuracy_claim": false
+  },
+  "note": "Nominal4.5m uses real released NASA input. Half/double-radius cases are diagnostic perturbations, not additional historical events. Agreement bounds numerical implementation under shared geometry, not operational accuracy."
+}

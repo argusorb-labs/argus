@@ -1,0 +1,58 @@
+[
+  {
+    "name": "orekit",
+    "version": "13.1",
+    "url": "https://repo.maven.apache.org/maven2/org/orekit/orekit/13.1/orekit-13.1.jar",
+    "filename": "orekit-13.1.jar",
+    "sha256": "bbda7dae7ddaf6b5b4464548ee2519c545b59f24117ef790fc34d5bbef3f7407"
+  },
+  {
+    "name": "hipparchus-core",
+    "version": "4.0.1",
+    "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-core/4.0.1/hipparchus-core-4.0.1.jar",
+    "filename": "hipparchus-core-4.0.1.jar",
+    "sha256": "944a55c3a1b13b0a0c9c4db6dbb79c33b1b49511ab7430b6cdc69dc046154a87"
+  },
+  {
+    "name": "hipparchus-geometry",
+    "version": "4.0.1",
+    "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-geometry/4.0.1/hipparchus-geometry-4.0.1.jar",
+    "filename": "hipparchus-geometry-4.0.1.jar",
+    "sha256": "75eb277e4dbb59f981ad26eb56ba32a9a13420dd83d2ee7796d9b1f49c05f516"
+  },
+  {
+    "name": "hipparchus-ode",
+    "version": "4.0.1",
+    "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-ode/4.0.1/hipparchus-ode-4.0.1.jar",
+    "filename": "hipparchus-ode-4.0.1.jar",
+    "sha256": "ae1266fc1c1570a7ca8879a98cb44ccabf43692e411c1310226d87f6163d0f44"
+  },
+  {
+    "name": "hipparchus-fitting",
+    "version": "4.0.1",
+    "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-fitting/4.0.1/hipparchus-fitting-4.0.1.jar",
+    "filename": "hipparchus-fitting-4.0.1.jar",
+    "sha256": "5c57a879eaec6adc05034d6e301def260abaef6291a6b65b621321266c3bb6cf"
+  },
+  {
+    "name": "hipparchus-optim",
+    "version": "4.0.1",
+    "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-optim/4.0.1/hipparchus-optim-4.0.1.jar",
+    "filename": "hipparchus-optim-4.0.1.jar",
+    "sha256": "a5af8e00aed1623a1f39340aa291de8ab586f8875ffd74e8a305dd4516ad43cf"
+  },
+  {
+    "name": "hipparchus-filtering",
+    "version": "4.0.1",
+    "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-filtering/4.0.1/hipparchus-filtering-4.0.1.jar",
+    "filename": "hipparchus-filtering-4.0.1.jar",
+    "sha256": "d15bf8a00f9b2b434028b498ed7c453b1f1c9fe5109e33475a49cac786fadc6c"
+  },
+  {
+    "name": "hipparchus-stat",
+    "version": "4.0.1",
+    "url": "https://repo.maven.apache.org/maven2/org/hipparchus/hipparchus-stat/4.0.1/hipparchus-stat-4.0.1.jar",
+    "filename": "hipparchus-stat-4.0.1.jar",
+    "sha256": "fda3097a7840e5db86d822a79d89947639f13d0832863a6d135be427cf6e3bd4"
+  }
+]
