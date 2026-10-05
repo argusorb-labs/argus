@@ -1,0 +1,824 @@
+{
+  "attribution": "NASA CARA, NASA-SP-20205011318/REV2-VOL2, Appendix N; released numeric CDM data only, no full handbook redistribution",
+  "bytes": 5738333,
+  "cdm_creation": "2022-03-11T22:52:43.000",
+  "checked_utc": "2026-10-04T03:32:15.068645+00:00",
+  "document": "NASA-SP-20205011318/REV2-VOL2, August2026",
+  "extraction": {
+    "kvn_sha256": "c18a84d50c4467e64d3b547036243407a383141e910fcdf2925d4cb03d8d693a",
+    "line_map": [
+      {
+        "kvn_line": 1,
+        "pdf_page_1_based": 95,
+        "text_line": 6
+      },
+      {
+        "kvn_line": 2,
+        "pdf_page_1_based": 95,
+        "text_line": 7
+      },
+      {
+        "kvn_line": 3,
+        "pdf_page_1_based": 95,
+        "text_line": 8
+      },
+      {
+        "kvn_line": 4,
+        "pdf_page_1_based": 95,
+        "text_line": 9
+      },
+      {
+        "kvn_line": 5,
+        "pdf_page_1_based": 95,
+        "text_line": 10
+      },
+      {
+        "kvn_line": 6,
+        "pdf_page_1_based": 95,
+        "text_line": 11
+      },
+      {
+        "kvn_line": 7,
+        "pdf_page_1_based": 95,
+        "text_line": 12
+      },
+      {
+        "kvn_line": 8,
+        "pdf_page_1_based": 95,
+        "text_line": 13
+      },
+      {
+        "kvn_line": 9,
+        "pdf_page_1_based": 95,
+        "text_line": 14
+      },
+      {
+        "kvn_line": 10,
+        "pdf_page_1_based": 95,
+        "text_line": 15
+      },
+      {
+        "kvn_line": 11,
+        "pdf_page_1_based": 95,
+        "text_line": 16
+      },
+      {
+        "kvn_line": 12,
+        "pdf_page_1_based": 95,
+        "text_line": 17
+      },
+      {
+        "kvn_line": 13,
+        "pdf_page_1_based": 95,
+        "text_line": 18
+      },
+      {
+        "kvn_line": 14,
+        "pdf_page_1_based": 95,
+        "text_line": 19
+      },
+      {
+        "kvn_line": 15,
+        "pdf_page_1_based": 95,
+        "text_line": 20
+      },
+      {
+        "kvn_line": 16,
+        "pdf_page_1_based": 95,
+        "text_line": 21
+      },
+      {
+        "kvn_line": 17,
+        "pdf_page_1_based": 95,
+        "text_line": 22
+      },
+      {
+        "kvn_line": 18,
+        "pdf_page_1_based": 95,
+        "text_line": 23
+      },
+      {
+        "kvn_line": 19,
+        "pdf_page_1_based": 95,
+        "text_line": 24
+      },
+      {
+        "kvn_line": 20,
+        "pdf_page_1_based": 95,
+        "text_line": 25
+      },
+      {
+        "kvn_line": 21,
+        "pdf_page_1_based": 95,
+        "text_line": 26
+      },
+      {
+        "kvn_line": 22,
+        "pdf_page_1_based": 95,
+        "text_line": 27
+      },
+      {
+        "kvn_line": 23,
+        "pdf_page_1_based": 95,
+        "text_line": 28
+      },
+      {
+        "kvn_line": 24,
+        "pdf_page_1_based": 95,
+        "text_line": 29
+      },
+      {
+        "kvn_line": 25,
+        "pdf_page_1_based": 95,
+        "text_line": 30
+      },
+      {
+        "kvn_line": 26,
+        "pdf_page_1_based": 95,
+        "text_line": 31
+      },
+      {
+        "kvn_line": 27,
+        "pdf_page_1_based": 95,
+        "text_line": 32
+      },
+      {
+        "kvn_line": 28,
+        "pdf_page_1_based": 95,
+        "text_line": 33
+      },
+      {
+        "kvn_line": 29,
+        "pdf_page_1_based": 95,
+        "text_line": 34
+      },
+      {
+        "kvn_line": 30,
+        "pdf_page_1_based": 95,
+        "text_line": 35
+      },
+      {
+        "kvn_line": 31,
+        "pdf_page_1_based": 95,
+        "text_line": 36
+      },
+      {
+        "kvn_line": 32,
+        "pdf_page_1_based": 95,
+        "text_line": 37
+      },
+      {
+        "kvn_line": 33,
+        "pdf_page_1_based": 95,
+        "text_line": 38
+      },
+      {
+        "kvn_line": 34,
+        "pdf_page_1_based": 95,
+        "text_line": 39
+      },
+      {
+        "kvn_line": 35,
+        "pdf_page_1_based": 95,
+        "text_line": 40
+      },
+      {
+        "kvn_line": 36,
+        "pdf_page_1_based": 95,
+        "text_line": 41
+      },
+      {
+        "kvn_line": 37,
+        "pdf_page_1_based": 95,
+        "text_line": 42
+      },
+      {
+        "kvn_line": 38,
+        "pdf_page_1_based": 95,
+        "text_line": 43
+      },
+      {
+        "kvn_line": 39,
+        "pdf_page_1_based": 95,
+        "text_line": 44
+      },
+      {
+        "kvn_line": 40,
+        "pdf_page_1_based": 95,
+        "text_line": 45
+      },
+      {
+        "kvn_line": 41,
+        "pdf_page_1_based": 95,
+        "text_line": 46
+      },
+      {
+        "kvn_line": 42,
+        "pdf_page_1_based": 95,
+        "text_line": 47
+      },
+      {
+        "kvn_line": 43,
+        "pdf_page_1_based": 95,
+        "text_line": 48
+      },
+      {
+        "kvn_line": 44,
+        "pdf_page_1_based": 95,
+        "text_line": 49
+      },
+      {
+        "kvn_line": 45,
+        "pdf_page_1_based": 95,
+        "text_line": 50
+      },
+      {
+        "kvn_line": 46,
+        "pdf_page_1_based": 95,
+        "text_line": 51
+      },
+      {
+        "kvn_line": 47,
+        "pdf_page_1_based": 95,
+        "text_line": 52
+      },
+      {
+        "kvn_line": 48,
+        "pdf_page_1_based": 95,
+        "text_line": 53
+      },
+      {
+        "kvn_line": 49,
+        "pdf_page_1_based": 95,
+        "text_line": 54
+      },
+      {
+        "kvn_line": 50,
+        "pdf_page_1_based": 95,
+        "text_line": 55
+      },
+      {
+        "kvn_line": 51,
+        "pdf_page_1_based": 95,
+        "text_line": 56
+      },
+      {
+        "kvn_line": 52,
+        "pdf_page_1_based": 95,
+        "text_line": 57
+      },
+      {
+        "kvn_line": 53,
+        "pdf_page_1_based": 95,
+        "text_line": 58
+      },
+      {
+        "kvn_line": 54,
+        "pdf_page_1_based": 95,
+        "text_line": 59
+      },
+      {
+        "kvn_line": 55,
+        "pdf_page_1_based": 95,
+        "text_line": 60
+      },
+      {
+        "kvn_line": 56,
+        "pdf_page_1_based": 95,
+        "text_line": 61
+      },
+      {
+        "kvn_line": 57,
+        "pdf_page_1_based": 95,
+        "text_line": 62
+      },
+      {
+        "kvn_line": 58,
+        "pdf_page_1_based": 95,
+        "text_line": 63
+      },
+      {
+        "kvn_line": 59,
+        "pdf_page_1_based": 95,
+        "text_line": 64
+      },
+      {
+        "kvn_line": 60,
+        "pdf_page_1_based": 96,
+        "text_line": 6
+      },
+      {
+        "kvn_line": 61,
+        "pdf_page_1_based": 96,
+        "text_line": 7
+      },
+      {
+        "kvn_line": 62,
+        "pdf_page_1_based": 96,
+        "text_line": 8
+      },
+      {
+        "kvn_line": 63,
+        "pdf_page_1_based": 96,
+        "text_line": 9
+      },
+      {
+        "kvn_line": 64,
+        "pdf_page_1_based": 96,
+        "text_line": 10
+      },
+      {
+        "kvn_line": 65,
+        "pdf_page_1_based": 96,
+        "text_line": 11
+      },
+      {
+        "kvn_line": 66,
+        "pdf_page_1_based": 96,
+        "text_line": 12
+      },
+      {
+        "kvn_line": 67,
+        "pdf_page_1_based": 96,
+        "text_line": 13
+      },
+      {
+        "kvn_line": 68,
+        "pdf_page_1_based": 96,
+        "text_line": 14
+      },
+      {
+        "kvn_line": 69,
+        "pdf_page_1_based": 96,
+        "text_line": 15
+      },
+      {
+        "kvn_line": 70,
+        "pdf_page_1_based": 96,
+        "text_line": 16
+      },
+      {
+        "kvn_line": 71,
+        "pdf_page_1_based": 96,
+        "text_line": 17
+      },
+      {
+        "kvn_line": 72,
+        "pdf_page_1_based": 96,
+        "text_line": 18
+      },
+      {
+        "kvn_line": 73,
+        "pdf_page_1_based": 96,
+        "text_line": 19
+      },
+      {
+        "kvn_line": 74,
+        "pdf_page_1_based": 96,
+        "text_line": 20
+      },
+      {
+        "kvn_line": 75,
+        "pdf_page_1_based": 96,
+        "text_line": 21
+      },
+      {
+        "kvn_line": 76,
+        "pdf_page_1_based": 96,
+        "text_line": 22
+      },
+      {
+        "kvn_line": 77,
+        "pdf_page_1_based": 96,
+        "text_line": 23
+      },
+      {
+        "kvn_line": 78,
+        "pdf_page_1_based": 96,
+        "text_line": 24
+      },
+      {
+        "kvn_line": 79,
+        "pdf_page_1_based": 96,
+        "text_line": 25
+      },
+      {
+        "kvn_line": 80,
+        "pdf_page_1_based": 96,
+        "text_line": 26
+      },
+      {
+        "kvn_line": 81,
+        "pdf_page_1_based": 96,
+        "text_line": 27
+      },
+      {
+        "kvn_line": 82,
+        "pdf_page_1_based": 96,
+        "text_line": 28
+      },
+      {
+        "kvn_line": 83,
+        "pdf_page_1_based": 96,
+        "text_line": 29
+      },
+      {
+        "kvn_line": 84,
+        "pdf_page_1_based": 96,
+        "text_line": 30
+      },
+      {
+        "kvn_line": 85,
+        "pdf_page_1_based": 96,
+        "text_line": 31
+      },
+      {
+        "kvn_line": 86,
+        "pdf_page_1_based": 96,
+        "text_line": 32
+      },
+      {
+        "kvn_line": 87,
+        "pdf_page_1_based": 96,
+        "text_line": 33
+      },
+      {
+        "kvn_line": 88,
+        "pdf_page_1_based": 96,
+        "text_line": 34
+      },
+      {
+        "kvn_line": 89,
+        "pdf_page_1_based": 96,
+        "text_line": 35
+      },
+      {
+        "kvn_line": 90,
+        "pdf_page_1_based": 96,
+        "text_line": 36
+      },
+      {
+        "kvn_line": 91,
+        "pdf_page_1_based": 96,
+        "text_line": 37
+      },
+      {
+        "kvn_line": 92,
+        "pdf_page_1_based": 96,
+        "text_line": 38
+      },
+      {
+        "kvn_line": 93,
+        "pdf_page_1_based": 96,
+        "text_line": 39
+      },
+      {
+        "kvn_line": 94,
+        "pdf_page_1_based": 96,
+        "text_line": 40
+      },
+      {
+        "kvn_line": 95,
+        "pdf_page_1_based": 96,
+        "text_line": 41
+      },
+      {
+        "kvn_line": 96,
+        "pdf_page_1_based": 96,
+        "text_line": 42
+      },
+      {
+        "kvn_line": 97,
+        "pdf_page_1_based": 96,
+        "text_line": 43
+      },
+      {
+        "kvn_line": 98,
+        "pdf_page_1_based": 96,
+        "text_line": 44
+      },
+      {
+        "kvn_line": 99,
+        "pdf_page_1_based": 96,
+        "text_line": 45
+      },
+      {
+        "kvn_line": 100,
+        "pdf_page_1_based": 96,
+        "text_line": 46
+      },
+      {
+        "kvn_line": 101,
+        "pdf_page_1_based": 96,
+        "text_line": 47
+      },
+      {
+        "kvn_line": 102,
+        "pdf_page_1_based": 96,
+        "text_line": 48
+      },
+      {
+        "kvn_line": 103,
+        "pdf_page_1_based": 96,
+        "text_line": 49
+      },
+      {
+        "kvn_line": 104,
+        "pdf_page_1_based": 96,
+        "text_line": 50
+      },
+      {
+        "kvn_line": 105,
+        "pdf_page_1_based": 96,
+        "text_line": 51
+      },
+      {
+        "kvn_line": 106,
+        "pdf_page_1_based": 96,
+        "text_line": 52
+      },
+      {
+        "kvn_line": 107,
+        "pdf_page_1_based": 96,
+        "text_line": 53
+      },
+      {
+        "kvn_line": 108,
+        "pdf_page_1_based": 96,
+        "text_line": 54
+      },
+      {
+        "kvn_line": 109,
+        "pdf_page_1_based": 96,
+        "text_line": 55
+      },
+      {
+        "kvn_line": 110,
+        "pdf_page_1_based": 96,
+        "text_line": 56
+      },
+      {
+        "kvn_line": 111,
+        "pdf_page_1_based": 96,
+        "text_line": 57
+      },
+      {
+        "kvn_line": 112,
+        "pdf_page_1_based": 96,
+        "text_line": 58
+      },
+      {
+        "kvn_line": 113,
+        "pdf_page_1_based": 96,
+        "text_line": 59
+      },
+      {
+        "kvn_line": 114,
+        "pdf_page_1_based": 96,
+        "text_line": 60
+      },
+      {
+        "kvn_line": 115,
+        "pdf_page_1_based": 96,
+        "text_line": 61
+      },
+      {
+        "kvn_line": 116,
+        "pdf_page_1_based": 96,
+        "text_line": 62
+      },
+      {
+        "kvn_line": 117,
+        "pdf_page_1_based": 96,
+        "text_line": 63
+      },
+      {
+        "kvn_line": 118,
+        "pdf_page_1_based": 96,
+        "text_line": 64
+      },
+      {
+        "kvn_line": 119,
+        "pdf_page_1_based": 97,
+        "text_line": 6
+      },
+      {
+        "kvn_line": 120,
+        "pdf_page_1_based": 97,
+        "text_line": 7
+      },
+      {
+        "kvn_line": 121,
+        "pdf_page_1_based": 97,
+        "text_line": 8
+      },
+      {
+        "kvn_line": 122,
+        "pdf_page_1_based": 97,
+        "text_line": 9
+      },
+      {
+        "kvn_line": 123,
+        "pdf_page_1_based": 97,
+        "text_line": 10
+      },
+      {
+        "kvn_line": 124,
+        "pdf_page_1_based": 97,
+        "text_line": 11
+      },
+      {
+        "kvn_line": 125,
+        "pdf_page_1_based": 97,
+        "text_line": 12
+      },
+      {
+        "kvn_line": 126,
+        "pdf_page_1_based": 97,
+        "text_line": 13
+      },
+      {
+        "kvn_line": 127,
+        "pdf_page_1_based": 97,
+        "text_line": 14
+      },
+      {
+        "kvn_line": 128,
+        "pdf_page_1_based": 97,
+        "text_line": 15
+      },
+      {
+        "kvn_line": 129,
+        "pdf_page_1_based": 97,
+        "text_line": 16
+      },
+      {
+        "kvn_line": 130,
+        "pdf_page_1_based": 97,
+        "text_line": 17
+      },
+      {
+        "kvn_line": 131,
+        "pdf_page_1_based": 97,
+        "text_line": 18
+      },
+      {
+        "kvn_line": 132,
+        "pdf_page_1_based": 97,
+        "text_line": 19
+      },
+      {
+        "kvn_line": 133,
+        "pdf_page_1_based": 97,
+        "text_line": 20
+      },
+      {
+        "kvn_line": 134,
+        "pdf_page_1_based": 97,
+        "text_line": 21
+      },
+      {
+        "kvn_line": 135,
+        "pdf_page_1_based": 97,
+        "text_line": 22
+      },
+      {
+        "kvn_line": 136,
+        "pdf_page_1_based": 97,
+        "text_line": 23
+      },
+      {
+        "kvn_line": 137,
+        "pdf_page_1_based": 97,
+        "text_line": 24
+      },
+      {
+        "kvn_line": 138,
+        "pdf_page_1_based": 97,
+        "text_line": 25
+      },
+      {
+        "kvn_line": 139,
+        "pdf_page_1_based": 97,
+        "text_line": 26
+      },
+      {
+        "kvn_line": 140,
+        "pdf_page_1_based": 97,
+        "text_line": 27
+      },
+      {
+        "kvn_line": 141,
+        "pdf_page_1_based": 97,
+        "text_line": 28
+      },
+      {
+        "kvn_line": 142,
+        "pdf_page_1_based": 97,
+        "text_line": 29
+      },
+      {
+        "kvn_line": 143,
+        "pdf_page_1_based": 97,
+        "text_line": 30
+      },
+      {
+        "kvn_line": 144,
+        "pdf_page_1_based": 97,
+        "text_line": 31
+      },
+      {
+        "kvn_line": 145,
+        "pdf_page_1_based": 97,
+        "text_line": 32
+      },
+      {
+        "kvn_line": 146,
+        "pdf_page_1_based": 97,
+        "text_line": 33
+      },
+      {
+        "kvn_line": 147,
+        "pdf_page_1_based": 97,
+        "text_line": 34
+      }
+    ],
+    "method": "pypdf 6.19.0 text: discard page headers/footer only; preserve folded lines, decimals, units and comments",
+    "page_text_sha256": {
+      "94": "24fc75c77cc2c31d11781c8c57b78b1faa9207cfef4f9bfbf23454b65f93e14d",
+      "95": "de9d9b1a6050485e19e5c5817a71019f57d6e89dff648e10140272199dac58b0",
+      "96": "9d4e6f37ec930e5e0a7452d2dce5b64972bf2e9125840fad79b88cc71b5f9152",
+      "97": "1d0e00aee3cb12a97031512c0c11ff29fbe6b75a035a5c5074242b8b53abe932",
+      "98": "9d3e590d86086dce4180f9eba6f21db4cd711d6a175d54df571c978674eb5f16",
+      "99": "3a6f5afef15d0fa8e1c6f771e927877a8abc2394474b6f6af7d134ac3a8d20e0"
+    }
+  },
+  "joint_hbr_m": 4.5,
+  "local_file": "/private/tmp/epic49-r2-data/nasa-ca-handbook-vol2.pdf",
+  "missing": [
+    "pre-TCA operational ephemeris",
+    "planned maneuver products",
+    "mission constraints",
+    "other-object catalog"
+  ],
+  "objects": [
+    "ICON /44628",
+    "PSLV DEB /27127"
+  ],
+  "parent_inspection_receipt_sha256": "3970b73d1b30a446207281574faad8fa5a0155f930e88b6b7987bb7eb47897e4",
+  "pdf_pages_1_based": {
+    "cdm": [
+      95,
+      96,
+      97
+    ],
+    "comparison": [
+      98,
+      99
+    ],
+    "release_and_reference": 94
+  },
+  "position_covariance_units": "m^2",
+  "position_units": "km",
+  "release_statement": "PDF94 footnote6: cleared for public release April03 2024 via Orbital Data Request24-001-1",
+  "render_verification": {
+    "checked": "release footnote, all state/covariance/DCP tokens, source comparison numbers and corrected exponent -4 confirmed visually",
+    "pages": {
+      "94": {
+        "sha256": "30cd5596362d5bbcf09de87eb3305ca1a3f16cbdeb61e3eb04e302e02eb2675a",
+        "temporary_path": "/private/tmp/epic49-r2-data/nasa-render-94.png"
+      },
+      "95": {
+        "sha256": "ced21bdd755c0a647740358fb317cb5654e85fa4e0b9b05c6e8d51b0fa28cd7e",
+        "temporary_path": "/private/tmp/epic49-r2-data/nasa-render-95.png"
+      },
+      "96": {
+        "sha256": "1cd22aab20a61421af3146bb02dc54502f7cf396798fc9faf3b5b8d8d683ab05",
+        "temporary_path": "/private/tmp/epic49-r2-data/nasa-render-96.png"
+      },
+      "97": {
+        "sha256": "f2bd3b8f831c8df72a43d7d124e01fd878048862fc7a122ac311608c9f8b9c10",
+        "temporary_path": "/private/tmp/epic49-r2-data/nasa-render-97.png"
+      },
+      "98": {
+        "sha256": "408f232e7650a3b9ca8476d30944d71b15aac2c87e4322ab5e7da737827ef41f",
+        "temporary_path": "/private/tmp/epic49-r2-data/nasa-render-98.png"
+      },
+      "99": {
+        "sha256": "8e25cdec574af11cb9e43ad14c9dd80d6e37b65af71f358c097d0dfcb9221e5e",
+        "temporary_path": "/private/tmp/epic49-r2-data/nasa-render-99.png"
+      }
+    },
+    "script_path": "/private/tmp/epic49-r2-render.swift",
+    "script_sha256": "f909aa8d8546eb77aeccd4cd2405f46525503d1e19663cc61ae8a0685d80533c",
+    "tool": "macOS PDFKit via isolated Swift script; 1224x1584 PNG thumbnails"
+  },
+  "reported_method": "FOSTER-1992",
+  "reported_pc": 0.0001601,
+  "sha256": "cc5acf7de44526d7bfc187f21e457e5969bedffdacaef69227ba619637a3b6dd",
+  "state_frame": "ITRF",
+  "tca": "2022-03-13T18:14:20.971",
+  "url": "https://www.nasa.gov/wp-content/uploads/2026/08/ca-handbook-volume2-nasa-sp-20205011318-rev2-vol2.pdf",
+  "velocity_units": "km/s",
+  "verification_status": "Author visually checked PDF94-99 renders against extracted data; numerical baseline and N-18 invariants reproduced; optional corrected source Pc mismatch; independent physical review pending"
+}

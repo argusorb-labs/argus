@@ -1,0 +1,2279 @@
+{
+  "benchmark": {
+    "assumed_scenario": true,
+    "catalog": [
+      {
+        "covariance_assumption": "independent position covariance at every TCA, not transported or calibrated",
+        "covariance_ric_m2": [
+          [
+            10000,
+            0,
+            0
+          ],
+          [
+            0,
+            40000,
+            0
+          ],
+          [
+            0,
+            0,
+            10000
+          ]
+        ],
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "synthetic-crossing",
+        "kind": "constructed",
+        "position_m": [
+          -2293146.821221787,
+          5884776.513834858,
+          2986588.8971168804
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -2293146.821221787,
+          5884776.513834858,
+          2986588.8971168804,
+          1173.5202942545893,
+          -3011.540561741494,
+          6825.450319520019
+        ],
+        "velocity_mps": [
+          1173.5202942545893,
+          -3011.540561741494,
+          6825.450319520019
+        ]
+      }
+    ],
+    "construction": {
+      "covariance_label": "all sigmas assumed, not empirically calibrated",
+      "encounter_time_s": 3600,
+      "hazard_intersection_time_s": 5400,
+      "hazard_label": "synthetic fixture construction from along-plus trajectory; not discovered debris",
+      "hazard_seed_si": [
+        -2536927.771416058,
+        6510378.153009116,
+        0.0,
+        0.0,
+        0.0,
+        7552.9629964375345
+      ],
+      "method": "DOP853 backward from declared crossing seeds, no historical TLE alteration",
+      "primary_encounter_seed_si": [
+        7000000.0,
+        0.0,
+        0.0,
+        0.0,
+        7546.056680715526,
+        0.0
+      ],
+      "secondary_encounter_seed_si": [
+        7000100.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        7546.002780888161
+      ]
+    },
+    "epoch_utc": "2019-09-02T10:02:00Z",
+    "frame": "TEME_frozen_axes",
+    "horizon_s": 7200,
+    "kind": "CONSTRUCTED_OPERATIONAL_BENCHMARK",
+    "options": [
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          0,
+          0
+        ],
+        "id": "no-burn"
+      },
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          0.3,
+          0
+        ],
+        "id": "along-plus"
+      },
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          -0.3,
+          0
+        ],
+        "id": "along-minus"
+      },
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          0,
+          0.3
+        ],
+        "id": "cross-plus"
+      },
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          0,
+          -0.3
+        ],
+        "id": "cross-minus"
+      }
+    ],
+    "primary": {
+      "covariance_assumption": "independent position covariance at every TCA, not transported or calibrated",
+      "covariance_ric_m2": [
+        [
+          10000,
+          0,
+          0
+        ],
+        [
+          0,
+          40000,
+          0
+        ],
+        [
+          0,
+          0,
+          10000
+        ]
+      ],
+      "epoch_utc": "2019-09-02T10:02:00Z",
+      "frame": "TEME_frozen_axes",
+      "id": "constructed-primary",
+      "kind": "constructed",
+      "position_m": [
+        -5102410.911849323,
+        4768276.13396061,
+        0.0
+      ],
+      "radius_m": 4,
+      "state_si": [
+        -5102410.911849323,
+        4768276.13396061,
+        0.0,
+        -5159.316707007579,
+        -5530.983398044604,
+        0.0
+      ],
+      "velocity_mps": [
+        -5159.316707007579,
+        -5530.983398044604,
+        0.0
+      ]
+    },
+    "secondary": {
+      "covariance_assumption": "independent position covariance at every TCA, not transported or calibrated",
+      "covariance_ric_m2": [
+        [
+          10000,
+          0,
+          0
+        ],
+        [
+          0,
+          40000,
+          0
+        ],
+        [
+          0,
+          0,
+          10000
+        ]
+      ],
+      "epoch_utc": "2019-09-02T10:02:00Z",
+      "frame": "TEME_frozen_axes",
+      "id": "constructed-secondary",
+      "kind": "constructed",
+      "position_m": [
+        -5152568.029547452,
+        0.0,
+        4728232.292499363
+      ],
+      "radius_m": 4,
+      "state_si": [
+        -5152568.029547452,
+        0.0,
+        4728232.292499363,
+        -5104.655711649714,
+        0.0,
+        -5561.153865037772
+      ],
+      "velocity_mps": [
+        -5104.655711649714,
+        0.0,
+        -5561.153865037772
+      ]
+    },
+    "thresholds": {
+      "alert_pc": 1e-05,
+      "max_dv_mps": 0.5,
+      "reject_pc": 0.0001,
+      "screen_m": 50000
+    }
+  },
+  "historical": {
+    "alternate_secondary": {
+      "epoch_tle": 19245.41943374,
+      "id": "44278",
+      "line_numbers": [
+        10507664,
+        10507665
+      ],
+      "raw_sha256": "b2e896d64577d9c8572fae797988678f2adf6c15ca77f218e3af91401dab446f",
+      "raw_text": "1 44278U 19029AV  19245.41943374  .00031209  00000-0  15784-3 0  1661\n2 44278  53.0001  39.4029 0025705 272.6298  87.1780 15.80826508 15918\n",
+      "tle": [
+        "1 44278U 19029AV  19245.41943374  .00031209  00000-0  15784-3 0  1661",
+        "2 44278  53.0001  39.4029 0025705 272.6298  87.1780 15.80826508 15918"
+      ]
+    },
+    "primary": {
+      "epoch_tle": 19245.30035846,
+      "id": "43600",
+      "line_numbers": [
+        10513585,
+        10513586
+      ],
+      "raw_sha256": "1e85aded02b4d5c6ab4250dba8e0d6226ce31412a763197edfd32c8085dae4f0",
+      "raw_text": "1 43600U 18066A   19245.30035846  .00030299  00000-0  11844-3 0  6467\n2 43600  96.7220 251.0137 0004546  95.6435  32.6923 15.86967333 59517\n",
+      "tle": [
+        "1 43600U 18066A   19245.30035846  .00030299  00000-0  11844-3 0  6467",
+        "2 43600  96.7220 251.0137 0004546  95.6435  32.6923 15.86967333 59517"
+      ]
+    },
+    "publication_time_verified": false,
+    "replay_kind": "retrospective_epoch_cutoff",
+    "search_epoch_utc": "2019-09-02T11:02:00Z",
+    "secondary": {
+      "epoch_tle": 19244.91366447,
+      "id": "44278",
+      "line_numbers": [
+        10499818,
+        10499819
+      ],
+      "raw_sha256": "b335c37366f9e62941d26efe7d85891c4c62a2e3551ea1fc4630cbd079e75927",
+      "raw_text": "1 44278U 19029AV  19244.91366447  .00030469  00000-0  15445-3 0  1655\n2 44278  53.0000  41.9472 0025704 270.8926  88.9149 15.80791031 15835\n",
+      "tle": [
+        "1 44278U 19029AV  19244.91366447  .00030469  00000-0  15445-3 0  1655",
+        "2 44278  53.0000  41.9472 0025704 270.8926  88.9149 15.80791031 15835"
+      ]
+    },
+    "selection_cutoff_utc": "2019-09-02T10:00:00Z",
+    "source_sha256": "c21a64976cb01a32ffeb3d3784e8fc7ef087d11c2ce537c4acfb6f1a65717c01"
+  },
+  "historical_dynamics": {
+    "assumed_scenario": false,
+    "catalog": [
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "42711",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          3591160.1175498916,
+          -2339990.2898349524,
+          5125598.984398136
+        ],
+        "radius_m": 1,
+        "state_si": [
+          3591160.1175498916,
+          -2339990.2898349524,
+          5125598.984398136,
+          2836.488551493344,
+          7078.605505957482,
+          1242.7382955642765
+        ],
+        "velocity_mps": [
+          2836.488551493344,
+          7078.605505957482,
+          1242.7382955642765
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "32477",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          5960595.804143437,
+          1463963.1781573046,
+          2675089.108136178
+        ],
+        "radius_m": 1,
+        "state_si": [
+          5960595.804143437,
+          1463963.1781573046,
+          2675089.108136178,
+          -3221.3159907723602,
+          5748.053966916206,
+          4016.537433115406
+        ],
+        "velocity_mps": [
+          -3221.3159907723602,
+          5748.053966916206,
+          4016.537433115406
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44473",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -1038718.7648096317,
+          2318258.1018001284,
+          6512644.518563512
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -1038718.7648096317,
+          2318258.1018001284,
+          6512644.518563512,
+          4950.197270488938,
+          -4981.397171886924,
+          2481.81124817109
+        ],
+        "velocity_mps": [
+          4950.197270488938,
+          -4981.397171886924,
+          2481.81124817109
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44179",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -2545387.497878794,
+          3199828.761677678,
+          5366208.541064358
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -2545387.497878794,
+          3199828.761677678,
+          5366208.541064358,
+          4850.668352585723,
+          -3925.756948638396,
+          4483.654766844255
+        ],
+        "velocity_mps": [
+          4850.668352585723,
+          -3925.756948638396,
+          4483.654766844255
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "7004",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -1804729.6258063135,
+          -4115256.3258726043,
+          4963334.86505592
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -1804729.6258063135,
+          -4115256.3258726043,
+          4963334.86505592,
+          815.8556861488534,
+          -6110.522786100996,
+          -4711.547456844993
+        ],
+        "velocity_mps": [
+          815.8556861488534,
+          -6110.522786100996,
+          -4711.547456844993
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44460",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -591104.1124494838,
+          6318644.567741644,
+          3362754.0549344146
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -591104.1124494838,
+          6318644.567741644,
+          3362754.0549344146,
+          1061.4063118872782,
+          -3259.2436411373087,
+          6455.099178907232
+        ],
+        "velocity_mps": [
+          1061.4063118872782,
+          -3259.2436411373087,
+          6455.099178907232
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "16623",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          1476617.074270166,
+          -3393767.389191203,
+          5633078.780287304
+        ],
+        "radius_m": 1,
+        "state_si": [
+          1476617.074270166,
+          -3393767.389191203,
+          5633078.780287304,
+          7391.611500741789,
+          -955.2431968444711,
+          -2330.7307000636297
+        ],
+        "velocity_mps": [
+          7391.611500741789,
+          -955.2431968444711,
+          -2330.7307000636297
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44117",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          246798.45471643933,
+          3156980.1201769044,
+          6777874.135059523
+        ],
+        "radius_m": 1,
+        "state_si": [
+          246798.45471643933,
+          3156980.1201769044,
+          6777874.135059523,
+          1047.3043096629965,
+          -6421.709494413478,
+          2804.154279871148
+        ],
+        "velocity_mps": [
+          1047.3043096629965,
+          -6421.709494413478,
+          2804.154279871148
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44214",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          735144.0436274061,
+          2703131.368055,
+          -6364769.221223694
+        ],
+        "radius_m": 1,
+        "state_si": [
+          735144.0436274061,
+          2703131.368055,
+          -6364769.221223694,
+          2830.66574416389,
+          6297.785463673119,
+          2881.132957810731
+        ],
+        "velocity_mps": [
+          2830.66574416389,
+          6297.785463673119,
+          2881.132957810731
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44470",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          432655.89158667024,
+          6301419.144850438,
+          4046030.1045928956
+        ],
+        "radius_m": 1,
+        "state_si": [
+          432655.89158667024,
+          6301419.144850438,
+          4046030.1045928956,
+          582.6782714322304,
+          -3364.623978745524,
+          6342.213271595712
+        ],
+        "velocity_mps": [
+          582.6782714322304,
+          -3364.623978745524,
+          6342.213271595712
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "89067",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          940474.8350663816,
+          -581323.6052315312,
+          6741694.302789975
+        ],
+        "radius_m": 1,
+        "state_si": [
+          940474.8350663816,
+          -581323.6052315312,
+          6741694.302789975,
+          2395.212977287075,
+          7399.132663499245,
+          647.5017498959775
+        ],
+        "velocity_mps": [
+          2395.212977287075,
+          7399.132663499245,
+          647.5017498959775
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44467",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          516994.91161958454,
+          2854484.6528374855,
+          6786752.174461234
+        ],
+        "radius_m": 1,
+        "state_si": [
+          516994.91161958454,
+          2854484.6528374855,
+          6786752.174461234,
+          440.8432576794519,
+          -6634.2915775309675,
+          2638.4167154673473
+        ],
+        "velocity_mps": [
+          440.8432576794519,
+          -6634.2915775309675,
+          2638.4167154673473
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44164",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          227114.17821717836,
+          834541.3360089619,
+          6733162.046087413
+        ],
+        "radius_m": 1,
+        "state_si": [
+          227114.17821717836,
+          834541.3360089619,
+          6733162.046087413,
+          5913.088424640698,
+          -4911.597419439669,
+          189.0109299064831
+        ],
+        "velocity_mps": [
+          5913.088424640698,
+          -4911.597419439669,
+          189.0109299064831
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44210",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -1152079.4400247317,
+          -1745687.5906062596,
+          6514533.031666214
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -1152079.4400247317,
+          -1745687.5906062596,
+          6514533.031666214,
+          879.9145258769078,
+          7221.509666558752,
+          2109.598954034486
+        ],
+        "velocity_mps": [
+          879.9145258769078,
+          7221.509666558752,
+          2109.598954034486
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44196",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          518680.9389909533,
+          388514.91866938415,
+          6808987.107036453
+        ],
+        "radius_m": 1,
+        "state_si": [
+          518680.9389909533,
+          388514.91866938415,
+          6808987.107036453,
+          2178.9392556529156,
+          -7305.894379268892,
+          15.553091155444308
+        ],
+        "velocity_mps": [
+          2178.9392556529156,
+          -7305.894379268892,
+          15.553091155444308
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "41635",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -2220996.084660735,
+          82050.18336926671,
+          6445263.843397297
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -2220996.084660735,
+          82050.18336926671,
+          6445263.843397297,
+          -4557.347558158942,
+          -5903.150289740963,
+          -1591.1596559117845
+        ],
+        "velocity_mps": [
+          -4557.347558158942,
+          -5903.150289740963,
+          -1591.1596559117845
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44469",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          788054.9407619913,
+          -798420.6934932367,
+          7363661.401889657
+        ],
+        "radius_m": 1,
+        "state_si": [
+          788054.9407619913,
+          -798420.6934932367,
+          7363661.401889657,
+          686.5332698073686,
+          -7007.546274191982,
+          -1129.6289285398705
+        ],
+        "velocity_mps": [
+          686.5332698073686,
+          -7007.546274191982,
+          -1129.6289285398705
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44354",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          6370723.081672169,
+          -634668.5737864404,
+          -3105667.2491296497
+        ],
+        "radius_m": 1,
+        "state_si": [
+          6370723.081672169,
+          -634668.5737864404,
+          -3105667.2491296497,
+          228.1894580906225,
+          7233.134380084644,
+          -1530.2457104536566
+        ],
+        "velocity_mps": [
+          228.1894580906225,
+          7233.134380084644,
+          -1530.2457104536566
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44466",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -109542.32497437179,
+          -3111435.336848436,
+          5964732.2874901295
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -109542.32497437179,
+          -3111435.336848436,
+          5964732.2874901295,
+          -1380.3126991451982,
+          -6676.822405188291,
+          -3713.293249926603
+        ],
+        "velocity_mps": [
+          -1380.3126991451982,
+          -6676.822405188291,
+          -3713.293249926603
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44347",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          6366715.670447672,
+          -421272.9655989477,
+          -3144399.9973510103
+        ],
+        "radius_m": 1,
+        "state_si": [
+          6366715.670447672,
+          -421272.9655989477,
+          -3144399.9973510103,
+          17.737995280280618,
+          7257.668015359089,
+          -1428.6001805115995
+        ],
+        "velocity_mps": [
+          17.737995280280618,
+          7257.668015359089,
+          -1428.6001805115995
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44203",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -3478632.8956337436,
+          4501093.523651629,
+          3912240.874684887
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -3478632.8956337436,
+          4501093.523651629,
+          3912240.874684887,
+          3452.55132362775,
+          -2867.3093295456047,
+          6072.552242831187
+        ],
+        "velocity_mps": [
+          3452.55132362775,
+          -2867.3093295456047,
+          6072.552242831187
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44445",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -390082.71994081355,
+          1139045.9533497046,
+          -6731885.750800553
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -390082.71994081355,
+          1139045.9533497046,
+          -6731885.750800553,
+          907.5317121369249,
+          7584.868046334931,
+          901.9676035105693
+        ],
+        "velocity_mps": [
+          907.5317121369249,
+          7584.868046334931,
+          901.9676035105693
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44381",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -1344698.0433980222,
+          -6684046.86348099,
+          -1575672.4547568385
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -1344698.0433980222,
+          -6684046.86348099,
+          -1575672.4547568385,
+          -170.90300855190404,
+          2362.517332802249,
+          -7318.317679968296
+        ],
+        "velocity_mps": [
+          -170.90300855190404,
+          2362.517332802249,
+          -7318.317679968296
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44147",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          1353702.7006253973,
+          -2114073.068533559,
+          6964548.657177585
+        ],
+        "radius_m": 1,
+        "state_si": [
+          1353702.7006253973,
+          -2114073.068533559,
+          6964548.657177585,
+          1627.660607056324,
+          -6469.887376785874,
+          -2655.22871129058
+        ],
+        "velocity_mps": [
+          1627.660607056324,
+          -6469.887376785874,
+          -2655.22871129058
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "38744",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -1256323.591182616,
+          -4690166.856411793,
+          5579644.401616314
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -1256323.591182616,
+          -4690166.856411793,
+          5579644.401616314,
+          6692.301621161609,
+          -2457.545632577075,
+          -1333.4696313611128
+        ],
+        "velocity_mps": [
+          6692.301621161609,
+          -2457.545632577075,
+          -1333.4696313611128
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44157",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          1085567.346569848,
+          -2781982.6341574085,
+          6761965.242124241
+        ],
+        "radius_m": 1,
+        "state_si": [
+          1085567.346569848,
+          -2781982.6341574085,
+          6761965.242124241,
+          713.393130011129,
+          -6427.0834009297805,
+          -3118.610433310528
+        ],
+        "velocity_mps": [
+          713.393130011129,
+          -6427.0834009297805,
+          -3118.610433310528
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "42798",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -3896907.290500761,
+          1002535.7454904534,
+          5695781.247827795
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -3896907.290500761,
+          1002535.7454904534,
+          5695781.247827795,
+          -5283.587970849199,
+          3181.421371277535,
+          -4236.6248701286095
+        ],
+        "velocity_mps": [
+          -5283.587970849199,
+          3181.421371277535,
+          -4236.6248701286095
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44154",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -1946312.3074348448,
+          6563657.006484416,
+          -353620.8057930566
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -1946312.3074348448,
+          6563657.006484416,
+          -353620.8057930566,
+          615.4309906644718,
+          1155.4965195502548,
+          7793.785187834796
+        ],
+        "velocity_mps": [
+          615.4309906644718,
+          1155.4965195502548,
+          7793.785187834796
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "87021",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          4743004.3809290845,
+          5155741.685835121,
+          4253981.374096123
+        ],
+        "radius_m": 1,
+        "state_si": [
+          4743004.3809290845,
+          5155741.685835121,
+          4253981.374096123,
+          -701.6360048320247,
+          4369.376914189544,
+          -4909.085018578748
+        ],
+        "velocity_mps": [
+          -701.6360048320247,
+          4369.376914189544,
+          -4909.085018578748
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44319",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          5037354.126448507,
+          -4002002.3619311345,
+          1755809.1308266572
+        ],
+        "radius_m": 1,
+        "state_si": [
+          5037354.126448507,
+          -4002002.3619311345,
+          1755809.1308266572,
+          4728.48317049607,
+          3547.351381191986,
+          -5075.309424259038
+        ],
+        "velocity_mps": [
+          4728.48317049607,
+          3547.351381191986,
+          -5075.309424259038
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "614",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -5924293.836233737,
+          -3526344.188426947,
+          1675045.6520055612
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -5924293.836233737,
+          -3526344.188426947,
+          1675045.6520055612,
+          -1315.453373501583,
+          -2031.916750196252,
+          -7089.5992491713805
+        ],
+        "velocity_mps": [
+          -1315.453373501583,
+          -2031.916750196252,
+          -7089.5992491713805
+        ]
+      },
+      {
+        "covariance_assumption": "missing",
+        "covariance_ric_m2": null,
+        "epoch_utc": "2019-09-02T10:02:00Z",
+        "frame": "TEME_frozen_axes",
+        "id": "44377",
+        "kind": "real_TLE_initial_state_assumed_radius",
+        "position_m": [
+          -3927955.1277697496,
+          -3760782.1616320047,
+          -3983150.0983312763
+        ],
+        "radius_m": 1,
+        "state_si": [
+          -3927955.1277697496,
+          -3760782.1616320047,
+          -3983150.0983312763,
+          2926.372041247684,
+          3328.650232975859,
+          -6309.070323156943
+        ],
+        "velocity_mps": [
+          2926.372041247684,
+          3328.650232975859,
+          -6309.070323156943
+        ]
+      }
+    ],
+    "epoch_utc": "2019-09-02T10:02:00Z",
+    "frame": "TEME_frozen_axes",
+    "horizon_s": 7200,
+    "kind": "HISTORICAL_INITIAL_STATES_MODEL_EXPERIMENT",
+    "options": [
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          0,
+          0
+        ],
+        "id": "no-burn"
+      },
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          0.3,
+          0
+        ],
+        "id": "along-plus"
+      },
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          -0.3,
+          0
+        ],
+        "id": "along-minus"
+      },
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          0,
+          0.3
+        ],
+        "id": "cross-plus"
+      },
+      {
+        "burn_time_s": 0,
+        "dv_ric_mps": [
+          0,
+          0,
+          -0.3
+        ],
+        "id": "cross-minus"
+      }
+    ],
+    "primary": {
+      "covariance_assumption": "missing",
+      "covariance_ric_m2": null,
+      "epoch_utc": "2019-09-02T10:02:00Z",
+      "frame": "TEME_frozen_axes",
+      "id": "43600",
+      "kind": "real_TLE_initial_state_assumed_radius",
+      "position_m": [
+        -1095193.2464955377,
+        -820253.7945410986,
+        6537023.813197302
+      ],
+      "radius_m": 4,
+      "state_si": [
+        -1095193.2464955377,
+        -820253.7945410986,
+        6537023.813197302,
+        2318.0707536161344,
+        7253.510226673056,
+        1294.8320318886394
+      ],
+      "velocity_mps": [
+        2318.0707536161344,
+        7253.510226673056,
+        1294.8320318886394
+      ]
+    },
+    "secondary": {
+      "covariance_assumption": "missing",
+      "covariance_ric_m2": null,
+      "epoch_utc": "2019-09-02T10:02:00Z",
+      "frame": "TEME_frozen_axes",
+      "id": "44278",
+      "kind": "real_TLE_initial_state_assumed_radius",
+      "position_m": [
+        5482096.0460028695,
+        3790130.117293563,
+        -731954.264467824
+      ],
+      "radius_m": 4,
+      "state_si": [
+        5482096.0460028695,
+        3790130.117293563,
+        -731954.264467824,
+        -2092.626480818069,
+        4229.119720148858,
+        6103.665256544609
+      ],
+      "velocity_mps": [
+        -2092.626480818069,
+        4229.119720148858,
+        6103.665256544609
+      ]
+    },
+    "thresholds": {
+      "alert_pc": 1e-05,
+      "max_dv_mps": 0.5,
+      "reject_pc": 0.0001,
+      "screen_m": 50000
+    }
+  },
+  "models": {
+    "J2": 0.001082616,
+    "covariance": "independent RIC position assumptions at each TCA; no OD/transport",
+    "earth_radius_m": 6378135.0,
+    "mu_m3_s2": 398600800000000.0,
+    "production_integrator": "RK4 5s + cubic Hermite dense output",
+    "reference_integrator": "DOP853 rtol 2e-13, atol 1e-7, max_step20s",
+    "state_model": "frozen TEME-axis two-body/J2; no drag or axis precession"
+  },
+  "real_catalog": {
+    "epoch_policy": "retrospective_epoch_cutoff",
+    "excluded_primary_secondary_ids": 2,
+    "excluded_propagation_ids": 1,
+    "excluded_radial_ids": 16889,
+    "geometrically_eligible_ids": 99,
+    "latest_age_eligible_ids": 16991,
+    "objects": [
+      {
+        "apogee_m": 315954.9399122307,
+        "epoch_tle": 19245.21539457,
+        "id": "42711",
+        "line_numbers": [
+          10502339,
+          10502340
+        ],
+        "perigee_m": 310294.1343438197,
+        "raw_sha256": "3f878a5ae8d12b6002adbf348e013e0061eca75f18d1bea3655f5471b533a38f",
+        "raw_text": "1 42711U 98067LS  19245.21539457  .00092312  00000-0  36274-3 0  1255\n2 42711  51.6311 256.6311 0004230  56.5409 303.5999 15.86138636131051\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 65067.078077362494,
+          "relative_speed_mps": 5936.225532336814,
+          "time_s": 6893.037560550926
+        },
+        "state_at_common_epoch_si": [
+          3591160.1175498916,
+          -2339990.2898349524,
+          5125598.984398136,
+          2836.488551493344,
+          7078.605505957482,
+          1242.7382955642765
+        ],
+        "tle": [
+          "1 42711U 98067LS  19245.21539457  .00092312  00000-0  36274-3 0  1255",
+          "2 42711  51.6311 256.6311 0004230  56.5409 303.5999 15.86138636131051"
+        ]
+      },
+      {
+        "apogee_m": 321504.45955672953,
+        "epoch_tle": 19244.71851645,
+        "id": "32477",
+        "line_numbers": [
+          10473871,
+          10473872
+        ],
+        "perigee_m": 310209.0178968031,
+        "raw_sha256": "c044ea0fba4d5e1645aaee49b1835a5b9c8990ae4f75dce4c18a1fdf5121cec4",
+        "raw_text": "1 32477U 08002B   19244.71851645  .00068710  00000-0  27931-3 0  2989\n2 32477  41.0215 348.1549 0008437 210.8981 149.1363 15.85167644651559\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 256874.0124913461,
+          "relative_speed_mps": 11544.856273079606,
+          "time_s": 857.1459889174074
+        },
+        "state_at_common_epoch_si": [
+          5960595.804143437,
+          1463963.1781573046,
+          2675089.108136178,
+          -3221.3159907723602,
+          5748.053966916206,
+          4016.537433115406
+        ],
+        "tle": [
+          "1 32477U 08002B   19244.71851645  .00068710  00000-0  27931-3 0  2989",
+          "2 32477  41.0215 348.1549 0008437 210.8981 149.1363 15.85167644651559"
+        ]
+      },
+      {
+        "apogee_m": 648223.2935232166,
+        "epoch_tle": 19243.65152637,
+        "id": "44473",
+        "line_numbers": [
+          10426958,
+          10426959
+        ],
+        "perigee_m": 248996.61397690326,
+        "raw_sha256": "4a3a01a821a6172514dda3aaa325cb241695779ec7747f9c54f391861de3e9ca",
+        "raw_text": "1 44473U 19006DX  19243.65152637  .00920478  21127-3  48505-2 0   353\n2 44473  96.9479 130.6711 0292399 237.1924 121.1422 15.39155293  6135\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 305330.8793403675,
+          "relative_speed_mps": 12979.883172332417,
+          "time_s": 5759.44727166236
+        },
+        "state_at_common_epoch_si": [
+          -1038718.7648096317,
+          2318258.1018001284,
+          6512644.518563512,
+          4950.197270488938,
+          -4981.397171886924,
+          2481.81124817109
+        ],
+        "tle": [
+          "1 44473U 19006DX  19243.65152637  .00920478  21127-3  48505-2 0   353",
+          "2 44473  96.9479 130.6711 0292399 237.1924 121.1422 15.39155293  6135"
+        ]
+      },
+      {
+        "apogee_m": 472792.6465319479,
+        "epoch_tle": 19245.15293723,
+        "id": "44179",
+        "line_numbers": [
+          10501992,
+          10501993
+        ],
+        "perigee_m": 266676.2747095041,
+        "raw_sha256": "344a2d20192d4e6d7905ca80cf5595ec1b9fdf0ad592ec7de4bcaa11e36f48b2",
+        "raw_text": "1 44179U 19006BS  19245.15293723  .00144397  72298-5  73755-3 0  1492\n2 44179  96.1219 136.3685 0152727 147.0880 214.0009 15.66220660 23655\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 430363.7931970161,
+          "relative_speed_mps": 12827.43123447384,
+          "time_s": 3067.127272538884
+        },
+        "state_at_common_epoch_si": [
+          -2545387.497878794,
+          3199828.761677678,
+          5366208.541064358,
+          4850.668352585723,
+          -3925.756948638396,
+          4483.654766844255
+        ],
+        "tle": [
+          "1 44179U 19006BS  19245.15293723  .00144397  72298-5  73755-3 0  1492",
+          "2 44179  96.1219 136.3685 0152727 147.0880 214.0009 15.66220660 23655"
+        ]
+      },
+      {
+        "apogee_m": 478892.81751680933,
+        "epoch_tle": 19245.0739451,
+        "id": "7004",
+        "line_numbers": [
+          10500804,
+          10500805
+        ],
+        "perigee_m": 315997.03515975457,
+        "raw_sha256": "aa2316143c3ee2aabaf79c87d324b51ebbbdc696954796dec8121cced355b7a9",
+        "raw_text": "1  7004U 73107B   19245.07394510  .00022250  00000-0  22361-3 0  1911\n2  7004  73.9259  85.6598 0120208 108.3008 253.1330 15.56622301362067\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 436961.5401202439,
+          "relative_speed_mps": 15120.42523985785,
+          "time_s": 2506.4040689819435
+        },
+        "state_at_common_epoch_si": [
+          -1804729.6258063135,
+          -4115256.3258726043,
+          4963334.86505592,
+          815.8556861488534,
+          -6110.522786100996,
+          -4711.547456844993
+        ],
+        "tle": [
+          "1  7004U 73107B   19245.07394510  .00022250  00000-0  22361-3 0  1911",
+          "2  7004  73.9259  85.6598 0120208 108.3008 253.1330 15.56622301362067"
+        ]
+      },
+      {
+        "apogee_m": 819776.4380001472,
+        "epoch_tle": 19245.01430171,
+        "id": "44460",
+        "line_numbers": [
+          10502092,
+          10502093
+        ],
+        "perigee_m": 270358.0318391584,
+        "raw_sha256": "1af6213aef79d212fb1da623f63f86fd457b978cf2662d76135b23e226b78157",
+        "raw_text": "1 44460U 19006DJ  19245.01430171  .01043091  22105-3  98728-2 0   608\n2 44460  95.2270  97.8492 0396795 224.5456 132.6434 15.07101250  9858\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 476553.2136581022,
+          "relative_speed_mps": 15074.472880077205,
+          "time_s": 3346.6696036016638
+        },
+        "state_at_common_epoch_si": [
+          -591104.1124494838,
+          6318644.567741644,
+          3362754.0549344146,
+          1061.4063118872782,
+          -3259.2436411373087,
+          6455.099178907232
+        ],
+        "tle": [
+          "1 44460U 19006DJ  19245.01430171  .01043091  22105-3  98728-2 0   608",
+          "2 44460  95.2270  97.8492 0396795 224.5456 132.6434 15.07101250  9858"
+        ]
+      },
+      {
+        "apogee_m": 840133.7233800655,
+        "epoch_tle": 19245.2648051,
+        "id": "16623",
+        "line_numbers": [
+          10508646,
+          10508647
+        ],
+        "perigee_m": 331745.1470888527,
+        "raw_sha256": "087d2502d43b2a9d854056d2a5b286fabe4dbc74e3efae912d12c934b341182b",
+        "raw_text": "1 16623U 86014D   19245.26480510  .00070518  00000-0  16637-2 0   328\n2 16623  63.2753 164.0901 0365008  78.2386 286.0026 14.93852955  4754\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 539921.753592045,
+          "relative_speed_mps": 10688.991018841172,
+          "time_s": 2474.44606173553
+        },
+        "state_at_common_epoch_si": [
+          1476617.074270166,
+          -3393767.389191203,
+          5633078.780287304,
+          7391.611500741789,
+          -955.2431968444711,
+          -2330.7307000636297
+        ],
+        "tle": [
+          "1 16623U 86014D   19245.26480510  .00070518  00000-0  16637-2 0   328",
+          "2 16623  63.2753 164.0901 0365008  78.2386 286.0026 14.93852955  4754"
+        ]
+      },
+      {
+        "apogee_m": 1130129.0180268977,
+        "epoch_tle": 19245.19812589,
+        "id": "44117",
+        "line_numbers": [
+          10504624,
+          10504625
+        ],
+        "perigee_m": 275731.90790471993,
+        "raw_sha256": "1ea3881b00f341caae5811bfb85a16d0bdcc42203db83e53507f1f24a2459058",
+        "raw_text": "1 44117U 19006C   19245.19812589  .00359987  20416-4  47657-2 0  2304\n2 44117  95.2934  96.8349 0603297 229.6713 125.0296 14.56984874 22642\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 657133.570126838,
+          "relative_speed_mps": 15143.296601504573,
+          "time_s": 3066.257483379908
+        },
+        "state_at_common_epoch_si": [
+          246798.45471643933,
+          3156980.1201769044,
+          6777874.135059523,
+          1047.3043096629965,
+          -6421.709494413478,
+          2804.154279871148
+        ],
+        "tle": [
+          "1 44117U 19006C   19245.19812589  .00359987  20416-4  47657-2 0  2304",
+          "2 44117  95.2934  96.8349 0603297 229.6713 125.0296 14.56984874 22642"
+        ]
+      },
+      {
+        "apogee_m": 601161.2027128153,
+        "epoch_tle": 19245.36592351,
+        "id": "44214",
+        "line_numbers": [
+          10510214,
+          10510215
+        ],
+        "perigee_m": 251631.4803851992,
+        "raw_sha256": "be4faed148d264f15e079f18504627b2b9bdf0a86a840f143bf26a7542f53b5d",
+        "raw_text": "1 44214U 19006CQ  19245.36592351  .01228736  41408-3  63588-2 0  2495\n2 44214  93.3285  67.1630 0256836 148.1829 213.6354 15.46698374 21553\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 697835.8380125664,
+          "relative_speed_mps": 15183.967705509454,
+          "time_s": 6819.607245966419
+        },
+        "state_at_common_epoch_si": [
+          735144.0436274061,
+          2703131.368055,
+          -6364769.221223694,
+          2830.66574416389,
+          6297.785463673119,
+          2881.132957810731
+        ],
+        "tle": [
+          "1 44214U 19006CQ  19245.36592351  .01228736  41408-3  63588-2 0  2495",
+          "2 44214  93.3285  67.1630 0256836 148.1829 213.6354 15.46698374 21553"
+        ]
+      },
+      {
+        "apogee_m": 1624119.638459362,
+        "epoch_tle": 19244.54384172,
+        "id": "44470",
+        "line_numbers": [
+          10463171,
+          10463172
+        ],
+        "perigee_m": 278522.3987025302,
+        "raw_sha256": "cba5219e257aaaf0ffb02327168efbcd62630b743af35ccfdf789b3dc0c9e614",
+        "raw_text": "1 44470U 19006DU  19244.54384172  .00292506  11175-4  52077-2 0   390\n2 44470  95.4678  89.0715 0917938 285.3435  65.0020 13.83551541  6226\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 729959.0519934508,
+          "relative_speed_mps": 15175.108376987699,
+          "time_s": 3602.4676455038116
+        },
+        "state_at_common_epoch_si": [
+          432655.89158667024,
+          6301419.144850438,
+          4046030.1045928956,
+          582.6782714322304,
+          -3364.623978745524,
+          6342.213271595712
+        ],
+        "tle": [
+          "1 44470U 19006DU  19244.54384172  .00292506  11175-4  52077-2 0   390",
+          "2 44470  95.4678  89.0715 0917938 285.3435  65.0020 13.83551541  6226"
+        ]
+      },
+      {
+        "apogee_m": 1224418.60539403,
+        "epoch_tle": 19244.98422206,
+        "id": "89067",
+        "line_numbers": [
+          10514123,
+          10514124
+        ],
+        "perigee_m": 334226.97089240886,
+        "raw_sha256": "310064fb299c1be8dc6732049824214e772eab21b6cd50c1e24f62122420253b",
+        "raw_text": "1 89067U          19244.98422206 +.00004664 +00000+0 +15537-3 0    1\n2 89067  80.9855 253.2745 0621863  42.0308 322.6888 14.3372138825074\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 746173.1531730354,
+          "relative_speed_mps": 2148.262140005916,
+          "time_s": 1345.2641894202056
+        },
+        "state_at_common_epoch_si": [
+          940474.8350663816,
+          -581323.6052315312,
+          6741694.302789975,
+          2395.212977287075,
+          7399.132663499245,
+          647.5017498959775
+        ],
+        "tle": [
+          "1 89067U          19244.98422206 +.00004664 +00000+0 +15537-3 0    1",
+          "2 89067  80.9855 253.2745 0621863  42.0308 322.6888 14.3372138825074"
+        ]
+      },
+      {
+        "apogee_m": 1029990.4209138379,
+        "epoch_tle": 19244.52217464,
+        "id": "44467",
+        "line_numbers": [
+          10466859,
+          10466860
+        ],
+        "perigee_m": 264515.39507919084,
+        "raw_sha256": "19135e3fd30653ef4800b40d436370d104429acf497975faf95659bfcdfa5510",
+        "raw_text": "1 44467U 19006DR  19244.52217464  .00652296  70979-4  66307-2 0   421\n2 44467  95.0927  91.2086 0544792 235.7750 119.4711 14.74339475  6495\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 836026.704599698,
+          "relative_speed_mps": 14574.196972248788,
+          "time_s": 5899.8134726831395
+        },
+        "state_at_common_epoch_si": [
+          516994.91161958454,
+          2854484.6528374855,
+          6786752.174461234,
+          440.8432576794519,
+          -6634.2915775309675,
+          2638.4167154673473
+        ],
+        "tle": [
+          "1 44467U 19006DR  19244.52217464  .00652296  70979-4  66307-2 0   421",
+          "2 44467  95.0927  91.2086 0544792 235.7750 119.4711 14.74339475  6495"
+        ]
+      },
+      {
+        "apogee_m": 671702.5913760867,
+        "epoch_tle": 19245.20590053,
+        "id": "44164",
+        "line_numbers": [
+          10501626,
+          10501627
+        ],
+        "perigee_m": 269558.1559193153,
+        "raw_sha256": "2d614d51080ed4e1d5b57a7d62f3900c37ea0e426ec2149d4cfa5d3ba36a6271",
+        "raw_text": "1 44164U 19006BB  19245.20590053  .00221987  12188-4  17419-2 0  1809\n2 44164  96.6541 139.9310 0293589 164.1936 196.8721 15.31738134 23201\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 880821.3071698694,
+          "relative_speed_mps": 12666.430131484005,
+          "time_s": 5642.843191111045
+        },
+        "state_at_common_epoch_si": [
+          227114.17821717836,
+          834541.3360089619,
+          6733162.046087413,
+          5913.088424640698,
+          -4911.597419439669,
+          189.0109299064831
+        ],
+        "tle": [
+          "1 44164U 19006BB  19245.20590053  .00221987  12188-4  17419-2 0  1809",
+          "2 44164  96.6541 139.9310 0293589 164.1936 196.8721 15.31738134 23201"
+        ]
+      },
+      {
+        "apogee_m": 472903.4623480318,
+        "epoch_tle": 19245.14897786,
+        "id": "44210",
+        "line_numbers": [
+          10501810,
+          10501811
+        ],
+        "perigee_m": 273009.05110930186,
+        "raw_sha256": "c0743344b4268c86747eae90fcab2e9b1f640fae8837aeea1ac4d47aa6a9ff89",
+        "raw_text": "1 44210U 19024D   19245.14897786  .00035531  26523-5  20330-3 0  1362\n2 44210  97.5167 260.5746 0148046 266.1064  92.3261 15.65099632 19533\n",
+        "relevance_minimum": {
+          "boundary_minimum": true,
+          "distance_m": 927453.2792371237,
+          "relative_speed_mps": 1653.2279058423155,
+          "time_s": 0.0
+        },
+        "state_at_common_epoch_si": [
+          -1152079.4400247317,
+          -1745687.5906062596,
+          6514533.031666214,
+          879.9145258769078,
+          7221.509666558752,
+          2109.598954034486
+        ],
+        "tle": [
+          "1 44210U 19024D   19245.14897786  .00035531  26523-5  20330-3 0  1362",
+          "2 44210  97.5167 260.5746 0148046 266.1064  92.3261 15.65099632 19533"
+        ]
+      },
+      {
+        "apogee_m": 667423.825380167,
+        "epoch_tle": 19245.140928,
+        "id": "44196",
+        "line_numbers": [
+          10500520,
+          10500521
+        ],
+        "perigee_m": 246602.8797287764,
+        "raw_sha256": "c5833723b7cd7b19c6e6f4a8a91bdd550984d20335ac995f09faccc35412a0de",
+        "raw_text": "1 44196U 19006CG  19245.14092800  .00373504  32446-4  19287-2 0  1733\n2 44196  95.0994 106.4040 0307836 184.3863 175.4682 15.36317719 22120\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1194681.0412247053,
+          "relative_speed_mps": 14608.735712652482,
+          "time_s": 5621.865775089013
+        },
+        "state_at_common_epoch_si": [
+          518680.9389909533,
+          388514.91866938415,
+          6808987.107036453,
+          2178.9392556529156,
+          -7305.894379268892,
+          15.553091155444308
+        ],
+        "tle": [
+          "1 44196U 19006CG  19245.14092800  .00373504  32446-4  19287-2 0  1733",
+          "2 44196  95.0994 106.4040 0307836 184.3863 175.4682 15.36317719 22120"
+        ]
+      },
+      {
+        "apogee_m": 503422.2680718228,
+        "epoch_tle": 19245.07691816,
+        "id": "41635",
+        "line_numbers": [
+          10501804,
+          10501805
+        ],
+        "perigee_m": 323924.2838695049,
+        "raw_sha256": "b648feac5363fb7f05f5560e5e0f3a8ecb88e45259325d2a1500a8e1a0820816",
+        "raw_text": "1 41635U 16043B   19245.07691816  .00013284  00000-0  15823-3 0  9509\n2 41635  74.9750  49.7566 0132143 215.0072 144.2411 15.51046544178852\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1258962.8009988545,
+          "relative_speed_mps": 15095.278394362784,
+          "time_s": 5526.877840460039
+        },
+        "state_at_common_epoch_si": [
+          -2220996.084660735,
+          82050.18336926671,
+          6445263.843397297,
+          -4557.347558158942,
+          -5903.150289740963,
+          -1591.1596559117845
+        ],
+        "tle": [
+          "1 41635U 16043B   19245.07691816  .00013284  00000-0  15823-3 0  9509",
+          "2 41635  74.9750  49.7566 0132143 215.0072 144.2411 15.51046544178852"
+        ]
+      },
+      {
+        "apogee_m": 1186724.3579557715,
+        "epoch_tle": 19245.0521458,
+        "id": "44469",
+        "line_numbers": [
+          10505910,
+          10505911
+        ],
+        "perigee_m": 273829.4054150749,
+        "raw_sha256": "ccc75a12c1b7a1f379ead1360a921773fd6d58188c03905ad2955c4549331a10",
+        "raw_text": "1 44469U 19006DT  19245.05214580  .00439311  29172-4  58259-2 0   403\n2 44469  95.3745  96.2247 0642123 240.2279 114.0372 14.48585324  6486\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1338576.7377709118,
+          "relative_speed_mps": 14397.08744650852,
+          "time_s": 5706.398169716676
+        },
+        "state_at_common_epoch_si": [
+          788054.9407619913,
+          -798420.6934932367,
+          7363661.401889657,
+          686.5332698073686,
+          -7007.546274191982,
+          -1129.6289285398705
+        ],
+        "tle": [
+          "1 44469U 19006DT  19245.05214580  .00439311  29172-4  58259-2 0   403",
+          "2 44469  95.3745  96.2247 0642123 240.2279 114.0372 14.48585324  6486"
+        ]
+      },
+      {
+        "apogee_m": 841358.2648930047,
+        "epoch_tle": 19244.90757688,
+        "id": "44354",
+        "line_numbers": [
+          10497706,
+          10497707
+        ],
+        "perigee_m": 304675.1346859969,
+        "raw_sha256": "e4d103ad2a21750656cd7d3295f150e4cd9e8951330eb15774794edc0547af1a",
+        "raw_text": "1 44354U 19036R   19244.90757688 +.00017270 +00000-0 +26824-3 0 0001\n2 44354 028.5301 114.3930 0386039 111.3178 252.9065 14.9802067501028\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1355924.0165020197,
+          "relative_speed_mps": 12975.035604347664,
+          "time_s": 7107.476107512355
+        },
+        "state_at_common_epoch_si": [
+          6370723.081672169,
+          -634668.5737864404,
+          -3105667.2491296497,
+          228.1894580906225,
+          7233.134380084644,
+          -1530.2457104536566
+        ],
+        "tle": [
+          "1 44354U 19036R   19244.90757688 +.00017270 +00000-0 +26824-3 0 0001",
+          "2 44354 028.5301 114.3930 0386039 111.3178 252.9065 14.9802067501028"
+        ]
+      },
+      {
+        "apogee_m": 687710.7477049567,
+        "epoch_tle": 19244.80725166,
+        "id": "44466",
+        "line_numbers": [
+          10475516,
+          10475517
+        ],
+        "perigee_m": 272199.63721440174,
+        "raw_sha256": "35e9634767d3483e8f905b2cf84bff042bfeaf6e1736f885e4a2c003107170ed",
+        "raw_text": "1 44466U 19006DQ  19244.80725166  .00392361  33486-4  32864-2 0   207\n2 44466  93.9110  80.1300 0302935 174.6795 185.8859 15.28615182  6810\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1442717.6668924466,
+          "relative_speed_mps": 15405.031978081448,
+          "time_s": 5415.971421607342
+        },
+        "state_at_common_epoch_si": [
+          -109542.32497437179,
+          -3111435.336848436,
+          5964732.2874901295,
+          -1380.3126991451982,
+          -6676.822405188291,
+          -3713.293249926603
+        ],
+        "tle": [
+          "1 44466U 19006DQ  19244.80725166  .00392361  33486-4  32864-2 0   207",
+          "2 44466  93.9110  80.1300 0302935 174.6795 185.8859 15.28615182  6810"
+        ]
+      },
+      {
+        "apogee_m": 831386.06868573,
+        "epoch_tle": 19244.90766434,
+        "id": "44347",
+        "line_numbers": [
+          10473019,
+          10473020
+        ],
+        "perigee_m": 306500.94164371025,
+        "raw_sha256": "94b23333fe4cc2fe58ed7bc37f9a160fb10ae05c4b0d7953f07d39176e35af90",
+        "raw_text": "1 44347U 19036J   19244.90766434  .00042612  00000-0  67984-3 0   702\n2 44347  28.5252 114.4096 0377774 111.6257 252.4998 14.99338342 10298\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1485876.1346375209,
+          "relative_speed_mps": 13001.348255627709,
+          "time_s": 7090.0530551890215
+        },
+        "state_at_common_epoch_si": [
+          6366715.670447672,
+          -421272.9655989477,
+          -3144399.9973510103,
+          17.737995280280618,
+          7257.668015359089,
+          -1428.6001805115995
+        ],
+        "tle": [
+          "1 44347U 19036J   19244.90766434  .00042612  00000-0  67984-3 0   702",
+          "2 44347  28.5252 114.4096 0377774 111.6257 252.4998 14.99338342 10298"
+        ]
+      },
+      {
+        "apogee_m": 608312.8638072051,
+        "epoch_tle": 19245.216838,
+        "id": "44203",
+        "line_numbers": [
+          10500980,
+          10500981
+        ],
+        "perigee_m": 274027.7889851341,
+        "raw_sha256": "ee015a7eb60c5bb21bef6d3222339bf76005ea4dbca0cb8b22460be9b1f1f789",
+        "raw_text": "1 44203U 19006CP  19245.21683800  .00155395  68820-5  11915-2 0  1413\n2 44203  96.1319 131.7691 0245102 158.1971 202.9934 15.41674728 22387\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1486948.1485325193,
+          "relative_speed_mps": 13267.092427053107,
+          "time_s": 3217.7560998929735
+        },
+        "state_at_common_epoch_si": [
+          -3478632.8956337436,
+          4501093.523651629,
+          3912240.874684887,
+          3452.55132362775,
+          -2867.3093295456047,
+          6072.552242831187
+        ],
+        "tle": [
+          "1 44203U 19006CP  19245.21683800  .00155395  68820-5  11915-2 0  1413",
+          "2 44203  96.1319 131.7691 0245102 158.1971 202.9934 15.41674728 22387"
+        ]
+      },
+      {
+        "apogee_m": 900888.0026750872,
+        "epoch_tle": 19244.49700915,
+        "id": "44445",
+        "line_numbers": [
+          10464413,
+          10464414
+        ],
+        "perigee_m": 260328.7176296981,
+        "raw_sha256": "68bc1879a5603490b6e353ced4c2fa9b048cd2eac7bf9adc82998d8b12397980",
+        "raw_text": "1 44445U 19006DH  19244.49700915  .00494727  44633-4  42192-2 0   305\n2 44445  94.3538  83.1762 0460255 213.1383 144.0234 14.95569939  9844\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1497851.2241968915,
+          "relative_speed_mps": 14902.852406667022,
+          "time_s": 1422.7109414279616
+        },
+        "state_at_common_epoch_si": [
+          -390082.71994081355,
+          1139045.9533497046,
+          -6731885.750800553,
+          907.5317121369249,
+          7584.868046334931,
+          901.9676035105693
+        ],
+        "tle": [
+          "1 44445U 19006DH  19244.49700915  .00494727  44633-4  42192-2 0   305",
+          "2 44445  94.3538  83.1762 0460255 213.1383 144.0234 14.95569939  9844"
+        ]
+      },
+      {
+        "apogee_m": 1513744.4749184195,
+        "epoch_tle": 19244.80407747,
+        "id": "44381",
+        "line_numbers": [
+          10470456,
+          10470457
+        ],
+        "perigee_m": 278011.8426611051,
+        "raw_sha256": "732b94224cabc1e5ca5eeaf366b016dc478d5b701b78be291387cada19d48631",
+        "raw_text": "1 44381U 19006DC  19244.80407747  .00046370  12153-5  78509-3 0   364\n2 44381  94.6181  79.3804 0849416 262.2316  88.1719 13.99399884 15436\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1617431.2705325896,
+          "relative_speed_mps": 15382.496746434315,
+          "time_s": 2001.7547469636452
+        },
+        "state_at_common_epoch_si": [
+          -1344698.0433980222,
+          -6684046.86348099,
+          -1575672.4547568385,
+          -170.90300855190404,
+          2362.517332802249,
+          -7318.317679968296
+        ],
+        "tle": [
+          "1 44381U 19006DC  19244.80407747  .00046370  12153-5  78509-3 0   364",
+          "2 44381  94.6181  79.3804 0849416 262.2316  88.1719 13.99399884 15436"
+        ]
+      },
+      {
+        "apogee_m": 1196282.0181639828,
+        "epoch_tle": 19245.18738339,
+        "id": "44147",
+        "line_numbers": [
+          10500794,
+          10500795
+        ],
+        "perigee_m": 271836.18402601406,
+        "raw_sha256": "6d0a134d8c9eeabd4063863ee514307e536abaf43360b3d9c08f69032874b1fc",
+        "raw_text": "1 44147U 19006AJ  19245.18738339  .00087860  23938-5  11357-2 0  4172\n2 44147  95.7448 106.2565 0649902 242.6309 110.7335 14.47429955 22071\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1625870.0004760553,
+          "relative_speed_mps": 14101.882608479365,
+          "time_s": 5610.617593393713
+        },
+        "state_at_common_epoch_si": [
+          1353702.7006253973,
+          -2114073.068533559,
+          6964548.657177585,
+          1627.660607056324,
+          -6469.887376785874,
+          -2655.22871129058
+        ],
+        "tle": [
+          "1 44147U 19006AJ  19245.18738339  .00087860  23938-5  11357-2 0  4172",
+          "2 44147  95.7448 106.2565 0649902 242.6309 110.7335 14.47429955 22071"
+        ]
+      },
+      {
+        "apogee_m": 1460310.5715623936,
+        "epoch_tle": 19245.18353861,
+        "id": "38744",
+        "line_numbers": [
+          10501286,
+          10501287
+        ],
+        "perigee_m": 240624.1574387895,
+        "raw_sha256": "caa112b1b9d878506e64d004f97609edfa63056839f6ce25e00627cadf38f1e1",
+        "raw_text": "1 38744U 12044A   19245.18353861  .00103783  84301-5  82981-3 0  8873\n2 38744  49.8709 151.7525 0843653 209.7125 145.3231 14.12607325312495\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1744841.5572329352,
+          "relative_speed_mps": 12343.234115845235,
+          "time_s": 2447.5998936451624
+        },
+        "state_at_common_epoch_si": [
+          -1256323.591182616,
+          -4690166.856411793,
+          5579644.401616314,
+          6692.301621161609,
+          -2457.545632577075,
+          -1333.4696313611128
+        ],
+        "tle": [
+          "1 38744U 12044A   19245.18353861  .00103783  84301-5  82981-3 0  8873",
+          "2 38744  49.8709 151.7525 0843653 209.7125 145.3231 14.12607325312495"
+        ]
+      },
+      {
+        "apogee_m": 1163982.721452427,
+        "epoch_tle": 19245.05013914,
+        "id": "44157",
+        "line_numbers": [
+          10516219,
+          10516220
+        ],
+        "perigee_m": 258088.7833541222,
+        "raw_sha256": "56028080915b7000c52e84bf69eb5a7003d459d4dd6a40d22c8d99ff7d93c820",
+        "raw_text": "1 44157U 19006AU  19245.05013914  .00213582  78839-5  21038-2 0  2384\n2 44157  95.4012  98.7059 0638928 250.2216 102.9041 14.54486858 21931\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1781224.549436772,
+          "relative_speed_mps": 14388.35302161371,
+          "time_s": 5561.751086891729
+        },
+        "state_at_common_epoch_si": [
+          1085567.346569848,
+          -2781982.6341574085,
+          6761965.242124241,
+          713.393130011129,
+          -6427.0834009297805,
+          -3118.610433310528
+        ],
+        "tle": [
+          "1 44157U 19006AU  19245.05013914  .00213582  78839-5  21038-2 0  2384",
+          "2 44157  95.4012  98.7059 0638928 250.2216 102.9041 14.54486858 21931"
+        ]
+      },
+      {
+        "apogee_m": 610630.4214076363,
+        "epoch_tle": 19244.87332045,
+        "id": "42798",
+        "line_numbers": [
+          10496058,
+          10496059
+        ],
+        "perigee_m": 313454.8009826951,
+        "raw_sha256": "b341fb198e7c030b17afd19b691fae2c66a30f81c98b42bd698bd67f3a7bb75e",
+        "raw_text": "1 42798U 17037A   19244.87332045 +.00008277 +00000-0 +11399-3 0 0975\n2 42798 097.8193 333.7780 0217228 285.7825 071.9633 15.3462365812014\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1854565.6232178095,
+          "relative_speed_mps": 10217.2064375733,
+          "time_s": 5341.85244047034
+        },
+        "state_at_common_epoch_si": [
+          -3896907.290500761,
+          1002535.7454904534,
+          5695781.247827795,
+          -5283.587970849199,
+          3181.421371277535,
+          -4236.6248701286095
+        ],
+        "tle": [
+          "1 42798U 17037A   19244.87332045 +.00008277 +00000-0 +11399-3 0 0975",
+          "2 42798 097.8193 333.7780 0217228 285.7825 071.9633 15.3462365812014"
+        ]
+      },
+      {
+        "apogee_m": 1761854.1881112577,
+        "epoch_tle": 19245.19859994,
+        "id": "44154",
+        "line_numbers": [
+          10500002,
+          10500003
+        ],
+        "perigee_m": 278054.88099563867,
+        "raw_sha256": "02081e51f85db570a142f323a4afabac17b374b2fa2e4f642a492a77fb380384",
+        "raw_text": "1 44154U 19006AR  19245.19859994  .00472427  26478-4  87991-2 0  2580\n2 44154  96.6846 106.0152 1002826 311.0864  40.7754 13.64343049 20495\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1921072.8599101494,
+          "relative_speed_mps": 14406.685243985665,
+          "time_s": 798.8966918599916
+        },
+        "state_at_common_epoch_si": [
+          -1946312.3074348448,
+          6563657.006484416,
+          -353620.8057930566,
+          615.4309906644718,
+          1155.4965195502548,
+          7793.785187834796
+        ],
+        "tle": [
+          "1 44154U 19006AR  19245.19859994  .00472427  26478-4  87991-2 0  2580",
+          "2 44154  96.6846 106.0152 1002826 311.0864  40.7754 13.64343049 20495"
+        ]
+      },
+      {
+        "apogee_m": 1857064.9842411112,
+        "epoch_tle": 19245.38583777,
+        "id": "87021",
+        "line_numbers": [
+          10513929,
+          10513930
+        ],
+        "perigee_m": 262767.7634015726,
+        "raw_sha256": "8bc7a2a84fea39d843489cc6a768c0934beb57a62b25b7c1abb19f0942bc60c9",
+        "raw_text": "1 87021U          19245.38583777 +.00343993 +17389-4 +49980-2 0    1\n2 87021  63.2792 245.2842 1071717 308.8038  42.1902 13.5336268117868\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 1964527.8520458422,
+          "relative_speed_mps": 4411.993068349317,
+          "time_s": 7097.276804603077
+        },
+        "state_at_common_epoch_si": [
+          4743004.3809290845,
+          5155741.685835121,
+          4253981.374096123,
+          -701.6360048320247,
+          4369.376914189544,
+          -4909.085018578748
+        ],
+        "tle": [
+          "1 87021U          19245.38583777 +.00343993 +17389-4 +49980-2 0    1",
+          "2 87021  63.2792 245.2842 1071717 308.8038  42.1902 13.5336268117868"
+        ]
+      },
+      {
+        "apogee_m": 522693.10343538877,
+        "epoch_tle": 19245.13423629,
+        "id": "44319",
+        "line_numbers": [
+          10505812,
+          10505813
+        ],
+        "perigee_m": 260238.39031925332,
+        "raw_sha256": "5cd49c6f5cae498e44bdb88c1a5f64e2c89b571919b997ff1e3eb25387cc7f90",
+        "raw_text": "1 44319U 19032K   19245.13423629  .00303655  33602-4  15216-2 0   793\n2 44319  44.8970 159.0713 0193848 114.0553 248.0739 15.58685062 13400\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 2127747.5749338423,
+          "relative_speed_mps": 11964.029451582348,
+          "time_s": 4706.1227667737685
+        },
+        "state_at_common_epoch_si": [
+          5037354.126448507,
+          -4002002.3619311345,
+          1755809.1308266572,
+          4728.48317049607,
+          3547.351381191986,
+          -5075.309424259038
+        ],
+        "tle": [
+          "1 44319U 19032K   19245.13423629  .00303655  33602-4  15216-2 0   793",
+          "2 44319  44.8970 159.0713 0193848 114.0553 248.0739 15.58685062 13400"
+        ]
+      },
+      {
+        "apogee_m": 1106347.5371601796,
+        "epoch_tle": 19244.90796347,
+        "id": "614",
+        "line_numbers": [
+          10476220,
+          10476221
+        ],
+        "perigee_m": 301577.6276425505,
+        "raw_sha256": "3c01420b5daea2c3cc82c62294375d08404403593a6680084a572d7c6cb1d9b0",
+        "raw_text": "1   614U 63025B   19244.90796347 +.00009959 -11199-5 +18926-3 0 0001\n2   614 081.9799 033.2196 0568172 072.7567 293.4977 14.5666638255507\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 2201470.6843908564,
+          "relative_speed_mps": 14867.286873512068,
+          "time_s": 5210.751748169539
+        },
+        "state_at_common_epoch_si": [
+          -5924293.836233737,
+          -3526344.188426947,
+          1675045.6520055612,
+          -1315.453373501583,
+          -2031.916750196252,
+          -7089.5992491713805
+        ],
+        "tle": [
+          "1   614U 63025B   19244.90796347 +.00009959 -11199-5 +18926-3 0 0001",
+          "2   614 081.9799 033.2196 0568172 072.7567 293.4977 14.5666638255507"
+        ]
+      },
+      {
+        "apogee_m": 556161.8233600771,
+        "epoch_tle": 19244.86541483,
+        "id": "44377",
+        "line_numbers": [
+          10475798,
+          10475799
+        ],
+        "perigee_m": 251357.70153557416,
+        "raw_sha256": "6e5393c1b2480af8dace66c9bfbf2877736e5be3652a149342821e9da1025c14",
+        "raw_text": "1 44377U 19006CY  19244.86541483  .01391579  58415-3  66463-2 0  1293\n2 44377  92.2829  45.2519 0224719 143.9165 217.8656 15.54448677 17700\n",
+        "relevance_minimum": {
+          "boundary_minimum": false,
+          "distance_m": 2223397.592055811,
+          "relative_speed_mps": 15343.583083990048,
+          "time_s": 4633.903540505067
+        },
+        "state_at_common_epoch_si": [
+          -3927955.1277697496,
+          -3760782.1616320047,
+          -3983150.0983312763,
+          2926.372041247684,
+          3328.650232975859,
+          -6309.070323156943
+        ],
+        "tle": [
+          "1 44377U 19006CY  19244.86541483  .01391579  58415-3  66463-2 0  1293",
+          "2 44377  92.2829  45.2519 0224719 143.9165 217.8656 15.54448677 17700"
+        ]
+      }
+    ],
+    "publication_time_verified": false,
+    "selected_ids": [
+      "42711",
+      "32477",
+      "44473",
+      "44179",
+      "7004",
+      "44460",
+      "16623",
+      "44117",
+      "44214",
+      "44470",
+      "89067",
+      "44467",
+      "44164",
+      "44210",
+      "44196",
+      "41635",
+      "44469",
+      "44354",
+      "44466",
+      "44347",
+      "44203",
+      "44445",
+      "44381",
+      "44147",
+      "38744",
+      "44157",
+      "42798",
+      "44154",
+      "87021",
+      "44319",
+      "614",
+      "44377"
+    ],
+    "selection": "latest epoch <= 2019-09-02T10:00Z, age <=3 days; mean radial envelope overlaps 302-345km, perigee>=100km, apogee<=2000km; rank by refined SGP4 minimum to Aeolus over 10:02-12:02Z; nearest 32",
+    "source_sha256": "c21a64976cb01a32ffeb3d3784e8fc7ef087d11c2ce537c4acfb6f1a65717c01",
+    "stream_counts": {
+      "excluded_epoch_records": 7814707,
+      "lines": 15773349,
+      "malformed_epoch_records": 0,
+      "matching_pairs": 7881846,
+      "nonmatching_or_unpaired_line2": 3219
+    },
+    "subset_sha256": "292f706550e9984e32b317eb832beb565108c26802c27e9990928c9464d87507",
+    "truncated_ids": 67
+  },
+  "schema_version": 1
+}
