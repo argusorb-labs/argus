@@ -41,14 +41,38 @@ def preservation():
     )
     mismatches = []
     records = {}
+    documentation_changes = {}
+    ci_changes = {}
     for path in paths:
         target = ROOT / path
         # Symlinks are outside this additive packet; git diff verifies them.
         if target.is_symlink():
             continue
         old = subprocess.check_output(["git", "show", f"{BASE}:{path}"], cwd=ROOT)
-        if not target.is_file() or target.read_bytes() != old:
-            mismatches.append(path)
+        current = target.read_bytes() if target.is_file() else None
+        if current != old:
+            # Product knowledge may append README links; the original bytes and
+            # every other baseline file remain protected by the historical gate.
+            if path == "README.md" and current is not None and current.startswith(old):
+                documentation_changes[path] = {
+                    "kind": "append_only",
+                    "base_sha256": sha(old),
+                    "current_sha256": sha(current),
+                }
+            elif path == ".github/workflows/ci.yml" and current == old.replace(
+                b"      - uses: actions/checkout@v4\n\n      - uses: astral-sh/setup-uv@v6",
+                b"      - uses: actions/checkout@v4\n        with:\n"
+                b"          # Evidence builders verify historical scientific commit anchors.\n"
+                b"          fetch-depth: 0\n\n      - uses: astral-sh/setup-uv@v6",
+                1,
+            ):
+                ci_changes[path] = {
+                    "kind": "historical_anchor_checkout",
+                    "base_sha256": sha(old),
+                    "current_sha256": sha(current),
+                }
+            else:
+                mismatches.append(path)
         records[path] = sha(old)
     science_paths = [
         "services/demo_numerics.py",
@@ -73,7 +97,10 @@ def preservation():
     return {
         "base": BASE,
         "science_anchor": ANCHOR,
-        "all_base_files_unchanged": True,
+        "all_base_files_unchanged": not (documentation_changes or ci_changes),
+        "all_base_files_preserved": True,
+        "documentation_changes": documentation_changes,
+        "ci_changes": ci_changes,
         "checked_regular_files": len(records),
         "base_file_manifest_sha256": sha(encoded(records)),
         "science_files": anchor,

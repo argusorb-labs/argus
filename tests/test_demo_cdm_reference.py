@@ -192,7 +192,12 @@ def test_builder_reports_optional_source_mismatch_and_is_deterministic(tmp_path)
     assert corrected["status"] == "incomplete_source_pc_mismatch"
     assert corrected["actual"] == pytest.approx(8.04040496e-5, rel=1e-8)
     assert receipt["independent_agreement"]["baseline"]["absolute_difference"] < 1e-12
-    assert receipt["round1_preservation"]["all_base_files_unchanged"]
+    assert receipt["round1_preservation"]["all_base_files_preserved"]
+    assert not receipt["round1_preservation"]["all_base_files_unchanged"]
+    assert (
+        receipt["round1_preservation"]["documentation_changes"]["README.md"]["kind"]
+        == "append_only"
+    )
 
 
 @pytest.mark.parametrize("value", [0, float("nan"), float("inf")])
@@ -228,3 +233,37 @@ def test_density_sensitivity_parameters_drive_corrected_estimate():
         )
         > 0.01
     )
+
+
+@pytest.mark.parametrize(
+    "change",
+    ["append_readme", "rewrite_readme", "science_change", "unrelated_ci_change"],
+)
+def test_preservation_allows_documentation_append_but_rejects_rewrites(
+    tmp_path, monkeypatch, change
+):
+    import subprocess
+
+    builder = importlib.import_module("scripts.build_epic49_cdm_packet")
+    root = tmp_path / "checkout"
+    subprocess.run(
+        ["git", "clone", "--shared", "--quiet", str(builder.ROOT), str(root)],
+        check=True,
+    )
+    monkeypatch.setattr(builder, "ROOT", root)
+    relative = {
+        "science_change": "services/demo_numerics.py",
+        "unrelated_ci_change": ".github/workflows/ci.yml",
+    }.get(change, "README.md")
+    target = root / relative
+    if change == "rewrite_readme":
+        target.write_text("replaced original documentation\n")
+    else:
+        target.write_bytes(target.read_bytes() + b"\nAdditional text\n")
+    if change == "append_readme":
+        result = builder.preservation()
+        assert result["all_base_files_preserved"]
+        assert not result["all_base_files_unchanged"]
+    else:
+        with pytest.raises(ValueError, match="round-1 files changed"):
+            builder.preservation()
